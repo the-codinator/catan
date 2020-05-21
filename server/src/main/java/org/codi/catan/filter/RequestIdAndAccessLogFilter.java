@@ -1,5 +1,9 @@
 package org.codi.catan.filter;
 
+import static org.codi.catan.util.Constants.REQUEST_ID;
+import static org.codi.catan.util.Constants.REQUEST_START_TIME;
+import static org.codi.catan.util.Util.shouldSkipFilters;
+
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
@@ -15,28 +19,33 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.MDC;
 
 @Provider
-@Priority(Priorities.USER + 100)
-public class RequestIdFilter implements ContainerRequestFilter, ContainerResponseFilter {
+@Priority(Priorities.HEADER_DECORATOR)
+public class RequestIdAndAccessLogFilter implements ContainerRequestFilter, ContainerResponseFilter {
 
-    private static final Logger logger = LoggerFactory.getLogger(RequestIdFilter.class);
-    private static final String REQUEST_ID = "X-Request-Id";
+    private static final Logger logger = LoggerFactory.getLogger(RequestIdAndAccessLogFilter.class);
 
     @Override
     public void filter(ContainerRequestContext request) {
+        if (shouldSkipFilters(request)) {
+            return;
+        }
         String id = request.getHeaderString(REQUEST_ID);
         if (id == null || id.isBlank()) {
             id = generateRandomUuid().toString();
             request.getHeaders().putSingle(REQUEST_ID, id);
         }
         MDC.put("requestId", id);
-        logger.debug("[ ACCESS ] method={} path={}", request.getMethod(), request.getUriInfo().getPath());
+        logger.debug("[ ACCESS ] method={} path={} start={}", request.getMethod(), request.getUriInfo().getPath(),
+            request.getProperty(REQUEST_START_TIME));
     }
 
     @Override
-    public void filter(final ContainerRequestContext request, final ContainerResponseContext response) {
+    public void filter(ContainerRequestContext request, ContainerResponseContext response) {
+        if (shouldSkipFilters(request)) {
+            return;
+        }
         String id = request.getHeaderString(REQUEST_ID);
         response.getHeaders().putSingle(REQUEST_ID, id);
-        logger.debug("[ REQUEST ] status={}", response.getStatus());
     }
 
     /**

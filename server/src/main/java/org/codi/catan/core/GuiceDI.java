@@ -1,8 +1,16 @@
 package org.codi.catan.core;
 
+import com.codahale.metrics.health.HealthCheck;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
+import com.google.inject.multibindings.Multibinder;
+import com.google.inject.util.Types;
+import java.util.Iterator;
+import java.util.Set;
+import org.codi.catan.impl.health.AwsDynamoDbHealthChecker;
 
 public class GuiceDI extends AbstractModule {
 
@@ -10,6 +18,8 @@ public class GuiceDI extends AbstractModule {
 
     @Override
     protected void configure() {
+        Multibinder<HealthCheck> health = Multibinder.newSetBinder(binder(), HealthCheck.class);
+        health.addBinding().to(AwsDynamoDbHealthChecker.class);
     }
 
     public static void setup() {
@@ -24,5 +34,16 @@ public class GuiceDI extends AbstractModule {
 
     public static <T> T get(Class<T> clazz) {
         return injector.getInstance(clazz);
+    }
+
+    public static <T> Iterator<T> getMulti(Class<T> clazz) {
+        Key<Set<T>> key = Key.get(setOf(clazz));
+        Set<T> bindings = injector.getInstance(key);
+        return bindings.iterator();
+    }
+
+    @SuppressWarnings("unchecked")
+    private static <T> TypeLiteral<Set<T>> setOf(Class<T> type) {
+        return (TypeLiteral<Set<T>>) TypeLiteral.get(Types.setOf(type));
     }
 }

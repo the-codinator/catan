@@ -11,7 +11,7 @@ public class CatanConfigurationSourceProvider extends SubstitutingSourceProvider
         super(new ResourceConfigurationSourceProvider(), new EnvironmentVariableSubstitutor(false));
     }
 
-    public static void setup(final Bootstrap<?> bootstrap) {
+    public static void setup(Bootstrap<?> bootstrap) {
         bootstrap.setConfigurationSourceProvider(new CatanConfigurationSourceProvider());
     }
 }

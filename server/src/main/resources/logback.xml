@@ -1,0 +1,27 @@
+<configuration>
+
+  <appender name="SHORT" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>
+        %date{HH:mm:ss.SSS} [%thread] [%X{requestId}] [%level] %logger{0} - %msg%n
+      </Pattern>
+    </encoder>
+  </appender>
+
+  <appender name="FULL" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder class="ch.qos.logback.classic.encoder.PatternLayoutEncoder">
+      <Pattern>
+        %date{HH:mm:ss.SSS} [%thread] [%X{requestId}] [%level] %logger - %msg%n
+      </Pattern>
+    </encoder>
+  </appender>
+
+  <logger name="org.codi.catan" level="debug" additivity="false">
+    <appender-ref ref="SHORT"/>
+  </logger>
+
+  <root level="error">
+    <appender-ref ref="FULL"/>
+  </root>
+
+</configuration>

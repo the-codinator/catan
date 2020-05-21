@@ -1,0 +1,17 @@
+version: '3'
+
+services:
+  dynamodb:
+    image: amazon/dynamodb-local
+    ports:
+      - '8000:8000'
+    networks:
+      - catan
+  server:
+    image: catan-server
+    ports:
+      - '8080:8080'
+    networks:
+      - catan
+    depends_on:
+      - dynamodb

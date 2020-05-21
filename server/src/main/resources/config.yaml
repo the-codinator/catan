@@ -1,0 +1,13 @@
+logging:
+  loggers:
+    "io.dropwizard": INFO
+    "org.codi.catan":
+      level: DEBUG
+      additive: false
+      appenders:
+        - type: console
+          logFormat: "%date{HH:mm:ss.SSS} [ %thread ] [ %X{requestId} ] [ %-5level ] %logger{0} - %msg%n"
+  level: ERROR
+  appenders:
+    - type: console
+      logFormat: "%date{HH:mm:ss.SSS} [ %thread ] [ %X{requestId} ] [ %-5level ] %logger - %msg%n"

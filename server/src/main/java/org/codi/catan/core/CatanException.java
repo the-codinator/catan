@@ -56,4 +56,9 @@ public class CatanException extends Exception {
     public ErrorResponse asErrorResponse() {
         return new ErrorResponse(getErrorStatus().getStatusCode(), super.getMessage());
     }
+
+    public static ErrorResponse asErrorResponse(Exception e) {
+        return e instanceof CatanException ? ((CatanException) e).asErrorResponse()
+            : new ErrorResponse(DEFAULT_ERROR_STATUS.getStatusCode(), "Unhandled Error: " + e.getMessage());
+    }
 }

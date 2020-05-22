@@ -21,8 +21,8 @@ public class Token {
     private String id;
     private TokenType type;
     private String user;
-    private long created;
-    private long expiry;
+    private Long created;
+    private Long expiry;
 
     public Token(String id) {
         this();

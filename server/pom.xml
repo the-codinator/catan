@@ -92,6 +92,13 @@
       <scope>provided</scope>
     </dependency>
 
+    <!-- Swagger -->
+    <dependency>
+      <groupId>com.smoketurner</groupId>
+      <artifactId>dropwizard-swagger</artifactId>
+      <version>2.0.0-1</version>
+    </dependency>
+
   </dependencies>
 
   <build>

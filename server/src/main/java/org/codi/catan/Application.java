@@ -8,6 +8,8 @@ package org.codi.catan;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import io.federecio.dropwizard.swagger.SwaggerBundle;
+import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.codi.catan.api.health.Health;
 import org.codi.catan.api.health.Ping;
 import org.codi.catan.api.misc.Favicon;
@@ -40,6 +42,14 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
 
         CatanConfigurationSourceProvider.setup(bootstrap);
         logger.debug("[ BOOT ] DropWizard ConfigSource configured");
+
+        bootstrap.addBundle(new SwaggerBundle<>() {
+            @Override
+            protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(CatanConfiguration configuration) {
+                return configuration.swagger;
+            }
+        });
+        logger.debug("[ BOOT ] Swagger configured");
 
         GuiceDI.setup(bootstrap);
         logger.debug("[ BOOT ] Guice bindings configured");

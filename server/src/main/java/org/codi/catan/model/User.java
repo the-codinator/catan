@@ -5,7 +5,6 @@
 
 package org.codi.catan.model;
 
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,13 +19,21 @@ public class User {
     private String id;
     private String name;
     private String pwd;
-    private Set<UserRole> roles;
-    private boolean isAdmin; // For simplicity we us a single var since we don't have multiple roles
-
-    public enum UserRole {
-        ADMIN
-    }
+    /**
+     * Ideally ACLs should be stored in a separate DB but since it is different from authentication, and we don't want
+     * password info to be available when checking permissions
+     *
+     * Also, rather than independent ACL vars, we should have something like this:
+     * <pre>{@code
+     *   private Set<UserRole> roles;
+     *
+     *   public enum UserRole {
+     *     ADMIN
+     *   }
+     * }</pre>
+     *
+     * Here since we have a very simple User definition and ACLs are only applicable for the admin APIs we can take a
+     * shortcut with this and reduce some hassle
+     */
+    private Boolean admin;
 }
-
-
-

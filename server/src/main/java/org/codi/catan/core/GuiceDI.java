@@ -20,10 +20,10 @@ import com.google.inject.util.Types;
 import io.dropwizard.setup.Bootstrap;
 import java.util.Collection;
 import java.util.Set;
-import org.codi.catan.impl.data.CacheDelegateDataLoader;
-import org.codi.catan.impl.data.CatanDataLoader;
-import org.codi.catan.impl.data.DynamoDbDataLoader;
-import org.codi.catan.impl.data.ImMemoryDataLoader;
+import org.codi.catan.impl.data.CachedDelegateCDC;
+import org.codi.catan.impl.data.CatanDataConnector;
+import org.codi.catan.impl.data.DynamoDbCDC;
+import org.codi.catan.impl.data.ImMemoryCDC;
 import org.codi.catan.impl.health.AwsDynamoDbHealthChecker;
 import org.codi.catan.impl.health.InMemoryHealthChecker;
 
@@ -40,13 +40,13 @@ public class GuiceDI extends AbstractModule {
     protected void configure() {
         bind(ObjectMapper.class).toInstance(mapper);
         Multibinder<HealthCheck> health = Multibinder.newSetBinder(binder(), HealthCheck.class);
-        bind(CatanDataLoader.class).to(CacheDelegateDataLoader.class);
+        bind(CatanDataConnector.class).to(CachedDelegateCDC.class);
         if (isAwsEnabled()) {
             health.addBinding().to(AwsDynamoDbHealthChecker.class);
-            bind(CatanDataLoader.class).annotatedWith(Names.named(DELEGATE)).to(DynamoDbDataLoader.class);
+            bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(DynamoDbCDC.class);
         } else {
             health.addBinding().to(InMemoryHealthChecker.class);
-            bind(CatanDataLoader.class).annotatedWith(Names.named(DELEGATE)).to(ImMemoryDataLoader.class);
+            bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(ImMemoryCDC.class);
         }
     }
 

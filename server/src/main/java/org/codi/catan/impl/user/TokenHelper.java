@@ -9,6 +9,7 @@ import static org.codi.catan.util.Constants.DAY_MILLIS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.Token;
 import org.codi.catan.model.Token.TokenType;
@@ -43,19 +44,29 @@ public class TokenHelper {
         }
     }
 
-    public String serializeToken(Token s) throws CatanException {
+    public String serializeToken(Token token) throws CatanException {
         try {
-            return Util.base64Encode(mapper.writeValueAsString(s));
+            return Util.base64Encode(mapper.writeValueAsString(token));
         } catch (Exception e) {
             throw new CatanException("Error serializing session to token", e);
         }
     }
 
-    public Token parseToken(String s) throws CatanException {
+    public Token parseToken(String token) throws CatanException {
         try {
-            return mapper.readValue(Util.base64Decode(s), Token.class);
+            return mapper.readValue(Util.base64Decode(token), Token.class);
         } catch (Exception e) {
             throw new CatanException("Error parsing session from token", e);
+        }
+    }
+
+    public void validateRequestTokenOffline(Token token) throws CatanException {
+        long now = System.currentTimeMillis();
+        if (token.getCreated() > now) {
+            throw new CatanException("Session from the future", Status.UNAUTHORIZED);
+        }
+        if (token.getCreated() + token.getExpiry() < now) {
+            throw new CatanException("Session has expired", Status.UNAUTHORIZED);
         }
     }
 }

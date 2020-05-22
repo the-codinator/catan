@@ -1,5 +1,7 @@
 package org.codi.catan.core;
 
+import static org.codi.catan.util.Constants.DELEGATE;
+
 import com.codahale.metrics.health.HealthCheck;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -7,11 +9,16 @@ import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
+import com.google.inject.name.Names;
 import com.google.inject.util.Types;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.Set;
+import org.codi.catan.impl.data.CacheDelegateDataLoader;
+import org.codi.catan.impl.data.CatanDataLoader;
+import org.codi.catan.impl.data.aws.DynamoDbDataLoader;
+import org.codi.catan.impl.data.mem.ImMemoryDataLoader;
 import org.codi.catan.impl.health.AwsDynamoDbHealthChecker;
+import org.codi.catan.impl.health.InMemoryHealthChecker;
 
 public class GuiceDI extends AbstractModule {
 
@@ -20,7 +27,18 @@ public class GuiceDI extends AbstractModule {
     @Override
     protected void configure() {
         Multibinder<HealthCheck> health = Multibinder.newSetBinder(binder(), HealthCheck.class);
-        health.addBinding().to(AwsDynamoDbHealthChecker.class);
+        bind(CatanDataLoader.class).to(CacheDelegateDataLoader.class);
+        if (isAwsEnabled()) {
+            health.addBinding().to(AwsDynamoDbHealthChecker.class);
+            bind(CatanDataLoader.class).annotatedWith(Names.named(DELEGATE)).to(DynamoDbDataLoader.class);
+        } else {
+            health.addBinding().to(InMemoryHealthChecker.class);
+            bind(CatanDataLoader.class).annotatedWith(Names.named(DELEGATE)).to(ImMemoryDataLoader.class);
+        }
+    }
+
+    private boolean isAwsEnabled() {
+        return false;
     }
 
     public static void setup() {

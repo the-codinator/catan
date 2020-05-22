@@ -36,7 +36,7 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
         CatanConfigurationSourceProvider.setup(bootstrap);
         logger.debug("[ BOOT ] DropWizard ConfigSource configured");
 
-        GuiceDI.setup();
+        GuiceDI.setup(bootstrap);
         logger.debug("[ BOOT ] Guice bindings configured");
 
         logger.info("[ BOOT ] Init complete");

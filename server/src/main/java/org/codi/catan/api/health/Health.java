@@ -10,7 +10,7 @@ import javax.ws.rs.core.MediaType;
 public class Health {
 
     @GET
-    public String ping() {
+    public String health() {
         return "{\"status\": \"ok\"}";
     }
 }

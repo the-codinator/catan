@@ -3,7 +3,6 @@ package org.codi.catan;
 import com.codahale.metrics.health.HealthCheck;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import java.util.Iterator;
 import org.codi.catan.api.health.Health;
 import org.codi.catan.api.health.Ping;
 import org.codi.catan.api.misc.Favicon;
@@ -46,9 +45,7 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
     @Override
     public void run(CatanConfiguration configuration, Environment environment) {
         // Health Check
-        Iterator<HealthCheck> healthCheckers = GuiceDI.getMulti(HealthCheck.class);
-        while (healthCheckers.hasNext()) {
-            var hc = healthCheckers.next();
+        for (var hc : GuiceDI.getMulti(HealthCheck.class)) {
             environment.healthChecks().register(hc.getClass().getSimpleName().split("Health")[0], hc);
         }
         logger.debug("[ BOOT ] Health Check configured");
@@ -60,9 +57,9 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
         logger.debug("[ BOOT ] Filters configured");
 
         // APIs
-        environment.jersey().register(GuiceDI.get(Ping.class));
-        environment.jersey().register(GuiceDI.get(Health.class));
-        environment.jersey().register(GuiceDI.get(Favicon.class));
+        environment.jersey().register(Ping.class);
+        environment.jersey().register(Health.class);
+        environment.jersey().register(Favicon.class);
         logger.debug("[ BOOT ] APIs configured");
 
         logger.info("[ BOOT ] Server ready!");

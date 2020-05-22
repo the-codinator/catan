@@ -22,8 +22,12 @@ public class ResponseLogAndTimingFilter implements ContainerResponseFilter {
         if (shouldSkipFilters(request)) {
             return;
         }
-        long duration = System.currentTimeMillis() - (Long) request.getProperty(REQUEST_START_TIME);
-        response.getHeaders().putSingle("Server-Timing", "total;dur=" + duration);
+        Long start = (Long) request.getProperty(REQUEST_START_TIME);
+        long duration = -1;
+        if (start != null) {
+            duration = System.currentTimeMillis() - start;
+            response.getHeaders().putSingle("Server-Timing", "total;dur=" + duration);
+        }
         logger.debug("[ REQUEST ] status={} duration={}", response.getStatus(), duration);
     }
 }

@@ -1,6 +1,7 @@
 package org.codi.catan.core;
 
 import javax.ws.rs.core.Response.Status;
+import org.codi.catan.model.ErrorResponse;
 
 public class CatanException extends Exception {
 
@@ -45,5 +46,9 @@ public class CatanException extends Exception {
         } else {
             return super.getMessage();
         }
+    }
+
+    public ErrorResponse asErrorResponse() {
+        return new ErrorResponse(getErrorStatus().getStatusCode(), super.getMessage());
     }
 }

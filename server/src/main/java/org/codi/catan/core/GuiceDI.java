@@ -8,6 +8,7 @@ import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.util.Types;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
 import org.codi.catan.impl.health.AwsDynamoDbHealthChecker;
@@ -36,10 +37,9 @@ public class GuiceDI extends AbstractModule {
         return injector.getInstance(clazz);
     }
 
-    public static <T> Iterator<T> getMulti(Class<T> clazz) {
+    public static <T> Collection<T> getMulti(Class<T> clazz) {
         Key<Set<T>> key = Key.get(setOf(clazz));
-        Set<T> bindings = injector.getInstance(key);
-        return bindings.iterator();
+        return injector.getInstance(key);
     }
 
     @SuppressWarnings("unchecked")

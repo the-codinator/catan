@@ -83,6 +83,14 @@
       <artifactId>guava</artifactId>
       <version>29.0-jre</version>
     </dependency>
+
+    <!-- Lombok -->
+    <dependency>
+      <groupId>org.projectlombok</groupId>
+      <artifactId>lombok</artifactId>
+      <version>1.18.12</version>
+    </dependency>
+
   </dependencies>
 
   <build>

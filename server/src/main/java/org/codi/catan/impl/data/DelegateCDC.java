@@ -17,8 +17,8 @@ public class DelegateCDC implements CatanDataConnector {
         this.delegate = delegate;
     }
 
-    public User getUser(User user) throws CatanException {
-        return delegate.getUser(user);
+    public User getUser(String id) throws CatanException {
+        return delegate.getUser(id);
     }
 
     public void createUser(User user) throws CatanException {
@@ -29,19 +29,19 @@ public class DelegateCDC implements CatanDataConnector {
         delegate.updateUser(user);
     }
 
-    public void deleteUser(User user) throws CatanException {
-        delegate.deleteUser(user);
+    public void deleteUser(String id) throws CatanException {
+        delegate.deleteUser(id);
     }
 
-    public Token getToken(Token token) throws CatanException {
-        return delegate.getToken(token);
+    public Token getToken(String id) throws CatanException {
+        return delegate.getToken(id);
     }
 
     public void createToken(Token token) throws CatanException {
         delegate.createToken(token);
     }
 
-    public void deleteToken(Token token) throws CatanException {
-        delegate.deleteToken(token);
+    public void deleteToken(String id) throws CatanException {
+        delegate.deleteToken(id);
     }
 }

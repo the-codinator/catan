@@ -27,13 +27,13 @@ public class CachedDelegateCDC extends DelegateCDC implements CatanDataConnector
         tokens = CacheBuilder.newBuilder()
             .maximumSize(100)
             .expireAfterWrite(10, TimeUnit.MINUTES)
-            .build(new CatanCacheLoader<>(id -> delegate.getToken(new Token(id))));
+            .build(new CatanCacheLoader<>(delegate::getToken));
     }
 
     @Override
-    public Token getToken(Token token) throws CatanException {
+    public Token getToken(String id) throws CatanException {
         try {
-            return tokens.get(token.getId());
+            return tokens.get(id);
         } catch (ExecutionException e) {
             throw new CatanException("Error loading token with cache", e);
         }
@@ -45,7 +45,7 @@ public class CachedDelegateCDC extends DelegateCDC implements CatanDataConnector
     }
 
     @Override
-    public void deleteToken(Token token) {
-        tokens.invalidate(token.getId());
+    public void deleteToken(String id) {
+        tokens.invalidate(id);
     }
 }

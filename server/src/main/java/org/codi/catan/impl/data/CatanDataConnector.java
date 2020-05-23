@@ -11,12 +11,12 @@ import org.codi.catan.model.user.User;
 
 public interface CatanDataConnector {
 
-    User getUser(User user) throws CatanException;
+    User getUser(String id) throws CatanException;
     void createUser(User user) throws CatanException;
     void updateUser(User user) throws CatanException;
-    void deleteUser(User user) throws CatanException;
+    void deleteUser(String id) throws CatanException;
 
-    Token getToken(Token token) throws CatanException;
+    Token getToken(String id) throws CatanException;
     void createToken(Token token) throws CatanException;
-    void deleteToken(Token token) throws CatanException;
+    void deleteToken(String id) throws CatanException;
 }

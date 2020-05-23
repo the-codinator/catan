@@ -81,7 +81,7 @@ public class UserApiHelper {
     private SessionResponse loginInternal(User requestUser, boolean rememberMe) throws CatanException {
         User dbUser;
         try {
-            dbUser = dataConnector.getUser(requestUser);
+            dbUser = dataConnector.getUser(requestUser.getId());
         } catch (CatanException e) {
             throw new CatanException("Username/Password Mismatch", Status.UNAUTHORIZED);
         }

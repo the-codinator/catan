@@ -31,10 +31,11 @@ public class UserApiHelper {
         this.dataConnector = dataConnector;
     }
 
+    @SuppressWarnings({"checkstyle:MissingJavadocMethod", "checkstyle:LineLength"})
     public void validateUserId(String id) throws CatanException {
         if (id == null || !id.matches(USER_ID_REGEX)) {
             throw new CatanException(
-                "User Id must contain only alphabets, numbers, hyphen, or underscore, and must be between 3 and 12 characters",
+                "User Id must only contain (english) alphabets, (arabic) numerals, hyphen (-), underscore(_), and must be between 3 and 12 characters",
                 Status.BAD_REQUEST);
         }
     }
@@ -52,8 +53,12 @@ public class UserApiHelper {
         }
     }
 
+    /**
+     * Validate that user id and password match
+     */
     public void validateCredentials(User actual, User expected) throws CatanException {
         if (actual.getId() == null || !actual.getId().equals(expected.getId())) {
+            // Ideally shouldn't happen
             throw new CatanException("Expected user is different");
         }
         if (actual.getPwd() == null || !actual.getPwd().equals(expected.getPwd())) {
@@ -61,6 +66,9 @@ public class UserApiHelper {
         }
     }
 
+    /**
+     * User Sign Up (user creation) flow
+     */
     public void signup(SignUpRequest request) throws CatanException {
         Util.validateInput(request);
         validateUserId(request.getId());
@@ -70,6 +78,9 @@ public class UserApiHelper {
         dataConnector.createUser(user);
     }
 
+    /**
+     * User Login flow
+     */
     public SessionResponse login(LoginRequest request, boolean rememberMe) throws CatanException {
         Util.validateInput(request);
         validateUserId(request.getId());

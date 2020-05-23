@@ -6,7 +6,6 @@
 package org.codi.catan;
 
 import com.codahale.metrics.health.HealthCheck;
-import com.fasterxml.jackson.databind.SerializationFeature;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
@@ -42,9 +41,6 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
     @Override
     public void initialize(Bootstrap<CatanConfiguration> bootstrap) {
         logger.debug("[ BOOT ] Starting init");
-
-//        bootstrap.getObjectMapper().disable(SerializationFeature.WRITE_NULL_MAP_VALUES);
-//        logger.debug("[ BOOT ] Jackson ObjectMapper configured");
 
         CatanConfigurationSourceProvider.setup(bootstrap);
         logger.debug("[ BOOT ] DropWizard ConfigSource configured");

@@ -19,11 +19,7 @@ public class CatanException extends Exception {
 
     public CatanException(String message, Exception e) {
         super(message, e);
-        if (e instanceof CatanException) {
-            this.errorStatus = ((CatanException) e).errorStatus;
-        } else {
-            this.errorStatus = null;
-        }
+        this.errorStatus = e instanceof CatanException ? ((CatanException) e).errorStatus : null;
     }
 
     public CatanException(String message, Status errorStatus) {

@@ -19,7 +19,7 @@ public class User {
     private String id;
     private String name;
     private String pwd;
-    /**
+    /*
      * Ideally ACLs should be stored in a separate DB but since it is different from authentication, and we don't want
      * password info to be available when checking permissions
      *

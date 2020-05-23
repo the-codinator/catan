@@ -6,6 +6,7 @@
 package org.codi.catan.core;
 
 import com.google.common.cache.CacheLoader;
+import javax.annotation.ParametersAreNonnullByDefault;
 
 public class CatanCacheLoader<K, V> extends CacheLoader<K, V> {
 
@@ -17,6 +18,7 @@ public class CatanCacheLoader<K, V> extends CacheLoader<K, V> {
     }
 
     @Override
+    @ParametersAreNonnullByDefault
     public V load(K key) throws CatanException {
         return computingFunction.apply(key);
     }

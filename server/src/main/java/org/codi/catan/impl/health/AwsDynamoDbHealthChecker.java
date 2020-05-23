@@ -10,6 +10,7 @@ import org.codi.catan.core.CatanException;
 
 public class AwsDynamoDbHealthChecker extends HealthCheck {
 
+    @Override
     public Result check() throws CatanException {
         try {
             if (false) {

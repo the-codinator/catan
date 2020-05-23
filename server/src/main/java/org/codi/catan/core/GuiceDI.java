@@ -62,6 +62,10 @@ public class GuiceDI extends AbstractModule {
         return key != null && !key.isBlank() && !key.startsWith("$");
     }
 
+    /**
+     * Create an injector for DI using Google Guice
+     * Fail on attempting to re-create
+     */
     public static void setup(CatanConfiguration configuration, Environment environment) {
         if (injector == null) {
             synchronized (GuiceDI.class) {

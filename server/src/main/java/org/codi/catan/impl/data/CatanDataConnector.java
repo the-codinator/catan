@@ -9,6 +9,7 @@ import org.codi.catan.core.CatanException;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
+@SuppressWarnings("checkstyle:EmptyLineSeparator")
 public interface CatanDataConnector {
 
     User getUser(String id) throws CatanException;

@@ -13,6 +13,7 @@ import javax.ws.rs.ext.Provider;
 @Provider
 public class CatanExceptionMapper implements ExceptionMapper<CatanException> {
 
+    @Override
     public Response toResponse(CatanException e) {
         return Response.status(e.getErrorStatus().getStatusCode())
             .entity(e.asMessageResponse())

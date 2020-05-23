@@ -25,6 +25,9 @@ public class SessionHelper {
         this.mapper = mapper;
     }
 
+    /**
+     * Create a session (and corresponding token) for given {@param user} of type {@param type}
+     */
     public Token createSession(User user, TokenType type) throws CatanException {
         if (user == null || user.getId() == null) {
             throw new CatanException("User is null");
@@ -44,6 +47,9 @@ public class SessionHelper {
         }
     }
 
+    /**
+     * Serialize {@param token} to send to user
+     */
     public String serializeToken(Token token) throws CatanException {
         if (token == null) {
             return null;
@@ -55,6 +61,9 @@ public class SessionHelper {
         }
     }
 
+    /**
+     * Deserialize {@param token} received from user
+     */
     public Token parseToken(String token) throws CatanException {
         if (token == null) {
             return null;
@@ -66,6 +75,12 @@ public class SessionHelper {
         }
     }
 
+    /**
+     * Perform offline token validation
+     * The following validations are performed:
+     * - Token from the future
+     * - Expired token
+     */
     public void validateRequestTokenOffline(Token token) throws CatanException {
         long now = System.currentTimeMillis();
         if (token.getCreated() > now) {

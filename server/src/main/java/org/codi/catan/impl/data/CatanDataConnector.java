@@ -6,17 +6,17 @@
 package org.codi.catan.impl.data;
 
 import org.codi.catan.core.CatanException;
-import org.codi.catan.model.Token;
-import org.codi.catan.model.User;
+import org.codi.catan.model.user.Token;
+import org.codi.catan.model.user.User;
 
 public interface CatanDataConnector {
 
-    User getUser(String id) throws CatanException;
+    User getUser(User user) throws CatanException;
     void createUser(User user) throws CatanException;
     void updateUser(User user) throws CatanException;
-    void deleteUser(String id) throws CatanException;
+    void deleteUser(User user) throws CatanException;
 
-    Token getToken(String id) throws CatanException;
+    Token getToken(Token token) throws CatanException;
     void createToken(Token token) throws CatanException;
-    void deleteToken(String id) throws CatanException;
+    void deleteToken(Token token) throws CatanException;
 }

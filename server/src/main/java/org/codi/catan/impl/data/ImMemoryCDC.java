@@ -9,8 +9,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
-import org.codi.catan.model.Token;
-import org.codi.catan.model.User;
+import org.codi.catan.model.user.Token;
+import org.codi.catan.model.user.User;
+import org.codi.catan.util.Util;
 
 public class ImMemoryCDC implements CatanDataConnector {
 
@@ -18,18 +19,18 @@ public class ImMemoryCDC implements CatanDataConnector {
     private final Map<String, Token> tokens = new ConcurrentHashMap<>();
 
     @Override
-    public User getUser(String id) throws CatanException {
-        User user = users.get(id);
-        if (user == null) {
+    public User getUser(User user) throws CatanException {
+        User u = users.get(user.getId());
+        if (u == null) {
             throw new CatanException("User does not exist", Status.NOT_FOUND);
         }
-        return user;
+        return u;
     }
 
     @Override
     public void createUser(User user) throws CatanException {
         if (users.putIfAbsent(user.getId(), user) != null) {
-            throw new CatanException("User already exists", Status.CONFLICT);
+            throw new CatanException("User id is already taken", Status.CONFLICT);
         }
     }
 
@@ -41,19 +42,19 @@ public class ImMemoryCDC implements CatanDataConnector {
     }
 
     @Override
-    public void deleteUser(String id) throws CatanException {
-        if (users.remove(id) == null) {
+    public void deleteUser(User user) throws CatanException {
+        if (users.remove(user.getId()) == null) {
             throw new CatanException("User does not exist", Status.NOT_FOUND);
         }
     }
 
     @Override
-    public Token getToken(String id) throws CatanException {
-        Token token = tokens.get(id);
-        if (token == null) {
+    public Token getToken(Token token) throws CatanException {
+        Token t = tokens.get(token.getId());
+        if (t == null) {
             throw new CatanException("Session does not exist", Status.NOT_FOUND);
         }
-        return token;
+        return t;
     }
 
     @Override
@@ -64,8 +65,8 @@ public class ImMemoryCDC implements CatanDataConnector {
     }
 
     @Override
-    public void deleteToken(String id) throws CatanException {
-        if (tokens.remove(id) == null) {
+    public void deleteToken(Token token) throws CatanException {
+        if (tokens.remove(token.getId()) == null) {
             throw new CatanException("Session does not exist", Status.NOT_FOUND);
         }
     }

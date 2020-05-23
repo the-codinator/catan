@@ -17,7 +17,7 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.google.inject.util.Types;
-import io.dropwizard.setup.Bootstrap;
+import io.dropwizard.setup.Environment;
 import java.util.Collection;
 import java.util.Set;
 import org.codi.catan.impl.data.CachedDelegateCDC;
@@ -26,42 +26,52 @@ import org.codi.catan.impl.data.DynamoDbCDC;
 import org.codi.catan.impl.data.ImMemoryCDC;
 import org.codi.catan.impl.health.AwsDynamoDbHealthChecker;
 import org.codi.catan.impl.health.InMemoryHealthChecker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GuiceDI extends AbstractModule {
 
     private static Injector injector = null;
     private final ObjectMapper mapper;
+    private final CatanConfiguration configuration;
+    private static final Logger logger = LoggerFactory.getLogger(GuiceDI.class);
 
-    public GuiceDI(ObjectMapper mapper) {
+    private GuiceDI(ObjectMapper mapper, CatanConfiguration configuration) {
         this.mapper = mapper;
+        this.configuration = configuration;
     }
 
     @Override
     protected void configure() {
         bind(ObjectMapper.class).toInstance(mapper);
+        bind(CatanConfiguration.class).toInstance(configuration);
         Multibinder<HealthCheck> health = Multibinder.newSetBinder(binder(), HealthCheck.class);
         bind(CatanDataConnector.class).to(CachedDelegateCDC.class);
         if (isAwsEnabled()) {
             health.addBinding().to(AwsDynamoDbHealthChecker.class);
             bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(DynamoDbCDC.class);
         } else {
+            logger.warn("AWS Credentials not found, using an In-Memory data store instead");
             health.addBinding().to(InMemoryHealthChecker.class);
             bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(ImMemoryCDC.class);
         }
     }
 
     private boolean isAwsEnabled() {
-        return false;
+        String key = configuration.getDynamodb().getKey();
+        return key != null && !key.isBlank() && !key.startsWith("$");
     }
 
-    public static void setup(Bootstrap<CatanConfiguration> bootstrap) {
+    public static void setup(CatanConfiguration configuration, Environment environment) {
         if (injector == null) {
             synchronized (GuiceDI.class) {
                 if (injector == null) {
-                    injector = Guice.createInjector(new GuiceDI(bootstrap.getObjectMapper()));
+                    injector = Guice.createInjector(new GuiceDI(environment.getObjectMapper(), configuration));
+                    return;
                 }
             }
         }
+        throw new IllegalStateException("Attempted to re-initialize Guice DI");
     }
 
     public static <T> T get(Class<T> clazz) {

@@ -11,20 +11,19 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
-import org.codi.catan.model.Token;
-import org.codi.catan.model.Token.TokenType;
-import org.codi.catan.model.User;
+import org.codi.catan.model.user.Token;
+import org.codi.catan.model.user.Token.TokenType;
+import org.codi.catan.model.user.User;
 import org.codi.catan.util.Util;
 
-public class TokenHelper {
+public class SessionHelper {
 
     private final ObjectMapper mapper;
 
     @Inject
-    public TokenHelper(ObjectMapper mapper) {
+    public SessionHelper(ObjectMapper mapper) {
         this.mapper = mapper;
     }
-
 
     public Token createSession(User user, TokenType type) throws CatanException {
         if (user == null || user.getId() == null) {
@@ -37,14 +36,18 @@ public class TokenHelper {
         }
         switch (type) {
             case refresh:
-                return new Token(id, TokenType.access, user.getId(), created, DAY_MILLIS);
+                return new Token(id, TokenType.refresh, user.getId(), user.isAdmin(), created,
+                    created + 14 * DAY_MILLIS);
             case access:
             default:
-                return new Token(id, TokenType.refresh, user.getId(), created, 14 * DAY_MILLIS);
+                return new Token(id, TokenType.access, user.getId(), user.isAdmin(), created, created + DAY_MILLIS);
         }
     }
 
     public String serializeToken(Token token) throws CatanException {
+        if (token == null) {
+            return null;
+        }
         try {
             return Util.base64Encode(mapper.writeValueAsString(token));
         } catch (Exception e) {
@@ -53,6 +56,9 @@ public class TokenHelper {
     }
 
     public Token parseToken(String token) throws CatanException {
+        if (token == null) {
+            return null;
+        }
         try {
             return mapper.readValue(Util.base64Decode(token), Token.class);
         } catch (Exception e) {
@@ -65,7 +71,7 @@ public class TokenHelper {
         if (token.getCreated() > now) {
             throw new CatanException("Session from the future", Status.UNAUTHORIZED);
         }
-        if (token.getCreated() + token.getExpiry() < now) {
+        if (token.getCreated() + token.getExpires() < now) {
             throw new CatanException("Session has expired", Status.UNAUTHORIZED);
         }
     }

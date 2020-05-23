@@ -15,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import org.codi.catan.core.CatanCacheLoader;
 import org.codi.catan.core.CatanException;
-import org.codi.catan.model.Token;
+import org.codi.catan.model.user.Token;
 
 public class CachedDelegateCDC extends DelegateCDC implements CatanDataConnector {
 
@@ -27,13 +27,13 @@ public class CachedDelegateCDC extends DelegateCDC implements CatanDataConnector
         tokens = CacheBuilder.newBuilder()
             .maximumSize(100)
             .expireAfterWrite(10, TimeUnit.MINUTES)
-            .build(new CatanCacheLoader<>(delegate::getToken));
+            .build(new CatanCacheLoader<>(id -> delegate.getToken(new Token(id))));
     }
 
     @Override
-    public Token getToken(String id) throws CatanException {
+    public Token getToken(Token token) throws CatanException {
         try {
-            return tokens.get(id);
+            return tokens.get(token.getId());
         } catch (ExecutionException e) {
             throw new CatanException("Error loading token with cache", e);
         }
@@ -45,7 +45,7 @@ public class CachedDelegateCDC extends DelegateCDC implements CatanDataConnector
     }
 
     @Override
-    public void deleteToken(String id) {
-        tokens.invalidate(id);
+    public void deleteToken(Token token) {
+        tokens.invalidate(token.getId());
     }
 }

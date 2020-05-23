@@ -5,12 +5,16 @@
 
 package org.codi.catan.core;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import io.dropwizard.Configuration;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import lombok.Getter;
+import org.codi.catan.model.misc.DynamoDbCreds;
 
 public class CatanConfiguration extends Configuration {
 
-    @JsonProperty
-    public SwaggerBundleConfiguration swagger;
+    @Getter
+    private SwaggerBundleConfiguration swagger;
+
+    @Getter
+    private DynamoDbCreds dynamodb;
 }

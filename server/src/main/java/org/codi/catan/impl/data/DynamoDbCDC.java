@@ -6,13 +6,14 @@
 package org.codi.catan.impl.data;
 
 import org.codi.catan.core.CatanException;
-import org.codi.catan.model.Token;
-import org.codi.catan.model.User;
+import org.codi.catan.model.user.Token;
+import org.codi.catan.model.user.User;
 
 public class DynamoDbCDC implements CatanDataConnector {
 
+
     @Override
-    public User getUser(String id) throws CatanException {
+    public User getUser(User user) throws CatanException {
         return null;
     }
 
@@ -27,12 +28,12 @@ public class DynamoDbCDC implements CatanDataConnector {
     }
 
     @Override
-    public void deleteUser(String id) throws CatanException {
+    public void deleteUser(User user) throws CatanException {
 
     }
 
     @Override
-    public Token getToken(String id) throws CatanException {
+    public Token getToken(Token token) throws CatanException {
         return null;
     }
 
@@ -42,7 +43,7 @@ public class DynamoDbCDC implements CatanDataConnector {
     }
 
     @Override
-    public void deleteToken(String id) throws CatanException {
+    public void deleteToken(Token token) throws CatanException {
 
     }
 }

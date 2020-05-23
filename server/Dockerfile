@@ -1,4 +1,4 @@
-FROM openjdk:11
+FROM openjdk:11.0.7-jre
 
 LABEL name="Catan Server"
 

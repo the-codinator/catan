@@ -1,9 +1,9 @@
 /*
  * @author the-codinator
- * created on 2020/5/22
+ * created on 2020/5/23
  */
 
-package org.codi.catan.model;
+package org.codi.catan.model.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -35,5 +35,9 @@ public class User {
      * Here since we have a very simple User definition and ACLs are only applicable for the admin APIs we can take a
      * shortcut with this and reduce some hassle
      */
-    private Boolean admin;
+    private boolean admin;
+
+    public User(String id) {
+        this.id = id;
+    }
 }

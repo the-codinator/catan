@@ -6,7 +6,7 @@
 package org.codi.catan.core;
 
 import javax.ws.rs.core.Response.Status;
-import org.codi.catan.model.ErrorResponse;
+import org.codi.catan.model.response.MessageResponse;
 
 public class CatanException extends Exception {
 
@@ -53,12 +53,12 @@ public class CatanException extends Exception {
         }
     }
 
-    public ErrorResponse asErrorResponse() {
-        return new ErrorResponse(getErrorStatus().getStatusCode(), super.getMessage());
+    public MessageResponse asMessageResponse() {
+        return new MessageResponse(getErrorStatus().getStatusCode(), super.getMessage());
     }
 
-    public static ErrorResponse asErrorResponse(Exception e) {
-        return e instanceof CatanException ? ((CatanException) e).asErrorResponse()
-            : new ErrorResponse(DEFAULT_ERROR_STATUS.getStatusCode(), "Unhandled Error: " + e.getMessage());
+    public static MessageResponse asMessageResponse(Exception e) {
+        return e instanceof CatanException ? ((CatanException) e).asMessageResponse()
+            : new MessageResponse(DEFAULT_ERROR_STATUS, "Unhandled Error: " + e.getMessage());
     }
 }

@@ -15,3 +15,6 @@ swagger:
   title: "Catan Server"
   contact: "github/the-codinator"
   resourcePackage: org.codi.catan.api.health,org.codi.catan.api.user,org.codi.catan.api.game
+dynamodb:
+  key: ${AWS_ACCESS_KEY_ID}
+  secret: ${AWS_SECRET_ACCESS_KEY}

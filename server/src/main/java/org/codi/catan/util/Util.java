@@ -10,11 +10,14 @@ import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Response.Status;
+import org.codi.catan.core.CatanException;
 
 public class Util {
 
     public static boolean shouldSkipFilters(ContainerRequestContext request) {
-        return "OPTIONS".equalsIgnoreCase(request.getMethod()) || "ping".equals(request.getUriInfo().getPath());
+        return request.getMethod().equals("OPTIONS") || request.getUriInfo().getPath().equals("ping")
+            || request.getUriInfo().getPath().startsWith("swagger");
     }
 
     /**
@@ -43,5 +46,11 @@ public class Util {
 
     public static String base64Decode(String str) {
         return new String(Base64.getDecoder().decode(str));
+    }
+
+    public static void validateInput(Object o) throws CatanException {
+        if (o == null) {
+            throw new CatanException("Invalid Input", Status.BAD_REQUEST);
+        }
     }
 }

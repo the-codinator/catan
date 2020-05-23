@@ -6,8 +6,8 @@
 package org.codi.catan.impl.data;
 
 import org.codi.catan.core.CatanException;
-import org.codi.catan.model.Token;
-import org.codi.catan.model.User;
+import org.codi.catan.model.user.Token;
+import org.codi.catan.model.user.User;
 
 public class DelegateCDC implements CatanDataConnector {
 
@@ -17,8 +17,8 @@ public class DelegateCDC implements CatanDataConnector {
         this.delegate = delegate;
     }
 
-    public User getUser(String id) throws CatanException {
-        return delegate.getUser(id);
+    public User getUser(User user) throws CatanException {
+        return delegate.getUser(user);
     }
 
     public void createUser(User user) throws CatanException {
@@ -29,19 +29,19 @@ public class DelegateCDC implements CatanDataConnector {
         delegate.updateUser(user);
     }
 
-    public void deleteUser(String id) throws CatanException {
-        delegate.deleteUser(id);
+    public void deleteUser(User user) throws CatanException {
+        delegate.deleteUser(user);
     }
 
-    public Token getToken(String id) throws CatanException {
-        return delegate.getToken(id);
+    public Token getToken(Token token) throws CatanException {
+        return delegate.getToken(token);
     }
 
     public void createToken(Token token) throws CatanException {
         delegate.createToken(token);
     }
 
-    public void deleteToken(String id) throws CatanException {
-        delegate.deleteToken(id);
+    public void deleteToken(Token token) throws CatanException {
+        delegate.deleteToken(token);
     }
 }

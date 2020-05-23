@@ -1,3 +1,8 @@
+server:
+  requestLog:
+    appenders:
+      - type: console
+        logFormat: "%date{HH:mm:ss.SSS} [ REQUEST ] requestId=%responseHeader{X-Request-Id} request=\"%requestURL\" ip=%clientHost user=%user status=%statusCode bytes=%bytesSent duration=%elapsedTime agent=\"%header{User-Agent}\""
 logging:
   loggers:
     "io.dropwizard": INFO

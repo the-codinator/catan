@@ -6,7 +6,6 @@
 package org.codi.catan.filter;
 
 import static org.codi.catan.util.Constants.REQUEST_ID;
-import static org.codi.catan.util.Constants.REQUEST_START_TIME;
 import static org.codi.catan.util.Util.shouldSkipFilters;
 
 import javax.annotation.Priority;
@@ -38,8 +37,7 @@ public class RequestIdAndAccessLogFilter implements ContainerRequestFilter, Cont
             request.getHeaders().putSingle(REQUEST_ID, id);
         }
         MDC.put("requestId", id);
-        logger.debug("[ ACCESS ] method={} path={} start={}", request.getMethod(), request.getUriInfo().getPath(),
-            request.getProperty(REQUEST_START_TIME));
+        logger.debug("[ ACCESS ] method={} path={}", request.getMethod(), request.getUriInfo().getPath());
     }
 
     @Override

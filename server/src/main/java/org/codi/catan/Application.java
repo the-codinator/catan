@@ -19,8 +19,6 @@ import org.codi.catan.core.CatanConfigurationSourceProvider;
 import org.codi.catan.core.CatanExceptionMapper;
 import org.codi.catan.core.GuiceDI;
 import org.codi.catan.filter.RequestIdAndAccessLogFilter;
-import org.codi.catan.filter.RequestTimingFilter;
-import org.codi.catan.filter.ResponseLogAndTimingFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -72,9 +70,7 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
         logger.debug("[ BOOT ] Health Check configured");
 
         // Filters
-        environment.jersey().register(RequestTimingFilter.class);
         environment.jersey().register(RequestIdAndAccessLogFilter.class);
-        environment.jersey().register(ResponseLogAndTimingFilter.class);
         logger.debug("[ BOOT ] Filters configured");
 
         // APIs

@@ -4,10 +4,9 @@ type session = {
   userId: string
 };
 
-
 let authLSIdentifier = "CATAN_ACCESS_TOKEN";
 let getAuthHeaders = () => {
-    let accessToken = JSUtil.getLSItem("ooolala");
+    let accessToken = JSUtil.getLSItem(authLSIdentifier);
     {
       "authorization": switch accessToken {
       | Some(token) => Some("Bearer " ++ token)
@@ -22,5 +21,5 @@ let authorize = () => {
     username: "rishichandra",
     userId: "myuserid"
   };
-  Js.Promise.resolve(None)
+  Js.Promise.resolve(Some(sessionInfo))
 };

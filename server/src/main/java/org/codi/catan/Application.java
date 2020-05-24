@@ -12,6 +12,9 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import org.codi.catan.api.game.BoardApi;
+import org.codi.catan.api.game.MoveApi;
+import org.codi.catan.api.game.TradeApi;
 import org.codi.catan.api.health.Health;
 import org.codi.catan.api.health.Ping;
 import org.codi.catan.api.misc.Favicon;
@@ -45,9 +48,11 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
     public void initialize(Bootstrap<CatanConfiguration> bootstrap) {
         logger.debug("[ BOOT ] Starting init");
 
+        // Config Source
         CatanConfigurationSourceProvider.setup(bootstrap);
         logger.debug("[ BOOT ] DropWizard ConfigSource configured");
 
+        // Swagger
         bootstrap.addBundle(new SwaggerBundle<>() {
             @Override
             protected SwaggerBundleConfiguration getSwaggerBundleConfiguration(CatanConfiguration configuration) {
@@ -94,8 +99,11 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
         // User
         environment.jersey().register(GuiceDI.get(UserApi.class));
         // Game
+        environment.jersey().register(GuiceDI.get(BoardApi.class));
+        environment.jersey().register(GuiceDI.get(MoveApi.class));
+        environment.jersey().register(GuiceDI.get(TradeApi.class));
         logger.debug("[ BOOT ] APIs configured");
 
-        logger.info("[ BOOT ] Server ready!");
+        logger.info("[ BOOT ] Application Configured!");
     }
 }

@@ -8,8 +8,8 @@ package org.codi.catan.impl.user;
 import static org.codi.catan.util.Constants.DAY_MILLIS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.user.Token;

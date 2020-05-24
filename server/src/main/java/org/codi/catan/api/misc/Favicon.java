@@ -5,6 +5,8 @@
 
 package org.codi.catan.api.misc;
 
+import static org.codi.catan.util.Constants.PATH_FAVICON;
+
 import com.google.common.io.ByteStreams;
 import java.io.IOException;
 import java.io.InputStream;
@@ -15,7 +17,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 
-@Path("/favicon.ico")
+@Path(PATH_FAVICON)
 @Produces("image/png")
 public class Favicon {
 

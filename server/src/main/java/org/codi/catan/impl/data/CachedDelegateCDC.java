@@ -7,8 +7,8 @@ package org.codi.catan.impl.data;
 
 import static org.codi.catan.util.Constants.DELEGATE;
 
-import com.google.inject.name.Named;
 import javax.inject.Inject;
+import javax.inject.Named;
 
 public class CachedDelegateCDC extends DelegateCDC implements CatanDataConnector {
 

@@ -9,10 +9,10 @@ import static org.codi.catan.util.Constants.BEARER_PREFIX;
 import static org.codi.catan.util.Constants.HEADER_AUTHORIZATION;
 import static org.codi.catan.util.Constants.TOKEN;
 
-import com.google.inject.Inject;
 import io.dropwizard.auth.AuthFilter;
 import io.dropwizard.auth.JSONUnauthorizedHandler;
 import javax.annotation.Priority;
+import javax.inject.Inject;
 import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response;

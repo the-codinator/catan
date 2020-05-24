@@ -8,14 +8,17 @@ package org.codi.catan.impl.user;
 import static org.codi.catan.util.Constants.NAME_REGEX;
 import static org.codi.catan.util.Constants.USER_ID_REGEX;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+import java.util.Collections;
+import java.util.List;
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.impl.data.CatanDataConnector;
 import org.codi.catan.model.request.LoginRequest;
 import org.codi.catan.model.request.RefreshTokenRequest;
 import org.codi.catan.model.request.SignUpRequest;
+import org.codi.catan.model.response.FindUserResponse;
 import org.codi.catan.model.response.SessionResponse;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.Token.TokenType;
@@ -149,6 +152,7 @@ public class UserApiHelper {
 
     /**
      * Invalidate the Session described by the {@param token}
+     *
      * @throws CatanException if session did not exist
      */
     public void logout(Token token) throws CatanException {
@@ -157,5 +161,12 @@ public class UserApiHelper {
         if (!access || !refresh) {
             throw new CatanException("Session does not exist", Status.BAD_REQUEST);
         }
+    }
+
+    public List<FindUserResponse> find(String userId) throws CatanException {
+        Util.validateInput(userId);
+        User user = dataConnector.getUser(userId);
+        return user == null ? Collections.emptyList()
+            : Collections.singletonList(new FindUserResponse(user.getId(), user.getName()));
     }
 }

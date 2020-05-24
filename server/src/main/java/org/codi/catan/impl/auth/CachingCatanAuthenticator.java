@@ -6,8 +6,8 @@
 package org.codi.catan.impl.auth;
 
 import com.codahale.metrics.MetricRegistry;
-import com.google.inject.Inject;
 import io.dropwizard.auth.CachingAuthenticator;
+import javax.inject.Inject;
 import org.codi.catan.core.CatanConfiguration;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;

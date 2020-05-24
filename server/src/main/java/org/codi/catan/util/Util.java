@@ -11,7 +11,9 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response.Status;
+import javax.ws.rs.core.SecurityContext;
 import org.codi.catan.core.CatanException;
+import org.codi.catan.model.user.User;
 
 public class Util {
 
@@ -52,5 +54,9 @@ public class Util {
         if (o == null) {
             throw new CatanException("Invalid Input", Status.BAD_REQUEST);
         }
+    }
+
+    public static String getUserIdFromSecurityContext(SecurityContext sc) {
+        return ((User) sc.getUserPrincipal()).getId();
     }
 }

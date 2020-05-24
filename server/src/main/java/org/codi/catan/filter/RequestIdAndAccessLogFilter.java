@@ -5,7 +5,8 @@
 
 package org.codi.catan.filter;
 
-import static org.codi.catan.util.Constants.REQUEST_ID;
+import static org.codi.catan.util.Constants.HEADER_REQUEST_ID;
+import static org.codi.catan.util.Constants.TOKEN;
 import static org.codi.catan.util.Util.shouldSkipFilters;
 
 import javax.annotation.Priority;
@@ -15,6 +16,7 @@ import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
+import org.codi.catan.model.user.Token;
 import org.codi.catan.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -31,13 +33,16 @@ public class RequestIdAndAccessLogFilter implements ContainerRequestFilter, Cont
         if (shouldSkipFilters(request)) {
             return;
         }
-        String id = request.getHeaderString(REQUEST_ID);
+        String id = request.getHeaderString(HEADER_REQUEST_ID);
         if (id == null || id.isBlank()) {
             id = Util.generateRandomUuid().toString();
-            request.getHeaders().putSingle(REQUEST_ID, id);
+            request.getHeaders().putSingle(HEADER_REQUEST_ID, id);
         }
         MDC.put("requestId", id);
-        logger.debug("[ ACCESS ] method={} path={}", request.getMethod(), request.getUriInfo().getPath());
+        Token token = (Token) request.getProperty(TOKEN);
+        String user = token == null ? "" : token.getUser();
+        logger.debug("[ ACCESS ] method={} path=/{} user={}", request.getMethod(), request.getUriInfo().getPath(),
+            user);
     }
 
     @Override
@@ -45,7 +50,7 @@ public class RequestIdAndAccessLogFilter implements ContainerRequestFilter, Cont
         if (shouldSkipFilters(request)) {
             return;
         }
-        String id = request.getHeaderString(REQUEST_ID);
-        response.getHeaders().putSingle(REQUEST_ID, id);
+        String id = request.getHeaderString(HEADER_REQUEST_ID);
+        response.getHeaders().putSingle(HEADER_REQUEST_ID, id);
     }
 }

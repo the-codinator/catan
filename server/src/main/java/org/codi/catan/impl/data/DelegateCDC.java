@@ -23,18 +23,18 @@ public class DelegateCDC implements CatanDataConnector {
     }
 
     @Override
-    public void createUser(User user) throws CatanException {
-        delegate.createUser(user);
+    public boolean createUser(User user) throws CatanException {
+        return delegate.createUser(user);
     }
 
     @Override
-    public void updateUser(User user) throws CatanException {
-        delegate.updateUser(user);
+    public boolean updateUser(User user) throws CatanException {
+        return delegate.updateUser(user);
     }
 
     @Override
-    public void deleteUser(String id) throws CatanException {
-        delegate.deleteUser(id);
+    public boolean deleteUser(String id) throws CatanException {
+        return delegate.deleteUser(id);
     }
 
     @Override
@@ -43,12 +43,12 @@ public class DelegateCDC implements CatanDataConnector {
     }
 
     @Override
-    public void createToken(Token token) throws CatanException {
-        delegate.createToken(token);
+    public boolean createToken(Token token) throws CatanException {
+        return delegate.createToken(token);
     }
 
     @Override
-    public void deleteToken(String id) throws CatanException {
-        delegate.deleteToken(id);
+    public boolean deleteToken(String id) throws CatanException {
+        return delegate.deleteToken(id);
     }
 }

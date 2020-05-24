@@ -7,6 +7,7 @@ package org.codi.catan.core;
 
 import static org.codi.catan.util.Constants.DELEGATE;
 
+import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
@@ -31,22 +32,25 @@ import org.slf4j.LoggerFactory;
 
 public class GuiceDI extends AbstractModule {
 
-    private static Injector injector = null;
-    private final ObjectMapper mapper;
-    private final CatanConfiguration configuration;
     private static final Logger logger = LoggerFactory.getLogger(GuiceDI.class);
 
-    private GuiceDI(ObjectMapper mapper, CatanConfiguration configuration) {
-        this.mapper = mapper;
+    private static Injector injector = null;
+    private final ObjectMapper mapper;
+    private final MetricRegistry metrics;
+    private final CatanConfiguration configuration;
+
+    private GuiceDI(Environment environment, CatanConfiguration configuration) {
+        this.mapper = environment.getObjectMapper();
+        this.metrics = environment.metrics();
         this.configuration = configuration;
     }
 
     @Override
     protected void configure() {
         bind(ObjectMapper.class).toInstance(mapper);
+        bind(MetricRegistry.class).toInstance(metrics);
         bind(CatanConfiguration.class).toInstance(configuration);
         Multibinder<HealthCheck> health = Multibinder.newSetBinder(binder(), HealthCheck.class);
-        bind(CatanDataConnector.class).to(CachedDelegateCDC.class);
         if (isAwsEnabled()) {
             health.addBinding().to(AwsDynamoDbHealthChecker.class);
             bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(DynamoDbCDC.class);
@@ -55,6 +59,7 @@ public class GuiceDI extends AbstractModule {
             health.addBinding().to(InMemoryHealthChecker.class);
             bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(ImMemoryCDC.class);
         }
+        bind(CatanDataConnector.class).to(CachedDelegateCDC.class).asEagerSingleton();
     }
 
     private boolean isAwsEnabled() {
@@ -70,7 +75,7 @@ public class GuiceDI extends AbstractModule {
         if (injector == null) {
             synchronized (GuiceDI.class) {
                 if (injector == null) {
-                    injector = Guice.createInjector(new GuiceDI(environment.getObjectMapper(), configuration));
+                    injector = Guice.createInjector(new GuiceDI(environment, configuration));
                     return;
                 }
             }

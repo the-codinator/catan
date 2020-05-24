@@ -16,6 +16,7 @@ logging:
   appenders:
     - type: console
       logFormat: "%date{HH:mm:ss.SSS} [ %thread ] [ %X{requestId} ] [ %-5level ] %logger - %msg%n"
+authenticationCachePolicy: maximumSize=200, expireAfterWrite=15m
 swagger:
   title: "Catan Server"
   contact: "github/the-codinator"

@@ -6,6 +6,8 @@
 package org.codi.catan;
 
 import com.codahale.metrics.health.HealthCheck;
+import io.dropwizard.auth.AuthDynamicFeature;
+import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
@@ -18,7 +20,10 @@ import org.codi.catan.core.CatanConfiguration;
 import org.codi.catan.core.CatanConfigurationSourceProvider;
 import org.codi.catan.core.CatanExceptionMapper;
 import org.codi.catan.core.GuiceDI;
+import org.codi.catan.filter.CatanAuthFilter;
 import org.codi.catan.filter.RequestIdAndAccessLogFilter;
+import org.codi.catan.model.user.User;
+import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -62,16 +67,23 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
 
         // Exception Mapper
         environment.jersey().register(CatanExceptionMapper.class);
+        logger.debug("[ BOOT ] Default ErrorHandlers configured");
 
         // Health Check
         for (var hc : GuiceDI.getMulti(HealthCheck.class)) {
             environment.healthChecks().register(hc.getClass().getSimpleName().split("Health")[0], hc);
         }
-        logger.debug("[ BOOT ] Health Check configured");
+        logger.debug("[ BOOT ] Health Checks configured");
 
         // Filters
         environment.jersey().register(RequestIdAndAccessLogFilter.class);
         logger.debug("[ BOOT ] Filters configured");
+
+        // Auth
+        environment.jersey().register(new AuthDynamicFeature(GuiceDI.get(CatanAuthFilter.class)));
+        environment.jersey().register(RolesAllowedDynamicFeature.class);
+        environment.jersey().register(new AuthValueFactoryProvider.Binder<>(User.class));
+        logger.debug("[ BOOT ] Auth configured");
 
         // APIs
         // Core

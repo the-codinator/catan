@@ -9,15 +9,20 @@ import org.codi.catan.core.CatanException;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
+/**
+ * All operations here return requested object if available, {@code null} otherwise.
+ * For operations that do not request resources, a {@code boolean} representing successful operation is returned.
+ * In case of any errors with the underlying data store, a {@code CatanException} with an appropriate message is thrown.
+ */
 @SuppressWarnings("checkstyle:EmptyLineSeparator")
 public interface CatanDataConnector {
 
     User getUser(String id) throws CatanException;
-    void createUser(User user) throws CatanException;
-    void updateUser(User user) throws CatanException;
-    void deleteUser(String id) throws CatanException;
+    boolean createUser(User user) throws CatanException;
+    boolean updateUser(User user) throws CatanException;
+    boolean deleteUser(String id) throws CatanException;
 
     Token getToken(String id) throws CatanException;
-    void createToken(Token token) throws CatanException;
-    void deleteToken(String id) throws CatanException;
+    boolean createToken(Token token) throws CatanException;
+    boolean deleteToken(String id) throws CatanException;
 }

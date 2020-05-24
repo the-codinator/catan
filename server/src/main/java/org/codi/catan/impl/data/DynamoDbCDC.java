@@ -17,18 +17,18 @@ public class DynamoDbCDC implements CatanDataConnector {
     }
 
     @Override
-    public void createUser(User user) throws CatanException {
-
+    public boolean createUser(User user) throws CatanException {
+        return false;
     }
 
     @Override
-    public void updateUser(User user) throws CatanException {
-
+    public boolean updateUser(User user) throws CatanException {
+        return false;
     }
 
     @Override
-    public void deleteUser(String id) throws CatanException {
-
+    public boolean deleteUser(String id) throws CatanException {
+        return false;
     }
 
     @Override
@@ -37,12 +37,12 @@ public class DynamoDbCDC implements CatanDataConnector {
     }
 
     @Override
-    public void createToken(Token token) throws CatanException {
-
+    public boolean createToken(Token token) throws CatanException {
+        return false;
     }
 
     @Override
-    public void deleteToken(String id) throws CatanException {
-
+    public boolean deleteToken(String id) throws CatanException {
+        return false;
     }
 }

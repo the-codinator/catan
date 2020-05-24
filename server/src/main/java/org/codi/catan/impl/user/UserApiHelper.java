@@ -9,10 +9,12 @@ import static org.codi.catan.util.Constants.NAME_REGEX;
 import static org.codi.catan.util.Constants.USER_ID_REGEX;
 
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.impl.data.CatanDataConnector;
 import org.codi.catan.model.request.LoginRequest;
+import org.codi.catan.model.request.RefreshTokenRequest;
 import org.codi.catan.model.request.SignUpRequest;
 import org.codi.catan.model.response.SessionResponse;
 import org.codi.catan.model.user.Token;
@@ -20,6 +22,7 @@ import org.codi.catan.model.user.Token.TokenType;
 import org.codi.catan.model.user.User;
 import org.codi.catan.util.Util;
 
+@Singleton
 public class UserApiHelper {
 
     private final SessionHelper sessionHelper;
@@ -74,8 +77,10 @@ public class UserApiHelper {
         validateUserId(request.getId());
         validateName(request.getName());
         validatePwd(request.getPwd());
-        User user = new User(request.getId(), request.getName(), request.getPwd(), false);
-        dataConnector.createUser(user);
+        User user = new User(request.getId(), request.getName(), request.getPwd(), null);
+        if (!dataConnector.createUser(user)) {
+            throw new CatanException("User id is already taken!", Status.CONFLICT);
+        }
     }
 
     /**
@@ -85,26 +90,67 @@ public class UserApiHelper {
         Util.validateInput(request);
         validateUserId(request.getId());
         validatePwd(request.getPwd());
-        User user = new User(request.getId(), null, request.getPwd(), false);
+        User user = new User(request.getId(), null, request.getPwd(), null);
         return loginInternal(user, rememberMe);
     }
 
-    private SessionResponse loginInternal(User requestUser, boolean rememberMe) throws CatanException {
-        User dbUser;
+    /**
+     * Session Refresh flow (Remember me scenario)
+     */
+    public SessionResponse refresh(RefreshTokenRequest request) throws CatanException {
+        Util.validateInput(request);
+        Token token;
         try {
-            dbUser = dataConnector.getUser(requestUser.getId());
+            token = sessionHelper.parseToken(request.getRefreshToken());
         } catch (CatanException e) {
+            throw new CatanException("Incorrect Token Type", Status.BAD_REQUEST, e);
+        }
+        if (token == null) {
+            throw new CatanException("Missing Refresh Token", Status.BAD_REQUEST);
+        }
+        if (token.getType() != TokenType.refresh) {
+            throw new CatanException("Bad Refresh Token", Status.BAD_REQUEST);
+        }
+        sessionHelper.validateRequestTokenOffline(token);
+        Token dbToken = dataConnector.getToken(token.getId());
+        if (!token.equals(dbToken)) {
+            throw new CatanException("Invalid Token", Status.BAD_REQUEST);
+        }
+        logout(token);
+        User user = new User(token.getUser());
+        user.setRoles(token.getRoles());
+        return createSessionInternal(user, true);
+    }
+
+    private SessionResponse loginInternal(User requestUser, boolean rememberMe) throws CatanException {
+        User dbUser = dataConnector.getUser(requestUser.getId());
+        if (dbUser == null) {
             throw new CatanException("Username/Password Mismatch", Status.UNAUTHORIZED);
         }
         validateCredentials(requestUser, dbUser);
+        return createSessionInternal(dbUser, rememberMe);
+    }
+
+    private SessionResponse createSessionInternal(User dbUser, boolean rememberMe) throws CatanException {
         Token accessToken = sessionHelper.createSession(dbUser, TokenType.access);
-        dataConnector.createToken(accessToken);
         Token refreshToken = null;
         if (rememberMe) {
             refreshToken = sessionHelper.createSession(dbUser, TokenType.refresh);
-            dataConnector.createToken(refreshToken);
+            accessToken.setLinkedId(refreshToken.getId());
+            refreshToken.setLinkedId(accessToken.getId());
         }
-        return new SessionResponse(dbUser.getId(), dbUser.getName(), dbUser.isAdmin(),
+        if (!(dataConnector.createToken(accessToken) && (refreshToken == null || dataConnector.createToken(
+            refreshToken)))) {
+            throw new CatanException("Conflicting Token Id");
+        }
+        return new SessionResponse(dbUser.getId(), dbUser.getName(), dbUser.getRoles(), accessToken.getCreated(),
             sessionHelper.serializeToken(accessToken), sessionHelper.serializeToken(refreshToken));
+    }
+
+    public void logout(Token token) throws CatanException {
+        dataConnector.deleteToken(token.getId());
+        if (token.getLinkedId() != null) {
+            dataConnector.deleteToken(token.getLinkedId());
+        }
     }
 }

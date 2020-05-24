@@ -9,6 +9,7 @@ import static org.codi.catan.util.Constants.DAY_MILLIS;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.user.Token;
@@ -16,6 +17,7 @@ import org.codi.catan.model.user.Token.TokenType;
 import org.codi.catan.model.user.User;
 import org.codi.catan.util.Util;
 
+@Singleton
 public class SessionHelper {
 
     private final ObjectMapper mapper;
@@ -39,11 +41,12 @@ public class SessionHelper {
         }
         switch (type) {
             case refresh:
-                return new Token(id, TokenType.refresh, user.getId(), user.isAdmin(), created,
-                    created + 14 * DAY_MILLIS);
+                return new Token(id, TokenType.refresh, user.getId(), user.getRoles(), created,
+                    created + 14 * DAY_MILLIS, null);
             case access:
             default:
-                return new Token(id, TokenType.access, user.getId(), user.isAdmin(), created, created + DAY_MILLIS);
+                return new Token(id, TokenType.access, user.getId(), user.getRoles(), created, created + DAY_MILLIS,
+                    null);
         }
     }
 
@@ -77,6 +80,7 @@ public class SessionHelper {
 
     /**
      * Perform offline token validation
+     *
      * The following validations are performed:
      * - Token from the future
      * - Expired token
@@ -86,7 +90,7 @@ public class SessionHelper {
         if (token.getCreated() > now) {
             throw new CatanException("Session from the future", Status.UNAUTHORIZED);
         }
-        if (token.getCreated() + token.getExpires() < now) {
+        if (token.getExpires() < now) {
             throw new CatanException("Session has expired", Status.UNAUTHORIZED);
         }
     }

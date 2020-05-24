@@ -10,15 +10,12 @@ import static org.codi.catan.util.Constants.DELEGATE;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.inject.AbstractModule;
-import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.TypeLiteral;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.google.inject.util.Types;
-import io.dropwizard.setup.Environment;
 import java.util.Collection;
 import java.util.Set;
 import org.codi.catan.impl.data.CachedDelegateCDC;
@@ -27,29 +24,21 @@ import org.codi.catan.impl.data.DynamoDbCDC;
 import org.codi.catan.impl.data.ImMemoryCDC;
 import org.codi.catan.impl.health.AwsDynamoDbHealthChecker;
 import org.codi.catan.impl.health.InMemoryHealthChecker;
+import org.codi.catan.impl.user.SessionHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vyarus.dropwizard.guice.module.support.DropwizardAwareModule;
 
-public class GuiceDI extends AbstractModule {
+public class GuiceDI extends DropwizardAwareModule<CatanConfiguration> {
 
     private static final Logger logger = LoggerFactory.getLogger(GuiceDI.class);
-
     private static Injector injector = null;
-    private final ObjectMapper mapper;
-    private final MetricRegistry metrics;
-    private final CatanConfiguration configuration;
-
-    private GuiceDI(Environment environment, CatanConfiguration configuration) {
-        this.mapper = environment.getObjectMapper();
-        this.metrics = environment.metrics();
-        this.configuration = configuration;
-    }
 
     @Override
     protected void configure() {
-        bind(ObjectMapper.class).toInstance(mapper);
-        bind(MetricRegistry.class).toInstance(metrics);
-        bind(CatanConfiguration.class).toInstance(configuration);
+        bind(ObjectMapper.class).toInstance(environment().getObjectMapper());
+        bind(MetricRegistry.class).toInstance(environment().metrics());
+        bind(CatanConfiguration.class).toInstance(configuration());
         Multibinder<HealthCheck> health = Multibinder.newSetBinder(binder(), HealthCheck.class);
         if (isAwsEnabled()) {
             health.addBinding().to(AwsDynamoDbHealthChecker.class);
@@ -60,10 +49,11 @@ public class GuiceDI extends AbstractModule {
             bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(ImMemoryCDC.class);
         }
         bind(CatanDataConnector.class).to(CachedDelegateCDC.class).asEagerSingleton();
+        bind(SessionHelper.class).asEagerSingleton();
     }
 
     private boolean isAwsEnabled() {
-        String key = configuration.getDynamodb().getKey();
+        String key = configuration().getDynamodb().getKey();
         return key != null && !key.isBlank() && !key.startsWith("$");
     }
 
@@ -71,11 +61,11 @@ public class GuiceDI extends AbstractModule {
      * Create an injector for DI using Google Guice
      * Fail on attempting to re-create
      */
-    public static void setup(CatanConfiguration configuration, Environment environment) {
+    public static void setInjector(Injector i) {
         if (injector == null) {
             synchronized (GuiceDI.class) {
                 if (injector == null) {
-                    injector = Guice.createInjector(new GuiceDI(environment, configuration));
+                    injector = i;
                     return;
                 }
             }

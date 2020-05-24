@@ -16,7 +16,6 @@ import org.codi.catan.api.game.BoardApi;
 import org.codi.catan.api.game.MoveApi;
 import org.codi.catan.api.game.TradeApi;
 import org.codi.catan.api.health.Health;
-import org.codi.catan.api.health.Ping;
 import org.codi.catan.api.misc.Favicon;
 import org.codi.catan.api.user.UserApi;
 import org.codi.catan.core.CatanConfiguration;
@@ -29,10 +28,12 @@ import org.codi.catan.model.user.User;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import ru.vyarus.dropwizard.guice.GuiceBundle;
 
 public class Application extends io.dropwizard.Application<CatanConfiguration> {
 
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    private GuiceBundle guiceBundle;
 
     public static void main(String[] args) throws Exception {
         logger.debug("--- Starting Application ---");
@@ -52,6 +53,16 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
         CatanConfigurationSourceProvider.setup(bootstrap);
         logger.debug("[ BOOT ] DropWizard ConfigSource configured");
 
+        // Guice DI
+        guiceBundle = GuiceBundle.builder()
+            .enableAutoConfig(getClass().getPackage().getName())
+            .modules(new GuiceDI())
+            .disableBundleLookup()
+            .noDefaultInstallers()
+            .build();
+        bootstrap.addBundle(guiceBundle);
+        logger.debug("[ BOOT ] Guice bundle configured");
+
         // Swagger
         bootstrap.addBundle(new SwaggerBundle<>() {
             @Override
@@ -67,8 +78,8 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
     @Override
     public void run(CatanConfiguration configuration, Environment environment) {
         // Guice DI
-        GuiceDI.setup(configuration, environment);
-        logger.debug("[ BOOT ] Guice bindings configured");
+        GuiceDI.setInjector(guiceBundle.getInjector());
+        logger.debug("[ BOOT ] Guice injector setup");
 
         // Exception Mapper
         environment.jersey().register(CatanExceptionMapper.class);
@@ -92,16 +103,16 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
 
         // APIs
         // Core
-        environment.jersey().register(Ping.class);
+        // environment.jersey().register(Ping.class);
         environment.jersey().register(Health.class);
         environment.jersey().register(Favicon.class);
         // Admin
         // User
-        environment.jersey().register(GuiceDI.get(UserApi.class));
+        environment.jersey().register(UserApi.class);
         // Game
-        environment.jersey().register(GuiceDI.get(BoardApi.class));
-        environment.jersey().register(GuiceDI.get(MoveApi.class));
-        environment.jersey().register(GuiceDI.get(TradeApi.class));
+        environment.jersey().register(BoardApi.class);
+        environment.jersey().register(MoveApi.class);
+        environment.jersey().register(TradeApi.class);
         logger.debug("[ BOOT ] APIs configured");
 
         logger.info("[ BOOT ] Application Configured!");

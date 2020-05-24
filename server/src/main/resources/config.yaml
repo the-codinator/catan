@@ -20,7 +20,7 @@ authenticationCachePolicy: maximumSize=200, expireAfterWrite=15m
 swagger:
   title: "Catan Server"
   contact: "github/the-codinator"
-  resourcePackage: org.codi.catan.api.health,org.codi.catan.api.user,org.codi.catan.api.game
+  resourcePackage: org.codi.catan.api
 dynamodb:
   key: ${AWS_ACCESS_KEY_ID}
   secret: ${AWS_SECRET_ACCESS_KEY}

@@ -29,6 +29,7 @@ public class Constants {
 
     // Misc
     public static final String BEARER_PREFIX = "Bearer ";
+    public static final String BEARER_TOKEN_AUTHORIZATION_KEY = "Bearer [access_token]";
     public static final long DAY_MILLIS = 24 * 60 * 60 * 1000L;
     public static final String DELEGATE = "delegate";
     public static final String TOKEN = "token";

@@ -11,10 +11,11 @@ import static org.codi.catan.util.Constants.TOKEN;
 
 import com.google.inject.Inject;
 import io.dropwizard.auth.AuthFilter;
+import io.dropwizard.auth.JSONUnauthorizedHandler;
 import javax.annotation.Priority;
 import javax.ws.rs.Priorities;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.ext.Provider;
 import org.codi.catan.core.CatanException;
@@ -29,6 +30,7 @@ import org.codi.catan.model.user.User;
 public class CatanAuthFilter extends AuthFilter<Token, User> {
 
     private final SessionHelper sessionHelper;
+    private final Response template;
 
     @Inject
     public CatanAuthFilter(SessionHelper sessionHelper, CachingCatanAuthenticator authenticator,
@@ -38,20 +40,22 @@ public class CatanAuthFilter extends AuthFilter<Token, User> {
         this.authorizer = authorizer;
         this.prefix = "Bearer";
         this.realm = "catan";
+        this.unauthorizedHandler = new JSONUnauthorizedHandler();
+        this.template = unauthorizedHandler.buildResponse(prefix, realm);
     }
 
     @Override
     public void filter(ContainerRequestContext request) {
-        Token token = null;
         try {
-            token = getTokenFromHeader(request);
+            Token token = getTokenFromHeader(request);
+            if (!authenticate(request, token, "BEARER")) {
+                throw new CatanException("Invalid Credentials", Status.UNAUTHORIZED);
+            }
+            request.setProperty(TOKEN, token);
         } catch (CatanException e) {
             logger.warn("Error performing authentication", e);
+            request.abortWith(Response.fromResponse(template).entity(e.asMessageResponse()).build());
         }
-        if (!authenticate(request, token, "BEARER")) {
-            throw new WebApplicationException(unauthorizedHandler.buildResponse(prefix, realm));
-        }
-        request.setProperty(TOKEN, token);
     }
 
     private Token getTokenFromHeader(ContainerRequestContext request) throws CatanException {

@@ -6,6 +6,7 @@
 package org.codi.catan.api.user;
 
 import static org.codi.catan.util.Constants.API_USER;
+import static org.codi.catan.util.Constants.BEARER_TOKEN_AUTHORIZATION_KEY;
 import static org.codi.catan.util.Constants.PARAM_REMEMBER_ME;
 import static org.codi.catan.util.Constants.PATH_LOGIN;
 import static org.codi.catan.util.Constants.PATH_LOGOUT;
@@ -16,6 +17,8 @@ import static org.codi.catan.util.Constants.TOKEN;
 
 import com.google.inject.Inject;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.Authorization;
 import java.util.Optional;
 import javax.annotation.security.PermitAll;
 import javax.ws.rs.Consumes;
@@ -71,6 +74,7 @@ public class UserApi {
 
     @POST
     @Path(PATH_LOGOUT)
+    @ApiOperation(value = "", authorizations = @Authorization(BEARER_TOKEN_AUTHORIZATION_KEY))
     @PermitAll
     public MessageResponse logout(@Context ContainerRequestContext request) throws CatanException {
         Token token = (Token) request.getProperty(TOKEN);

@@ -147,10 +147,15 @@ public class UserApiHelper {
             sessionHelper.serializeToken(accessToken), sessionHelper.serializeToken(refreshToken));
     }
 
+    /**
+     * Invalidate the Session described by the {@param token}
+     * @throws CatanException if session did not exist
+     */
     public void logout(Token token) throws CatanException {
-        dataConnector.deleteToken(token.getId());
-        if (token.getLinkedId() != null) {
-            dataConnector.deleteToken(token.getLinkedId());
+        boolean access = dataConnector.deleteToken(token.getId());
+        boolean refresh = token.getLinkedId() == null || dataConnector.deleteToken(token.getLinkedId());
+        if (!access || !refresh) {
+            throw new CatanException("Session does not exist", Status.BAD_REQUEST);
         }
     }
 }

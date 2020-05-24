@@ -47,6 +47,6 @@ public class ImMemoryCDC implements CatanDataConnector {
 
     @Override
     public boolean deleteToken(String id) {
-        return tokens.remove(id) == null;
+        return tokens.remove(id) != null;
     }
 }

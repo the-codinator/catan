@@ -34,6 +34,8 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
 
     private static final Logger logger = LoggerFactory.getLogger(Application.class);
 
+    private Environment environment;
+
     public static void main(String[] args) throws Exception {
         logger.debug("--- Starting Application ---");
         new Application().run(args);
@@ -66,12 +68,14 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
 
     @Override
     public void run(CatanConfiguration configuration, Environment environment) {
+        this.environment = environment;
+
         // Guice DI
         GuiceDI.setup(configuration, environment);
         logger.debug("[ BOOT ] Guice bindings configured");
 
         // Exception Mapper
-        environment.jersey().register(CatanExceptionMapper.class);
+        registerJerseyDI(CatanExceptionMapper.class);
         logger.debug("[ BOOT ] Default ErrorHandlers configured");
 
         // Health Check
@@ -81,7 +85,7 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
         logger.debug("[ BOOT ] Health Checks configured");
 
         // Filters
-        environment.jersey().register(RequestIdAndAccessLogFilter.class);
+        registerJerseyDI(RequestIdAndAccessLogFilter.class);
         logger.debug("[ BOOT ] Filters configured");
 
         // Auth
@@ -92,18 +96,22 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
 
         // APIs
         // Core
-        environment.jersey().register(Ping.class);
-        environment.jersey().register(Health.class);
-        environment.jersey().register(Favicon.class);
+        registerJerseyDI(Ping.class);
+        registerJerseyDI(Health.class);
+        registerJerseyDI(Favicon.class);
         // Admin
         // User
-        environment.jersey().register(GuiceDI.get(UserApi.class));
+        registerJerseyDI(UserApi.class);
         // Game
-        environment.jersey().register(GuiceDI.get(BoardApi.class));
-        environment.jersey().register(GuiceDI.get(MoveApi.class));
-        environment.jersey().register(GuiceDI.get(TradeApi.class));
+        registerJerseyDI(BoardApi.class);
+        registerJerseyDI(MoveApi.class);
+        registerJerseyDI(TradeApi.class);
         logger.debug("[ BOOT ] APIs configured");
 
         logger.info("[ BOOT ] Application Configured!");
+    }
+
+    private void registerJerseyDI(Class<?> clazz) {
+        environment.jersey().register(GuiceDI.get(clazz));
     }
 }

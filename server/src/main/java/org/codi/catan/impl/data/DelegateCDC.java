@@ -6,6 +6,7 @@
 package org.codi.catan.impl.data;
 
 import org.codi.catan.core.CatanException;
+import org.codi.catan.model.game.Board;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
@@ -50,5 +51,20 @@ public class DelegateCDC implements CatanDataConnector {
     @Override
     public boolean deleteToken(String id) throws CatanException {
         return delegate.deleteToken(id);
+    }
+
+    @Override
+    public Board getBoard(String id) throws CatanException {
+        return delegate.getBoard(id);
+    }
+
+    @Override
+    public boolean createBoard(Board board) throws CatanException {
+        return delegate.createBoard(board);
+    }
+
+    @Override
+    public boolean deleteBoard(String id) throws CatanException {
+        return delegate.deleteBoard(id);
     }
 }

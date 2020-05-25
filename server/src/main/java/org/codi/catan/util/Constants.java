@@ -9,6 +9,8 @@ public class Constants {
 
     // Headers, Params, etc
     public static final String HEADER_AUTHORIZATION = "Authorization";
+    public static final String HEADER_ETAG = "ETag";
+    public static final String HEADER_IF_NONE_MATCH = "If-None-Match";
     public static final String HEADER_REQUEST_ID = "X-Request-Id";
     public static final String PARAM_GAME_ID = "game";
     public static final String PARAM_REMEMBER_ME = "rememberMe";
@@ -37,7 +39,7 @@ public class Constants {
     // Paths - Game
     public static final String BASE_PATH_GAME = "/game";
     public static final String PATH_GAME_ID = "/{" + PARAM_GAME_ID + "}";
-    public static final String PATH_LAYOUT = PATH_GAME_ID + "/layout";
+    public static final String PATH_BOARD = PATH_GAME_ID + "/board";
     public static final String PATH_STATE = PATH_GAME_ID + "/state";
 
     // Paths - Move
@@ -55,7 +57,7 @@ public class Constants {
     public static final String PATH_SETUP_2 = "/setup2";
     public static final String PATH_THIEF = "/thief";
 
-    // Paths - TRADE
+    // Paths - Trade
     public static final String BASE_PATH_TRADE = BASE_PATH_MOVE + "/trade";
     public static final String PATH_TRADE_ID = "/{" + PARAM_TRADE_ID + "}";
     public static final String PATH_TRADE_ACCEPT = PATH_TRADE_ID + "/accept";

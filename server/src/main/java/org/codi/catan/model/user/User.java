@@ -12,13 +12,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.codi.catan.model.IdentifiableEntity;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
-public class User implements Principal {
+public class User implements Principal, IdentifiableEntity {
 
     private String id;
     private String name;

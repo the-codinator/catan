@@ -6,6 +6,7 @@
 package org.codi.catan.impl.data;
 
 import org.codi.catan.core.CatanException;
+import org.codi.catan.model.game.Board;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
@@ -25,4 +26,8 @@ public interface CatanDataConnector {
     Token getToken(String id) throws CatanException;
     boolean createToken(Token token) throws CatanException;
     boolean deleteToken(String id) throws CatanException;
+
+    Board getBoard(String id) throws CatanException;
+    boolean createBoard(Board board) throws CatanException;
+    boolean deleteBoard(String id) throws CatanException;
 }

@@ -13,13 +13,14 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.codi.catan.model.IdentifiableEntity;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
-public class Token {
+public class Token implements IdentifiableEntity {
 
     private String id;
     private TokenType type;

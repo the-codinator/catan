@@ -7,6 +7,7 @@ package org.codi.catan.impl.data;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -67,6 +68,18 @@ public class ImMemoryCDC implements CatanDataConnector {
     @Override
     public User getUser(String id) throws CatanException {
         return get(User.class, id);
+    }
+
+    @Override
+    public User[] getUsers(String... ids) throws CatanException {
+        List<User> users = new ArrayList<>(ids.length);
+        for (String id : ids) {
+            User user = getUser(id);
+            if (user != null) {
+                users.add(user);
+            }
+        }
+        return users.toArray(new User[0]);
     }
 
     @Override

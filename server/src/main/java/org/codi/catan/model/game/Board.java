@@ -24,4 +24,5 @@ public class Board implements IdentifiableEntity {
     private String id;
     private Tile[] tiles;
     private Port[] ports;
+    private Player[] players;
 }

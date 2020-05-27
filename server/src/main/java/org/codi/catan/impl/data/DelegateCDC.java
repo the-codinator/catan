@@ -24,6 +24,11 @@ public class DelegateCDC implements CatanDataConnector {
     }
 
     @Override
+    public User[] getUsers(String... ids) throws CatanException {
+        return delegate.getUsers(ids);
+    }
+
+    @Override
     public boolean createUser(User user) throws CatanException {
         return delegate.createUser(user);
     }

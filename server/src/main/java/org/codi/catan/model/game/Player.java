@@ -1,13 +1,17 @@
 /*
  * @author the-codinator
- * created on 2020/5/24
+ * created on 2020/5/27
  */
 
 package org.codi.catan.model.game;
 
-public enum Player {
-    blue,
-    orange,
-    red,
-    white
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class Player {
+
+    private String id;
+    private Color color;
 }

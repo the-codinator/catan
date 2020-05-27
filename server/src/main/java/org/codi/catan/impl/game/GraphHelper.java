@@ -12,17 +12,18 @@ import java.util.Collection;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
+import org.codi.catan.model.game.Resource;
 
 @Singleton
 public class GraphHelper {
 
-    public static void validateVertex(int vertex) throws CatanException {
+    public void validateVertex(int vertex) throws CatanException {
         if (vertex < 0 || vertex >= vertexToAdjacentVertexMatrix.length) {
             throw new CatanException("Invalid Vertex Id", Status.BAD_REQUEST);
         }
     }
 
-    public static void validateHex(int hex) throws CatanException {
+    public void validateHex(int hex) throws CatanException {
         if (hex < 0 || hex >= hexToConnectedVertexMatrix.length) {
             throw new CatanException("Invalid Hex Id", Status.BAD_REQUEST);
         }
@@ -31,22 +32,11 @@ public class GraphHelper {
     /**
      * Calculates the normalized vertex id for a {@param port} vertex, -1 if not a port
      */
-    public static int normalizePort(int port) {
-        int p = find(portVertexList, port);
-        if (p != -1) {
-            return p;
-        }
-        p = find(portVertexList, port - 1);
-        if (p != -1) {
-            return p;
-        }
-        return -1;
+    public int normalizePort(int port) {
+        return find(portVertexList, port) != -1 || find(portVertexList, --port) != -1 ? port : -1;
     }
 
-    /**
-     * Validate and normalize {@param port} id
-     */
-    public static int validatePort(int port) throws CatanException {
+    public int normalizeAndValidatePort(int port) throws CatanException {
         port = normalizePort(port);
         if (port == -1) {
             throw new CatanException("Invalid Port Id", Status.BAD_REQUEST);
@@ -57,22 +47,30 @@ public class GraphHelper {
     /**
      * Get vertices adjacent to {@param vertex}
      */
-    public static int[] getAdjacentVertexListForVertex(int vertex) {
+    public int[] getAdjacentVertexListForVertex(int vertex) {
         if (vertex < 0 || vertex >= vertexToAdjacentVertexMatrix.length) {
             return null;
         }
         return vertexToAdjacentVertexMatrix[vertex].clone();
     }
 
-    public static boolean isAdjacentVertices(int a, int b) {
+    public boolean isAdjacentVertices(int a, int b) {
         return a >= 0 && a < vertexToAdjacentVertexMatrix.length && find(vertexToAdjacentVertexMatrix[a], b) != -1;
     }
 
-    public static int[] getConnectedHexListForVertex(int vertex) {
+    public int[] getConnectedHexListForVertex(int vertex) {
         if (vertex < 0 || vertex >= vertexToConnectedHexMatrix.length) {
             return null;
         }
         return vertexToConnectedHexMatrix[vertex].clone();
+    }
+
+    public int[] getPortVertexList() {
+        return portVertexList.clone();
+    }
+
+    public int[] getDiceRollCount() {
+        return diceRollCount.clone();
     }
 
     // --------------------------------------------------------------------------------
@@ -87,6 +85,7 @@ public class GraphHelper {
     private static final int EDGE_COUNT = 72;
     private static final int HEX_COUNT = 19;
     private static final int PORT_COUNT = 9;
+    private static final int TOTAL_DICE_ROLL_COUNT = 13; // 2 dice * 6 per dice + rolling a 0 (for desert)
 
     private static final int MIN_ADJ_VERTEX = 2;
     private static final int MAX_ADJ_VERTEX = 3;
@@ -95,6 +94,10 @@ public class GraphHelper {
     private static final int MIN_DIST_BETWEEN_PORT = 3;
     private static final int MAX_DIST_BETWEEN_PORT = 4;
     private static final int VERTEX_COUNT_PER_HEX = 6;
+    private static final int MIN_TILE_RESOURCE_COUNT = 3;
+    private static final int MAX_TILE_RESOURCE_COUNT = 4;
+    private static final int MIN_DICE_ROLL_COUNT = 0;
+    private static final int MAX_DICE_ROLL_COUNT = 2;
 
     private static final int[][] vertexToAdjacentVertexMatrix = {{1, 29}, {0, 2, 31}, {1, 3}, {2, 4}, {3, 5, 32},
         {4, 6}, {5, 7, 34}, {6, 8}, {7, 9}, {8, 10, 35}, {9, 11}, {10, 12, 37}, {11, 13}, {12, 14}, {13, 15, 38},
@@ -115,12 +118,16 @@ public class GraphHelper {
 
     private static final int[] portVertexList = {0, 4, 7, 10, 14, 17, 20, 24, 27};
 
+    private static final int[] diceRollCount = {1, 0, 1, 2, 2, 2, 2, 0, 2, 2, 2, 2, 1}; // Desert -> 0
+
     static {
         try {
             shallowValidateVertexAdjacencyMatrix();
             shallowValidateVerticesAroundHex();
             generateVertexHexMapping();
             shallowValidatePorts();
+            validateResourceTileCount();
+            shallowValidateDiceRollCount();
         } catch (CatanException e) {
             throw new RuntimeException("Bad board graph data", e);
         }
@@ -213,5 +220,28 @@ public class GraphHelper {
             prev = port;
             ensure(port >= 0 && port < OUTER_VERTEX_COUNT, "port vertex id");
         }
+    }
+
+    private static void validateResourceTileCount() throws CatanException {
+        int count = 0;
+        for (Resource resource : Resource.values()) {
+            ensure(resource.getTileCount() >= MIN_TILE_RESOURCE_COUNT, "min tiles for resource");
+            ensure(resource.getTileCount() <= MAX_TILE_RESOURCE_COUNT, "max tiles for resource");
+            count += resource.getTileCount();
+        }
+        ensure(count + 1 /* Desert */ == HEX_COUNT, "tile count");
+    }
+
+    private static void shallowValidateDiceRollCount() throws CatanException {
+        int count = 0;
+        for (int i = 0; i < diceRollCount.length; i++) {
+            int drc = diceRollCount[i];
+            ensure(drc >= MIN_DICE_ROLL_COUNT, "min dice roll count");
+            ensure(drc <= MAX_DICE_ROLL_COUNT, "max dice roll count");
+            count += drc;
+        }
+        ensure(count == hexToConnectedVertexMatrix.length, "tile roll counts");
+        ensure(diceRollCount[0] == 1, "desert roll count");
+        ensure(diceRollCount[1] == 0, "1-roll count");
     }
 }

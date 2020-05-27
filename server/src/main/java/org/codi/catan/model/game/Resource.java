@@ -5,14 +5,21 @@
 
 package org.codi.catan.model.game;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
 /**
  * Standard game resources
  * A {@code null} value can be used to indicate desert, 3:1 ports, etc.
  */
+@Getter
+@AllArgsConstructor
 public enum Resource {
-    brick,
-    hay,
-    ore,
-    sheep,
-    wood
+    brick(3),
+    hay(4),
+    ore(3),
+    sheep(4),
+    wood(4);
+
+    private final int tileCount;
 }

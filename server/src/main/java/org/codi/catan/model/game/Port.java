@@ -12,6 +12,6 @@ import lombok.Setter;
 @Setter
 public class Port {
 
-    private int vertex;
     private Resource resource; // null => 3:1 Port
+    private int vertex;
 }

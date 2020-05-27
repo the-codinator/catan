@@ -69,6 +69,12 @@ public class Constants {
     public static final String NAME_REGEX = "[\\w-'\\. ]{2,50}";
     public static final String USER_ID_REGEX = "[\\w-]{3,12}";
 
+    // Game
+    public static final int DICE_COUNT = 2;
+    public static final int MAX_ROLL_PER_DIE = 6;
+    public static final int MIN_ROLL_PER_DIE = 1;
+    public static final int THIEF_ROLL = 7;
+
     // Misc
     public static final String BEARER_PREFIX = "Bearer ";
     public static final String BEARER_AUTHORIZATION_KEY = "Bearer [access_token]";

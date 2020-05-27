@@ -19,6 +19,7 @@ import org.codi.catan.model.user.User;
 public interface CatanDataConnector {
 
     User getUser(String id) throws CatanException;
+    User[] getUsers(String... ids) throws CatanException;
     boolean createUser(User user) throws CatanException;
     boolean updateUser(User user) throws CatanException;
     boolean deleteUser(String id) throws CatanException;

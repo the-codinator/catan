@@ -18,6 +18,11 @@ public class DynamoDbCDC implements CatanDataConnector {
     }
 
     @Override
+    public User[] getUsers(String... ids) throws CatanException {
+        return null;
+    }
+
+    @Override
     public boolean createUser(User user) throws CatanException {
         return false;
     }

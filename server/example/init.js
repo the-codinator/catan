@@ -45,4 +45,6 @@
   // Create Board
   const id = (await call('/game', json('board'))).id;
   log('Game id', id);
+
+  await call(`/game/${id}`);
 })();

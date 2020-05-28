@@ -13,6 +13,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanCacheLoader;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
@@ -35,21 +36,23 @@ public class CachedDelegateCDC extends DelegateCDC implements CatanDataConnector
         try {
             return boards.get(id);
         } catch (ExecutionException e) {
-            throw new CatanException("Error getting Board with cache", e);
+            if (e.getCause() instanceof CatanException) {
+                throw (CatanException) e.getCause();
+            } else {
+                throw new CatanException("Error getting Board with cache", e);
+            }
         }
     }
 
     @Override
-    public boolean createBoard(Board board) throws CatanException {
-        boolean ret = super.createBoard(board);
+    public void createBoard(Board board) throws CatanException {
+        super.createBoard(board);
         boards.put(board.getId(), board);
-        return ret;
     }
 
     @Override
-    public boolean deleteBoard(String id) throws CatanException {
-        boolean ret = super.deleteBoard(id);
+    public void deleteBoard(String id) throws CatanException {
+        super.deleteBoard(id);
         boards.invalidate(id);
-        return ret;
     }
 }

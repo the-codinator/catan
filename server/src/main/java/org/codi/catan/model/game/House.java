@@ -1,6 +1,6 @@
 /*
  * @author the-codinator
- * created on 2020/5/27
+ * created on 2020/5/28
  */
 
 package org.codi.catan.model.game;
@@ -10,8 +10,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class Player {
+public class House {
 
-    private String id; // TODO: Store display names as well / cache somehow ?
+    private HouseType type;
     private Color color;
+    private int vertex;
 }

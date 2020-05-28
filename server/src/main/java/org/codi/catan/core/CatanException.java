@@ -36,8 +36,8 @@ public class CatanException extends Exception {
         return errorStatus == null ? DEFAULT_ERROR_STATUS : errorStatus;
     }
 
-    public static Status getErrorStatus(Exception e) {
-        return e instanceof CatanException ? ((CatanException) e).getErrorStatus() : DEFAULT_ERROR_STATUS;
+    public static Status getErrorStatus(Throwable t) {
+        return t instanceof CatanException ? ((CatanException) t).getErrorStatus() : DEFAULT_ERROR_STATUS;
     }
 
     @Override

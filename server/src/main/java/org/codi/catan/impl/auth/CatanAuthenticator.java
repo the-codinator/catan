@@ -39,16 +39,18 @@ public class CatanAuthenticator implements Authenticator<Token, User> {
                 throw new CatanException("Incorrect Token Type", Status.BAD_REQUEST);
             }
             sessionHelper.validateRequestTokenOffline(token);
-            Token dbToken;
+            Token dbToken = null;
             try {
                 dbToken = dataConnector.getToken(token.getId());
             } catch (CatanException e) {
-                throw new AuthenticationException("Error reading token data store", e);
+                if (e.getErrorStatus() != Status.NOT_FOUND) {
+                    throw new AuthenticationException("Error reading token data store", e);
+                }
             }
             if (!token.equals(dbToken)) {
                 throw new CatanException("Invalid Token", Status.BAD_REQUEST);
             }
-            User user = new User(token.getId());
+            User user = new User(token.getUser());
             user.setRoles(token.getRoles());
             return Optional.of(user);
         } catch (CatanException e) {

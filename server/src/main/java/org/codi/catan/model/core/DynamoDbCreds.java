@@ -3,7 +3,7 @@
  * created on 2020/5/23
  */
 
-package org.codi.catan.model.misc;
+package org.codi.catan.model.core;
 
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;

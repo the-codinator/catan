@@ -9,7 +9,7 @@ import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import io.dropwizard.Configuration;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import lombok.Getter;
-import org.codi.catan.model.misc.DynamoDbCreds;
+import org.codi.catan.model.core.DynamoDbCreds;
 
 @Getter
 public class CatanConfiguration extends Configuration {

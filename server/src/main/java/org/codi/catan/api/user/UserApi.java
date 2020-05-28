@@ -21,7 +21,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.Authorization;
 import java.util.Collection;
-import java.util.Optional;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -66,9 +65,9 @@ public class UserApi {
 
     @POST
     @Path(PATH_LOGIN)
-    public SessionResponse login(LoginRequest request, @QueryParam(PARAM_REMEMBER_ME) Optional<Boolean> rememberMe)
+    public SessionResponse login(LoginRequest request, @QueryParam(PARAM_REMEMBER_ME) Boolean rememberMe)
         throws CatanException {
-        return userApiHelper.login(request, rememberMe.orElse(false));
+        return userApiHelper.login(request, rememberMe == null ? false : rememberMe);
     }
 
     @POST

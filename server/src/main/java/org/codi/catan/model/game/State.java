@@ -5,23 +5,28 @@
 
 package org.codi.catan.model.game;
 
-import lombok.AllArgsConstructor;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.util.EnumMap;
+import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.codi.catan.model.IdentifiableEntity;
 
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
-public class State implements IdentifiableEntity {
+public class State extends BaseState {
+
+    private List<DevCard> bankDevCards;
+    @JsonInclude(Include.NON_NULL)
+    private EnumMap<Color, Hand> hands;
 
     public State(String id) {
-        this.id = id;
+        super(id);
     }
 
-    private String id;
-    private int thief;
-    // TODO:
+    public Hand getHand(Color color) {
+        return color == null || hands == null ? null : hands.get(color);
+    }
 }

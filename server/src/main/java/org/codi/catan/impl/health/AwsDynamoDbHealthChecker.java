@@ -11,7 +11,7 @@ import org.codi.catan.core.CatanException;
 public class AwsDynamoDbHealthChecker extends HealthCheck {
 
     @Override
-    public Result check() throws CatanException {
+    public Result check() throws CatanException { // TODO:
         try {
             if (false) {
                 return Result.unhealthy("AWS DynamoDB Health Check Failed");

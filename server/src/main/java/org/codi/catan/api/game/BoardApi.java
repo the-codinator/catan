@@ -14,7 +14,9 @@ import static org.codi.catan.util.Constants.PATH_BOARD;
 import static org.codi.catan.util.Constants.PATH_GAME_ID;
 import static org.codi.catan.util.Constants.PATH_STATE;
 
+import io.dropwizard.auth.Auth;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
@@ -27,11 +29,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.codi.catan.core.CatanException;
+import org.codi.catan.filter.ResponseETagFilter.ResponseFilterAnnotation;
 import org.codi.catan.impl.game.LayoutHelper;
 import org.codi.catan.impl.game.StateHelper;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
 import org.codi.catan.model.response.GameResponse;
+import org.codi.catan.model.response.StateResponse;
+import org.codi.catan.model.user.User;
 
 @Api(value = API_BOARD, authorizations = @Authorization(BEARER_AUTHORIZATION_KEY))
 @Consumes(MediaType.APPLICATION_JSON)
@@ -39,7 +44,6 @@ import org.codi.catan.model.response.GameResponse;
 @PermitAll
 @Path(BASE_PATH_GAME)
 public class BoardApi {
-    // TODO: ETag support (ETag response header, If-None-Match Request Header)... maybe use a response filter ?
 
     private final LayoutHelper layoutHelper;
     private final StateHelper stateHelper;
@@ -51,18 +55,18 @@ public class BoardApi {
     }
 
     @POST
-    public GameResponse create(Board board) throws CatanException {
-        board = layoutHelper.create(board);
+    public GameResponse create(@ApiParam(hidden = true) @Auth User user, Board board) throws CatanException {
+        board = layoutHelper.create(board, user.getId());
         State state = stateHelper.createState(board);
-        return new GameResponse(board, state);
+        return new GameResponse(board, stateHelper.createStateResponse(state, board, user.getId()));
     }
 
     @GET
     @Path(PATH_GAME_ID)
-    public GameResponse get(@PathParam(PARAM_GAME_ID) String gameId, @HeaderParam(HEADER_IF_NONE_MATCH) String etag)
+    public GameResponse get(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId)
         throws CatanException {
         Board board = board(gameId);
-        State state = state(gameId, etag);
+        StateResponse state = state(user, gameId, null);
         return new GameResponse(board, state);
     }
 
@@ -74,7 +78,9 @@ public class BoardApi {
 
     @GET
     @Path(PATH_STATE)
-    public State state(@PathParam(PARAM_GAME_ID) String gameId, @HeaderParam(HEADER_IF_NONE_MATCH) String etag) {
-        return stateHelper.getState(gameId, etag);
+    @ResponseFilterAnnotation
+    public StateResponse state(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
+        @HeaderParam(HEADER_IF_NONE_MATCH) String etag) throws CatanException {
+        return stateHelper.createStateResponse(stateHelper.getState(gameId, etag), null, user.getId());
     }
 }

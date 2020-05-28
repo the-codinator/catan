@@ -7,10 +7,11 @@ package org.codi.catan.impl.data;
 
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
+import org.codi.catan.model.game.State;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
-public class DynamoDbCDC implements CatanDataConnector {
+public class DynamoDbCDC implements CatanDataConnector { // TODO:
 
     @Override
     public User getUser(String id) throws CatanException {
@@ -19,22 +20,22 @@ public class DynamoDbCDC implements CatanDataConnector {
 
     @Override
     public User[] getUsers(String... ids) throws CatanException {
-        return null;
+        return new User[0];
     }
 
     @Override
-    public boolean createUser(User user) throws CatanException {
-        return false;
+    public void createUser(User user) throws CatanException {
+
     }
 
     @Override
-    public boolean updateUser(User user) throws CatanException {
-        return false;
+    public void updateUser(User user) throws CatanException {
+
     }
 
     @Override
-    public boolean deleteUser(String id) throws CatanException {
-        return false;
+    public void deleteUser(String id) throws CatanException {
+
     }
 
     @Override
@@ -43,13 +44,13 @@ public class DynamoDbCDC implements CatanDataConnector {
     }
 
     @Override
-    public boolean createToken(Token token) throws CatanException {
-        return false;
+    public void createToken(Token token) throws CatanException {
+
     }
 
     @Override
-    public boolean deleteToken(String id) throws CatanException {
-        return false;
+    public void deleteToken(String id) throws CatanException {
+
     }
 
     @Override
@@ -58,12 +59,32 @@ public class DynamoDbCDC implements CatanDataConnector {
     }
 
     @Override
-    public boolean createBoard(Board board) throws CatanException {
-        return false;
+    public void createBoard(Board board) throws CatanException {
+
     }
 
     @Override
-    public boolean deleteBoard(String id) throws CatanException {
-        return false;
+    public void deleteBoard(String id) throws CatanException {
+
+    }
+
+    @Override
+    public State getState(String id, String etag) throws CatanException {
+        return null;
+    }
+
+    @Override
+    public void createState(State state) throws CatanException {
+
+    }
+
+    @Override
+    public void updateState(State state) throws CatanException {
+
+    }
+
+    @Override
+    public void deleteState(String id, String etag) throws CatanException {
+
     }
 }

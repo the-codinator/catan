@@ -6,19 +6,24 @@
 package org.codi.catan.model.response;
 
 import lombok.Getter;
+import lombok.Setter;
+import org.codi.catan.model.core.StrongEntity;
 import org.codi.catan.model.game.Board;
-import org.codi.catan.model.game.State;
 
 @Getter
-public class GameResponse {
+public class GameResponse implements StrongEntity {
 
-    public GameResponse(Board board, State state) {
+    public GameResponse(Board board, StateResponse state) {
         this.id = board.getId();
         this.board = board;
         this.state = state;
+        this.eTag = state.getETag();
     }
 
     private final String id;
     private final Board board;
-    private final State state;
+    private final StateResponse state;
+    @SuppressWarnings("checkstyle:MemberName")
+    @Setter
+    private String eTag;
 }

@@ -9,7 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.codi.catan.model.IdentifiableEntity;
+import org.codi.catan.model.core.IdentifiableEntity;
 
 @NoArgsConstructor
 @AllArgsConstructor

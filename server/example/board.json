@@ -14,7 +14,7 @@
       "roll": 10
     },
     {
-      "resource": "ore",
+      "resource": "rock",
       "roll": 8
     },
     {
@@ -46,7 +46,7 @@
       "roll": 12
     },
     {
-      "resource": "ore",
+      "resource": "rock",
       "roll": 10
     },
     {
@@ -62,7 +62,7 @@
       "roll": 4
     },
     {
-      "resource": "ore",
+      "resource": "rock",
       "roll": 3
     },
     {
@@ -83,7 +83,7 @@
       "vertex": 0
     },
     {
-      "resource": "ore",
+      "resource": "rock",
       "vertex": 4
     },
     {

@@ -25,6 +25,7 @@ import org.codi.catan.core.CatanExceptionMapper;
 import org.codi.catan.core.GuiceDI;
 import org.codi.catan.filter.CatanAuthFilter;
 import org.codi.catan.filter.RequestIdAndAccessLogFilter;
+import org.codi.catan.filter.ResponseETagFilter;
 import org.codi.catan.model.user.User;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
@@ -85,6 +86,7 @@ public class Application extends io.dropwizard.Application<CatanConfiguration> {
         logger.debug("[ BOOT ] Health Checks configured");
 
         // Filters
+        registerJerseyDI(ResponseETagFilter.class);
         registerJerseyDI(RequestIdAndAccessLogFilter.class);
         logger.debug("[ BOOT ] Filters configured");
 

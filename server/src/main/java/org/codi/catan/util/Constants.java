@@ -53,8 +53,7 @@ public class Constants {
     public static final String PATH_DEV_PLAY = PATH_DEV + "/play";
     public static final String PATH_END = "/end";
     public static final String PATH_ROLL = "/roll";
-    public static final String PATH_SETUP_1 = "/setup1";
-    public static final String PATH_SETUP_2 = "/setup2";
+    public static final String PATH_SETUP = "/setup";
     public static final String PATH_THIEF = "/thief";
 
     // Paths - Trade
@@ -74,6 +73,12 @@ public class Constants {
     public static final int MAX_ROLL_PER_DIE = 6;
     public static final int MIN_ROLL_PER_DIE = 1;
     public static final int THIEF_ROLL = 7;
+    public static final int VICTORY_POINTS_FOR_WIN = 10;
+
+    // Error Messages
+    public static final String ENTITY_CONFLICT = "Entity [%s] with id [%s] already exists";
+    public static final String ENTITY_NOT_FOUND = "Entity [%s] with id [%s] not found";
+    public static final String ENTITY_PRECONDITION_FAILED = "Entity [%s] with id [%s] does not exist";
 
     // Misc
     public static final String BEARER_PREFIX = "Bearer ";

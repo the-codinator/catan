@@ -81,8 +81,14 @@ public class UserApiHelper {
         validateName(request.getName());
         validatePwd(request.getPwd());
         User user = new User(request.getId(), request.getName(), request.getPwd(), null);
-        if (!dataConnector.createUser(user)) {
-            throw new CatanException("User id is already taken!", Status.CONFLICT);
+        try {
+            dataConnector.createUser(user);
+        } catch (CatanException e) {
+            if (e.getErrorStatus() == Status.CONFLICT) {
+                throw new CatanException("User id is already taken!", Status.CONFLICT, e);
+            } else {
+                throw e;
+            }
         }
     }
 
@@ -115,7 +121,14 @@ public class UserApiHelper {
             throw new CatanException("Bad Refresh Token", Status.BAD_REQUEST);
         }
         sessionHelper.validateRequestTokenOffline(token);
-        Token dbToken = dataConnector.getToken(token.getId());
+        Token dbToken = null;
+        try {
+            dbToken = dataConnector.getToken(token.getId());
+        } catch (CatanException e) {
+            if (e.getErrorStatus() != Status.NOT_FOUND) {
+                throw e;
+            }
+        }
         if (!token.equals(dbToken)) {
             throw new CatanException("Invalid Token", Status.BAD_REQUEST);
         }
@@ -126,9 +139,15 @@ public class UserApiHelper {
     }
 
     private SessionResponse loginInternal(User requestUser, boolean rememberMe) throws CatanException {
-        User dbUser = dataConnector.getUser(requestUser.getId());
-        if (dbUser == null) {
-            throw new CatanException("Username/Password Mismatch", Status.UNAUTHORIZED);
+        User dbUser;
+        try {
+            dbUser = dataConnector.getUser(requestUser.getId());
+        } catch (CatanException e) {
+            if (e.getErrorStatus() == Status.NOT_FOUND) {
+                throw new CatanException("Username/Password Mismatch", Status.UNAUTHORIZED);
+            } else {
+                throw e;
+            }
         }
         validateCredentials(requestUser, dbUser);
         return createSessionInternal(dbUser, rememberMe);
@@ -142,9 +161,13 @@ public class UserApiHelper {
             accessToken.setLinkedId(refreshToken.getId());
             refreshToken.setLinkedId(accessToken.getId());
         }
-        if (!(dataConnector.createToken(accessToken) && (refreshToken == null || dataConnector.createToken(
-            refreshToken)))) {
-            throw new CatanException("Conflicting Token Id");
+        try {
+            dataConnector.createToken(accessToken);
+            if (refreshToken != null) {
+                dataConnector.createToken(refreshToken);
+            }
+        } catch (CatanException e) {
+            throw new CatanException("Error creating token", Status.INTERNAL_SERVER_ERROR, e);
         }
         return new SessionResponse(dbUser.getId(), dbUser.getName(), dbUser.getRoles(), accessToken.getCreated(),
             sessionHelper.serializeToken(accessToken), sessionHelper.serializeToken(refreshToken));
@@ -156,17 +179,34 @@ public class UserApiHelper {
      * @throws CatanException if session did not exist
      */
     public void logout(Token token) throws CatanException {
-        boolean access = dataConnector.deleteToken(token.getId());
-        boolean refresh = token.getLinkedId() == null || dataConnector.deleteToken(token.getLinkedId());
-        if (!access || !refresh) {
-            throw new CatanException("Session does not exist", Status.BAD_REQUEST);
+        try {
+            dataConnector.deleteToken(token.getId());
+            if (token.getLinkedId() != null) {
+                dataConnector.deleteToken(token.getLinkedId());
+            }
+        } catch (CatanException e) {
+            if (e.getErrorStatus() == Status.NOT_FOUND) {
+                throw new CatanException("Attempting to log out of missing session", Status.INTERNAL_SERVER_ERROR, e);
+            } else {
+                throw e;
+            }
         }
     }
 
+    /**
+     * Find users based on {@param userId}
+     */
     public List<FindUserResponse> find(String userId) throws CatanException {
         Util.validateInput(userId);
-        User user = dataConnector.getUser(userId);
-        return user == null ? Collections.emptyList()
-            : Collections.singletonList(new FindUserResponse(user.getId(), user.getName()));
+        try {
+            User user = dataConnector.getUser(userId);
+            return Collections.singletonList(new FindUserResponse(user.getId(), user.getName()));
+        } catch (CatanException e) {
+            if (e.getErrorStatus() == Status.NOT_FOUND) {
+                return Collections.emptyList();
+            } else {
+                throw e;
+            }
+        }
     }
 }

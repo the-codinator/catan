@@ -49,20 +49,42 @@ public class LayoutHelper {
         invalidUsers = CacheBuilder.newBuilder().maximumSize(500).expireAfterWrite(1, TimeUnit.HOURS).build();
     }
 
-    public Board create(Board board) throws CatanException {
+    /**
+     * Normalize and validate created {@param board}, ensuring {@param author} is also a player
+     */
+    public Board create(Board board, String author) throws CatanException {
         normalizeAndValidateBoard(board);
-        if (!dataConnector.createBoard(board)) {
-            throw new CatanException("Error creating game - conflicting id");
+        boolean hasAuthor = false;
+        for (Player player : board.getPlayers()) {
+            if (player.getId().equals(author)) {
+                hasAuthor = true;
+                break;
+            }
+        }
+        if (!hasAuthor) {
+            throw new CatanException("Board creator is not part of game", Status.BAD_REQUEST);
+        }
+        try {
+            dataConnector.createBoard(board);
+        } catch (CatanException e) {
+            throw new CatanException("Error creating game", Status.INTERNAL_SERVER_ERROR, e);
         }
         return board;
     }
 
+    /**
+     * Get board with {@param gameId}
+     */
     public Board getBoard(String gameId) throws CatanException {
-        Board board = dataConnector.getBoard(gameId);
-        if (board == null) {
-            throw new CatanException("Game not found", Status.NOT_FOUND);
+        try {
+            return dataConnector.getBoard(gameId);
+        } catch (CatanException e) {
+            if (e.getErrorStatus() == Status.NOT_FOUND) {
+                throw new CatanException("Could not find board with id - " + gameId, Status.NOT_FOUND, e);
+            } else {
+                throw e;
+            }
         }
-        return board;
     }
 
     private void normalizeAndValidateBoard(Board board) throws CatanException {
@@ -171,11 +193,16 @@ public class LayoutHelper {
         }
         if (users.size() == 1) {
             String unknownUserId = users.iterator().next();
-            if (dataConnector.getUser(unknownUserId) == null) {
-                invalidUsers.put(unknownUserId, Boolean.FALSE);
-                throw new CatanException("Invalid Users - [" + unknownUserId + "]", Status.BAD_REQUEST);
-            } else {
+            try {
+                dataConnector.getUser(unknownUserId);
                 validUsers.put(unknownUserId, Boolean.TRUE);
+            } catch (CatanException e) {
+                if (e.getErrorStatus() == Status.NOT_FOUND) {
+                    invalidUsers.put(unknownUserId, Boolean.FALSE);
+                    throw new CatanException("Invalid Users - [" + unknownUserId + "]", Status.BAD_REQUEST);
+                } else {
+                    throw e;
+                }
             }
         } else {
             User[] unknownUsers = dataConnector.getUsers(users.toArray(new String[0]));

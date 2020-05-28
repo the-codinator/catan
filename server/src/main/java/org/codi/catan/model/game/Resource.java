@@ -17,8 +17,8 @@ import lombok.Getter;
 public enum Resource {
     brick(3),
     hay(4),
-    ore(3),
     sheep(4),
+    rock(3),
     wood(4);
 
     private final int tileCount;

@@ -234,8 +234,7 @@ public class GraphHelper {
 
     private static void shallowValidateDiceRollCount() throws CatanException {
         int count = 0;
-        for (int i = 0; i < diceRollCount.length; i++) {
-            int drc = diceRollCount[i];
+        for (int drc : diceRollCount) {
             ensure(drc >= MIN_DICE_ROLL_COUNT, "min dice roll count");
             ensure(drc <= MAX_DICE_ROLL_COUNT, "max dice roll count");
             count += drc;

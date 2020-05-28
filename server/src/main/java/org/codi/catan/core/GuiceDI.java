@@ -24,7 +24,7 @@ import java.util.Set;
 import org.codi.catan.impl.data.CachedDelegateCDC;
 import org.codi.catan.impl.data.CatanDataConnector;
 import org.codi.catan.impl.data.DynamoDbCDC;
-import org.codi.catan.impl.data.ImMemoryCDC;
+import org.codi.catan.impl.data.InMemoryCDC;
 import org.codi.catan.impl.health.AwsDynamoDbHealthChecker;
 import org.codi.catan.impl.health.InMemoryHealthChecker;
 import org.slf4j.Logger;
@@ -57,7 +57,7 @@ public class GuiceDI extends AbstractModule {
         } else {
             logger.warn("AWS Credentials not found, using an In-Memory data store instead");
             health.addBinding().to(InMemoryHealthChecker.class);
-            bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(ImMemoryCDC.class);
+            bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(InMemoryCDC.class);
         }
         bind(CatanDataConnector.class).to(CachedDelegateCDC.class).asEagerSingleton();
     }

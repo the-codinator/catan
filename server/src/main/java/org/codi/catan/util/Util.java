@@ -59,4 +59,8 @@ public class Util {
     public static String getUserIdFromSecurityContext(SecurityContext sc) {
         return ((User) sc.getUserPrincipal()).getId();
     }
+
+    public static boolean isOkStatus(int status) {
+        return status / 100 == 2;
+    }
 }

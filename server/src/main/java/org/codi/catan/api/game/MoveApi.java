@@ -15,8 +15,7 @@ import static org.codi.catan.util.Constants.PATH_DEV_BUY;
 import static org.codi.catan.util.Constants.PATH_DEV_PLAY;
 import static org.codi.catan.util.Constants.PATH_END;
 import static org.codi.catan.util.Constants.PATH_ROLL;
-import static org.codi.catan.util.Constants.PATH_SETUP_1;
-import static org.codi.catan.util.Constants.PATH_SETUP_2;
+import static org.codi.catan.util.Constants.PATH_SETUP;
 import static org.codi.catan.util.Constants.PATH_THIEF;
 
 import io.swagger.annotations.Api;
@@ -33,16 +32,11 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 @PermitAll
 @Path(BASE_PATH_MOVE)
-public class MoveApi {
+public class MoveApi { // TODO:
 
     @POST
-    @Path(PATH_SETUP_1)
-    public void setup1() {
-    }
-
-    @POST
-    @Path(PATH_SETUP_2)
-    public void setup2() {
+    @Path(PATH_SETUP)
+    public void setup() {
     }
 
     @POST

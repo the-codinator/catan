@@ -7,12 +7,13 @@ package org.codi.catan.impl.data;
 
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
+import org.codi.catan.model.game.State;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
 public class DelegateCDC implements CatanDataConnector {
 
-    protected final CatanDataConnector delegate;
+    private final CatanDataConnector delegate;
 
     public DelegateCDC(CatanDataConnector delegate) {
         this.delegate = delegate;
@@ -29,18 +30,18 @@ public class DelegateCDC implements CatanDataConnector {
     }
 
     @Override
-    public boolean createUser(User user) throws CatanException {
-        return delegate.createUser(user);
+    public void createUser(User user) throws CatanException {
+        delegate.createUser(user);
     }
 
     @Override
-    public boolean updateUser(User user) throws CatanException {
-        return delegate.updateUser(user);
+    public void updateUser(User user) throws CatanException {
+        delegate.updateUser(user);
     }
 
     @Override
-    public boolean deleteUser(String id) throws CatanException {
-        return delegate.deleteUser(id);
+    public void deleteUser(String id) throws CatanException {
+        delegate.deleteUser(id);
     }
 
     @Override
@@ -49,13 +50,13 @@ public class DelegateCDC implements CatanDataConnector {
     }
 
     @Override
-    public boolean createToken(Token token) throws CatanException {
-        return delegate.createToken(token);
+    public void createToken(Token token) throws CatanException {
+        delegate.createToken(token);
     }
 
     @Override
-    public boolean deleteToken(String id) throws CatanException {
-        return delegate.deleteToken(id);
+    public void deleteToken(String id) throws CatanException {
+        delegate.deleteToken(id);
     }
 
     @Override
@@ -64,12 +65,32 @@ public class DelegateCDC implements CatanDataConnector {
     }
 
     @Override
-    public boolean createBoard(Board board) throws CatanException {
-        return delegate.createBoard(board);
+    public void createBoard(Board board) throws CatanException {
+        delegate.createBoard(board);
     }
 
     @Override
-    public boolean deleteBoard(String id) throws CatanException {
-        return delegate.deleteBoard(id);
+    public void deleteBoard(String id) throws CatanException {
+        delegate.deleteBoard(id);
+    }
+
+    @Override
+    public State getState(String id, String etag) throws CatanException {
+        return delegate.getState(id, etag);
+    }
+
+    @Override
+    public void createState(State state) throws CatanException {
+        delegate.createState(state);
+    }
+
+    @Override
+    public void updateState(State state) throws CatanException {
+        delegate.updateState(state);
+    }
+
+    @Override
+    public void deleteState(String id, String etag) throws CatanException {
+        delegate.deleteState(id, etag);
     }
 }

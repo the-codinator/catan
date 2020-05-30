@@ -19,19 +19,19 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerResponseContext;
 import javax.ws.rs.container.ContainerResponseFilter;
 import javax.ws.rs.ext.Provider;
-import org.codi.catan.filter.ResponseETagFilter.ResponseFilterAnnotation;
+import org.codi.catan.filter.ETagHeaderFilter.ETagHeaderSupport;
 import org.codi.catan.model.core.StrongEntity;
 import org.codi.catan.util.Util;
 
 @Provider
 @Priority(Priorities.HEADER_DECORATOR - 1)
-@ResponseFilterAnnotation
-public class ResponseETagFilter implements ContainerResponseFilter {
+@ETagHeaderSupport
+public class ETagHeaderFilter implements ContainerResponseFilter {
 
     @NameBinding
     @Target({ElementType.TYPE, ElementType.METHOD})
     @Retention(value = RetentionPolicy.RUNTIME)
-    public @interface ResponseFilterAnnotation {
+    public @interface ETagHeaderSupport {
 
     }
 

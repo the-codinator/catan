@@ -18,9 +18,13 @@ import org.codi.catan.model.game.State;
 @Setter
 public class StateResponse extends BaseState {
 
+    public StateResponse(State state) {
+        this(state, state.getCurrentMove().getColor());
+    }
+
     public StateResponse(State state, Color color) {
         super(state.getId(), state.getPhase(), state.getHouses(), state.getRoads(), state.getThief(), state.getBank(),
-            state.getPlayedDevCards(), state.getCurrentMove(), state.getETag());
+            state.getPlayedDevCards(), state.getAchievements(), state.getCurrentMove(), state.getETag());
         Hand hand = state.getHand(color);
         this.hand = hand == null ? new Hand() : hand;
     }

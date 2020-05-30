@@ -1,4 +1,18 @@
-{
-  "id": "user1",
-  "pwd": "us3r1"
-}
+[
+  {
+    "id": "user1",
+    "pwd": "us3r1"
+  },
+  {
+    "id": "user2",
+    "pwd": "us3r2"
+  },
+  {
+    "id": "user3",
+    "pwd": "us3r3"
+  },
+  {
+    "id": "user4",
+    "pwd": "us3r4"
+  }
+]

@@ -28,10 +28,19 @@ Health Check
 ---
 
 Ping the application to check live-ness at `/ping` \
-To see your applications health enter url `http://localhost:8081/healthcheck` \
-This is also proxied at `/health` for external access
+To see your applications health enter url `http://localhost:8081/healthcheck` (default DW admin API) \
+This is also available at `/healthcheck` for external access
 
 Swagger
 ---
 
 View Swagger docs at `/swagger`
+
+Implementation TODOs
+---
+
+- Dynamo DB integration
+- Moves & Trades API
+- Admin APIs 
+- Long Poll for GET State
+- Server Hosting

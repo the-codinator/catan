@@ -10,6 +10,7 @@ public class Constants {
     // Headers, Params, etc
     public static final String HEADER_AUTHORIZATION = "Authorization";
     public static final String HEADER_ETAG = "ETag";
+    public static final String HEADER_IF_MATCH = "If-Match";
     public static final String HEADER_IF_NONE_MATCH = "If-None-Match";
     public static final String HEADER_REQUEST_ID = "X-Request-Id";
     public static final String PARAM_GAME_ID = "game";

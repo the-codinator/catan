@@ -9,5 +9,6 @@ public enum Phase {
     setup1,
     setup2,
     standard,
+    thief,
     end
 }

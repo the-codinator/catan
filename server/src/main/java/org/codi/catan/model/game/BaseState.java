@@ -36,6 +36,8 @@ public class BaseState implements IdentifiableEntity, StrongEntity {
     private EnumMap<Resource, Integer> bank;
     @JsonInclude(Include.NON_NULL)
     private EnumMap<Color, List<DevCard>> playedDevCards;
+    @JsonInclude(Include.NON_NULL)
+    private EnumMap<AchievementType, AchievementValue> achievements;
     private CurrentMove currentMove;
     @SuppressWarnings("checkstyle:MemberName")
     private String eTag;

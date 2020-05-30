@@ -16,7 +16,7 @@ import lombok.Setter;
 public class Trade { // TODO:
 
     // Trade ID is defined by its index in State.currentMove.trades
-    private String partner;
+    private Color partner;
     private boolean offeredByPartner;
     @JsonInclude(Include.NON_NULL)
     private EnumMap<Resource, Integer> turnResources;

@@ -5,6 +5,7 @@
 
 package org.codi.catan.model.response;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 import org.codi.catan.model.core.StrongEntity;
@@ -26,4 +27,10 @@ public class GameResponse implements StrongEntity {
     @SuppressWarnings("checkstyle:MemberName")
     @Setter
     private String eTag;
+
+    @Override
+    @JsonIgnore
+    public String getETag() {
+        return this.eTag;
+    }
 }

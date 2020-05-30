@@ -26,7 +26,7 @@ import org.codi.catan.core.CatanExceptionMapper;
 import org.codi.catan.core.GuiceDI;
 import org.codi.catan.filter.CatanAuthFilter;
 import org.codi.catan.filter.RequestIdAndAccessLogFilter;
-import org.codi.catan.filter.ResponseETagFilter;
+import org.codi.catan.filter.ETagHeaderFilter;
 import org.codi.catan.model.user.User;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
@@ -87,7 +87,7 @@ public class App extends Application<CatanConfiguration> {
         logger.debug("[ BOOT ] Health Checks configured");
 
         // Filters
-        registerJerseyDI(ResponseETagFilter.class);
+        registerJerseyDI(ETagHeaderFilter.class);
         registerJerseyDI(RequestIdAndAccessLogFilter.class);
         logger.debug("[ BOOT ] Filters configured");
 

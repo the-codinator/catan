@@ -1,8 +1,9 @@
 #!/bin/bash -e
 
 DIR=example
-SCRIPT=init.js
-SERVER=$1
+SCRIPT=test.js
+SIGNUP=$1 # true
+SERVER=$2 # http://localhost:8080
 
 if [ -d "${DIR}" ]; then
   cd ${DIR}
@@ -13,4 +14,4 @@ if [ ! -d "node_modules" ]; then
   rm -f package-lock.json
 fi
 
-node ${SCRIPT} ${SERVER}
+node ${SCRIPT} "signup=${SIGNUP}" "server=${SERVER}"

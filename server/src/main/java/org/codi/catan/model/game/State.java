@@ -29,7 +29,7 @@ public class State extends BaseState {
      */
     public State(String id, Color color, int thief) throws CatanException {
         super(id, Phase.setup1, Collections.emptyList(), Collections.emptyList(), thief, Resource.createNewBank(),
-            new EnumMap<>(Color.class), new CurrentMove(color), null);
+            new EnumMap<>(Color.class), new EnumMap<>(AchievementType.class), new CurrentMove(color), null);
         this.bankDevCards = DevCard.createRandomInitial();
         hands = new EnumMap<>(Color.class);
     }

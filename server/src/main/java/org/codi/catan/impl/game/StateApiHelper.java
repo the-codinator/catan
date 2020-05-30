@@ -17,14 +17,14 @@ import org.codi.catan.model.game.State;
 import org.codi.catan.model.response.StateResponse;
 
 @Singleton
-public class StateHelper {
+public class StateApiHelper {
 
-    private final FindUtility findUtility;
+    private final GameUtility gameUtility;
     private final CatanDataConnector dataConnector;
 
     @Inject
-    public StateHelper(FindUtility findUtility, CatanDataConnector dataConnector) {
-        this.findUtility = findUtility;
+    public StateApiHelper(GameUtility gameUtility, CatanDataConnector dataConnector) {
+        this.gameUtility = gameUtility;
         this.dataConnector = dataConnector;
     }
 
@@ -32,7 +32,7 @@ public class StateHelper {
      * Create default game state from a valid {@param board}
      */
     public State createState(Board board) throws CatanException {
-        State state = new State(board.getId(), board.getPlayers()[0].getColor(), findUtility.findThief(board));
+        State state = new State(board.getId(), board.getPlayers()[0].getColor(), gameUtility.findThief(board));
         try {
             dataConnector.createState(state);
         } catch (CatanException e) {

@@ -20,11 +20,8 @@ import lombok.Setter;
 public class CurrentMove {
 
     private Color color;
-    @JsonInclude(Include.NON_DEFAULT)
-    private int roll;
+    private Roll roll;
     private DevCard devCard;
-    @JsonInclude(Include.NON_DEFAULT)
-    private boolean thiefMove;
     private List<Trade> trades;
 
     public CurrentMove(Color color) {

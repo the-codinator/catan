@@ -29,9 +29,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import org.codi.catan.core.CatanException;
-import org.codi.catan.filter.ResponseETagFilter.ResponseFilterAnnotation;
+import org.codi.catan.filter.ETagHeaderFilter.ETagHeaderSupport;
 import org.codi.catan.impl.game.LayoutHelper;
-import org.codi.catan.impl.game.StateHelper;
+import org.codi.catan.impl.game.StateApiHelper;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
 import org.codi.catan.model.response.GameResponse;
@@ -46,19 +46,19 @@ import org.codi.catan.model.user.User;
 public class BoardApi {
 
     private final LayoutHelper layoutHelper;
-    private final StateHelper stateHelper;
+    private final StateApiHelper stateApiHelper;
 
     @Inject
-    public BoardApi(LayoutHelper layoutHelper, StateHelper stateHelper) {
+    public BoardApi(LayoutHelper layoutHelper, StateApiHelper stateApiHelper) {
         this.layoutHelper = layoutHelper;
-        this.stateHelper = stateHelper;
+        this.stateApiHelper = stateApiHelper;
     }
 
     @POST
     public GameResponse create(@ApiParam(hidden = true) @Auth User user, Board board) throws CatanException {
         board = layoutHelper.createBoard(board, user.getId());
-        State state = stateHelper.createState(board);
-        StateResponse stateResponse = stateHelper.createStateResponse(state, board, user.getId());
+        State state = stateApiHelper.createState(board);
+        StateResponse stateResponse = stateApiHelper.createStateResponse(state, board, user.getId());
         return new GameResponse(board, stateResponse);
     }
 
@@ -67,8 +67,8 @@ public class BoardApi {
     public GameResponse get(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId)
         throws CatanException {
         Board board = board(gameId);
-        State state = stateHelper.getState(gameId, null);
-        StateResponse stateResponse = stateHelper.createStateResponse(state, board, user.getId());
+        State state = stateApiHelper.getState(gameId, null);
+        StateResponse stateResponse = stateApiHelper.createStateResponse(state, board, user.getId());
         return new GameResponse(board, stateResponse);
     }
 
@@ -80,10 +80,10 @@ public class BoardApi {
 
     @GET
     @Path(PATH_STATE)
-    @ResponseFilterAnnotation
+    @ETagHeaderSupport
     public StateResponse state(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
         @HeaderParam(HEADER_IF_NONE_MATCH) String etag) throws CatanException {
-        State state = stateHelper.getState(gameId, etag);
-        return stateHelper.createStateResponse(state, null, user.getId());
+        State state = stateApiHelper.getState(gameId, etag);
+        return stateApiHelper.createStateResponse(state, null, user.getId());
     }
 }

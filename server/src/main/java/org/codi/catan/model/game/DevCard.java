@@ -9,8 +9,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import org.codi.catan.core.CatanException;
-import org.codi.catan.model.request.DevCardRequest;
 
 @AllArgsConstructor
 public enum DevCard {
@@ -26,12 +26,18 @@ public enum DevCard {
     market,
     university;
 
+    DevCard(int count) {
+        this(count, false);
+    }
+
     DevCard() {
-        this(1);
+        this(1, true);
     }
 
     private static final int TOTAL_COUNT = 25;
     private final int count;
+    @Getter
+    private final boolean victoryPoint;
 
     /**
      * Create a random list of dev cards for the bank of a new game
@@ -48,25 +54,5 @@ public enum DevCard {
         }
         Collections.shuffle(list);
         return list;
-    }
-
-    /**
-     * Play a dev card and mutate the game's state as per its rules
-     */
-    public static void playCard(DevCardRequest input, State state) { // TODO:
-        DevCard devCard = input.getDevCard();
-        // Update state based on dev card's rules. player from state.getCurrentTurn. check state.currentMove.devCard
-        switch (devCard) {
-            case knight:
-                break;
-            case road_building:
-                break;
-            case year_of_plenty:
-                break;
-            case monopoly:
-                break;
-            default:
-                // Victory cards cannot be played! They are revealed on game end...
-        }
     }
 }

@@ -19,19 +19,20 @@ import org.codi.catan.model.response.StateResponse;
 @Singleton
 public class StateHelper {
 
+    private final FindUtility findUtility;
     private final CatanDataConnector dataConnector;
 
     @Inject
-    public StateHelper(CatanDataConnector dataConnector) {
+    public StateHelper(FindUtility findUtility, CatanDataConnector dataConnector) {
+        this.findUtility = findUtility;
         this.dataConnector = dataConnector;
     }
 
     /**
-     * Create default game state from {@param board}
+     * Create default game state from a valid {@param board}
      */
     public State createState(Board board) throws CatanException {
-        State state = new State(board.getId());
-        // TODO:
+        State state = new State(board.getId(), board.getPlayers()[0].getColor(), findUtility.findThief(board));
         try {
             dataConnector.createState(state);
         } catch (CatanException e) {
@@ -82,8 +83,5 @@ public class StateHelper {
                 throw e;
             }
         }
-    }
-
-    public void validateState(State state) { // TODO:
     }
 }

@@ -17,12 +17,12 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <java.version>11</java.version>
-    <mainClass>org.codi.catan.Application</mainClass>
+    <mainClass>org.codi.catan.App</mainClass>
     <!-- Versions -->
     <aws.sdk.version>1.11.786</aws.sdk.version>
     <checkstyle.version>3.1.1</checkstyle.version>
     <compiler.plugin.version>3.8.1</compiler.plugin.version>
-    <dropwizard.version>2.0.9</dropwizard.version>
+    <dropwizard.version>2.0.10</dropwizard.version>
     <guava.version>29.0-jre</guava.version>
     <guice.version>4.2.3</guice.version>
     <jackson.version>2.11.0</jackson.version>
@@ -49,6 +49,14 @@
       <groupId>io.dropwizard</groupId>
       <artifactId>dropwizard-core</artifactId>
     </dependency>
+
+    <!--
+    <dependency>
+      <groupId>io.dropwizard</groupId>
+      <artifactId>dropwizard-client</artifactId>
+      <version>${dropwizard.version}</version>
+    </dependency>
+    -->
 
     <dependency>
       <groupId>com.fasterxml.jackson.core</groupId>

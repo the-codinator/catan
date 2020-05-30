@@ -24,3 +24,12 @@ swagger:
 dynamodb:
   key: ${AWS_ACCESS_KEY_ID}
   secret: ${AWS_SECRET_ACCESS_KEY}
+#httpClient:
+#  timeout: 10s
+#  connectionTimeout: 1s
+#  connectionRequestTimeout: 1s
+#  timeToLive: 1d
+#  cookiesEnabled: false
+#  maxConnections: 1024
+#  maxConnectionsPerRoute: 1024
+#  keepAlive: 10s

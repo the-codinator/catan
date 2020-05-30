@@ -6,6 +6,7 @@
 package org.codi.catan;
 
 import com.codahale.metrics.health.HealthCheck;
+import io.dropwizard.Application;
 import io.dropwizard.auth.AuthDynamicFeature;
 import io.dropwizard.auth.AuthValueFactoryProvider;
 import io.dropwizard.setup.Bootstrap;
@@ -31,15 +32,15 @@ import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Application extends io.dropwizard.Application<CatanConfiguration> {
+public class App extends Application<CatanConfiguration> {
 
-    private static final Logger logger = LoggerFactory.getLogger(Application.class);
+    private static final Logger logger = LoggerFactory.getLogger(App.class);
 
     private Environment environment;
 
     public static void main(String[] args) throws Exception {
         logger.debug("--- Starting Application ---");
-        new Application().run(args);
+        new App().run(args);
     }
 
     @Override

@@ -52,7 +52,7 @@ public class LayoutHelper {
     /**
      * Normalize and validate created {@param board}, ensuring {@param author} is also a player
      */
-    public Board create(Board board, String author) throws CatanException {
+    public Board createBoard(Board board, String author) throws CatanException {
         normalizeAndValidateBoard(board);
         boolean hasAuthor = false;
         for (Player player : board.getPlayers()) {

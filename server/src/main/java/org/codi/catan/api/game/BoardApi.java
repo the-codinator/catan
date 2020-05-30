@@ -56,9 +56,10 @@ public class BoardApi {
 
     @POST
     public GameResponse create(@ApiParam(hidden = true) @Auth User user, Board board) throws CatanException {
-        board = layoutHelper.create(board, user.getId());
+        board = layoutHelper.createBoard(board, user.getId());
         State state = stateHelper.createState(board);
-        return new GameResponse(board, stateHelper.createStateResponse(state, board, user.getId()));
+        StateResponse stateResponse = stateHelper.createStateResponse(state, board, user.getId());
+        return new GameResponse(board, stateResponse);
     }
 
     @GET
@@ -66,8 +67,9 @@ public class BoardApi {
     public GameResponse get(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId)
         throws CatanException {
         Board board = board(gameId);
-        StateResponse state = state(user, gameId, null);
-        return new GameResponse(board, state);
+        State state = stateHelper.getState(gameId, null);
+        StateResponse stateResponse = stateHelper.createStateResponse(state, board, user.getId());
+        return new GameResponse(board, stateResponse);
     }
 
     @GET
@@ -81,6 +83,7 @@ public class BoardApi {
     @ResponseFilterAnnotation
     public StateResponse state(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
         @HeaderParam(HEADER_IF_NONE_MATCH) String etag) throws CatanException {
-        return stateHelper.createStateResponse(stateHelper.getState(gameId, etag), null, user.getId());
+        State state = stateHelper.getState(gameId, etag);
+        return stateHelper.createStateResponse(state, null, user.getId());
     }
 }

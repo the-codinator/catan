@@ -9,6 +9,7 @@ import static org.codi.catan.util.Constants.DELEGATE;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.health.HealthCheck;
+import com.codahale.metrics.health.HealthCheckRegistry;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
@@ -37,11 +38,13 @@ public class GuiceDI extends AbstractModule {
     private static Injector injector = null;
     private final ObjectMapper mapper;
     private final MetricRegistry metrics;
+    private final HealthCheckRegistry health;
     private final CatanConfiguration configuration;
 
     private GuiceDI(Environment environment, CatanConfiguration configuration) {
         this.mapper = environment.getObjectMapper();
         this.metrics = environment.metrics();
+        this.health = environment.healthChecks();
         this.configuration = configuration;
     }
 
@@ -49,6 +52,7 @@ public class GuiceDI extends AbstractModule {
     protected void configure() {
         bind(ObjectMapper.class).toInstance(mapper);
         bind(MetricRegistry.class).toInstance(metrics);
+        bind(HealthCheckRegistry.class).toInstance(health);
         bind(CatanConfiguration.class).toInstance(configuration);
         Multibinder<HealthCheck> health = Multibinder.newSetBinder(binder(), HealthCheck.class);
         if (isAwsEnabled()) {
@@ -68,7 +72,7 @@ public class GuiceDI extends AbstractModule {
     }
 
     /**
-     * Create an injector for DI using Google Guice
+     * Create an injector for DI using Google Guice1
      * Fail on attempting to re-create
      */
     public static void setup(CatanConfiguration configuration, Environment environment) {

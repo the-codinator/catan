@@ -5,6 +5,7 @@
 
 package org.codi.catan.model.game;
 
+import java.util.EnumMap;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
@@ -21,5 +22,14 @@ public enum Resource {
     rock(3),
     wood(4);
 
+    private static final int RESOURCE_COUNT = 19;
     private final int tileCount;
+
+    public static EnumMap<Resource, Integer> createNewBank() {
+        EnumMap<Resource, Integer> map = new EnumMap<>(Resource.class);
+        for (Resource r : values()) {
+            map.put(r, RESOURCE_COUNT);
+        }
+        return map;
+    }
 }

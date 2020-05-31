@@ -19,6 +19,7 @@
   const fetch = require('node-fetch');
   const authTokens = [];
   let id = undefined;
+  let board = undefined;
   let etag;
   let tag;
 
@@ -45,11 +46,11 @@
     log(`[PASS] ${tag}`);
   }
 
-  async function callWithData(api, body) {
+  async function callWithData(user, api, body) {
     api = api.replace('/id', `/${id}`);
-    const data = {headers: {}};
-    if (authTokens.length === 4) {
-      data.headers.authorization = `Bearer ${authTokens[0]}`
+    const data = {headers: {accept: 'application/json'}};
+    if (typeof user === 'number') {
+      data.headers.authorization = `Bearer ${authTokens[user]}`
     }
     if (body) {
       data.method = 'POST';
@@ -64,59 +65,57 @@
     if (!response.ok) {
       log(`[FAIL] ${tag}`);
       console.log();
-      console.error('API call failed', JSON.stringify({api, data, response: await response.json()}, null, 2));
+      console.error('API call failed', JSON.stringify({user, api, data, response: await response.json()}, null, 2));
       throw Error('API call failed');
     }
     etag = response.headers.get('ETag') || etag;
     return response.json();
   }
 
-  async function callFromFile(api, file, func) {
+  async function callFromFile(file, func) {
     start(file);
-    const data = json(file);
-
-    async function callForOne(api, body) {
-      const resp = await callWithData(api, body);
+    for (const data of json(file)) {
+      const resp = await callWithData(data.user, data.api, data.body);
       func && func(resp);
     }
-
-    if (Array.isArray(data)) {
-      for (const body of data) {
-        await callForOne(api, body);
-        authTokens.push(authTokens.shift());
-      }
-    } else {
-      await callForOne(api, data);
-    }
     pass();
+  }
+
+  function assertState(state, file) {
+    const expected = json(file);
+    expected.id = id;
+    if (JSON.stringify(state) !== JSON.stringify(expected)) {
+      throw Error('State did not match expected');
+    }
+    log('[PASS] State Match Check');
   }
 
   log('Starting test...');
 
   // Create users
   if (args.signup !== 'false') {
-    await callFromFile('/user/signup', 'signup')
+    await callFromFile('signup')
   }
 
   // Login
-  await callFromFile('/user/login', 'login', resp => authTokens.push(resp.access_token));
-  log('Token - user1', `Bearer ${authTokens[0]}`);
+  await callFromFile('login', resp => authTokens.push(resp.access_token));
+  log('Token - user0', `Bearer ${authTokens[0]}`);
 
   // Game
-  await callFromFile('/game', 'board', resp => id = resp.id);
+  await callFromFile('board', resp => {
+    id = resp.id;
+    board = resp.board;
+  });
   log('Game id', id);
 
   start('get game')
-  await callWithData(`/game/${id}`);
+  await callWithData(0, '/game/id');
   pass();
 
-  // Setup 1
-  // TODO:
+  // Setup
+  await callFromFile('setup');
 
-  // Setup 2
-  authTokens.reverse();
-  // TODO:
-  authTokens.reverse();
+  assertState(await callWithData(0, '/game/id/state'), 'postSetupState');
 
   // TODO:
 })();

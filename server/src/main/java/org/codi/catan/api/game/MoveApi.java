@@ -132,8 +132,8 @@ public class MoveApi { // TODO:
     @POST
     @Path(PATH_END)
     public StateResponse end(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag) {
-        // Note: for this guy, first create the StateResponse, and then update current move
-        return null;
+        @HeaderParam(HEADER_IF_MATCH) String etag) throws CatanException {
+        return moveApiHelper.play(user.getId(), gameId, etag, miscMoveHelper::endTurn, Phase.setup1, Phase.setup2,
+            Phase.gameplay);
     }
 }

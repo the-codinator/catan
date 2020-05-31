@@ -6,14 +6,15 @@
 package org.codi.catan.util;
 
 import java.util.Base64;
+import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.function.Predicate;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.core.Response.Status;
-import javax.ws.rs.core.SecurityContext;
 import org.codi.catan.core.CatanException;
-import org.codi.catan.model.user.User;
+import org.codi.catan.model.core.IdentifiableEntity;
 
 public class Util {
 
@@ -58,5 +59,63 @@ public class Util {
 
     public static boolean isOkStatus(int status) {
         return status / 100 == 2;
+    }
+
+    /**
+     * Update the count of a [key -> count] frequency map by adding delta
+     * Seed count value = 0 for missing keys
+     */
+    public static <T> void addToFrequencyMap(Map<T, Integer> map, T key, int delta) {
+        map.merge(key, delta, Integer::sum);
+    }
+
+    /**
+     * Search utility
+     *
+     * @return element in {@param iterable} matching {@param predicate}
+     */
+    public static <T> T find(Iterable<T> iterable, Predicate<T> predicate) {
+        if (iterable != null) {
+            for (T t : iterable) {
+                if (predicate.test(t)) {
+                    return t;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Search utility
+     *
+     * @return element in {@param iterable} identified by {@param id}
+     */
+    public static <T extends IdentifiableEntity> T find(Iterable<T> iterable, String id) {
+        return id == null ? null : find(iterable, t -> id.equals(t.getId()));
+    }
+
+    /**
+     * Search utility
+     *
+     * @return element in {@param arr} matching {@param predicate}
+     */
+    public static <T> int find(T[] arr, Predicate<T> predicate) {
+        if (arr != null) {
+            for (int i = 0; i < arr.length; i++) {
+                if (predicate.test(arr[i])) {
+                    return i;
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Search utility
+     *
+     * @return element in {@param arr} identified by {@param id}
+     */
+    public static <T extends IdentifiableEntity> int find(T[] arr, String id) {
+        return id == null ? -1 : find(arr, t -> id.equals(t.getId()));
     }
 }

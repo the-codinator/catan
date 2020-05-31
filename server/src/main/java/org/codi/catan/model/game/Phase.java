@@ -8,7 +8,7 @@ package org.codi.catan.model.game;
 public enum Phase {
     setup1,
     setup2,
-    standard,
+    gameplay,
     thief,
     end
 }

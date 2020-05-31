@@ -1,132 +1,138 @@
-{
-  "id": "string",
-  "tiles": [
-    {
-      "resource": "sheep",
-      "roll": 2
-    },
-    {
-      "resource": "wood",
-      "roll": 9
-    },
-    {
-      "resource": "brick",
-      "roll": 10
-    },
-    {
-      "resource": "rock",
-      "roll": 8
-    },
-    {
-      "resource": "sheep",
-      "roll": 5
-    },
-    {
-      "resource": "sheep",
-      "roll": 11
-    },
-    {
-      "resource": "hay",
-      "roll": 6
-    },
-    {
-      "resource": "brick",
-      "roll": 5
-    },
-    {
-      "resource": "wood",
-      "roll": 8
-    },
-    {
-      "resource": "hay",
-      "roll": 9
-    },
-    {
-      "resource": "hay",
-      "roll": 12
-    },
-    {
-      "resource": "rock",
-      "roll": 10
-    },
-    {
-      "resource": "sheep",
-      "roll": 4
-    },
-    {
-      "resource": "wood",
-      "roll": 3
-    },
-    {
-      "resource": "hay",
-      "roll": 4
-    },
-    {
-      "resource": "rock",
-      "roll": 3
-    },
-    {
-      "resource": "wood",
-      "roll": 11
-    },
-    {
-      "resource": "brick",
-      "roll": 6
-    },
-    {
-      "resource": null
+[
+  {
+    "user": 0,
+    "api": "/game",
+    "body": {
+      "id": "string",
+      "tiles": [
+        {
+          "resource": "sheep",
+          "roll": 2
+        },
+        {
+          "resource": "wood",
+          "roll": 9
+        },
+        {
+          "resource": "brick",
+          "roll": 10
+        },
+        {
+          "resource": "rock",
+          "roll": 8
+        },
+        {
+          "resource": "sheep",
+          "roll": 5
+        },
+        {
+          "resource": "sheep",
+          "roll": 11
+        },
+        {
+          "resource": "hay",
+          "roll": 6
+        },
+        {
+          "resource": "brick",
+          "roll": 5
+        },
+        {
+          "resource": "wood",
+          "roll": 8
+        },
+        {
+          "resource": "hay",
+          "roll": 9
+        },
+        {
+          "resource": "hay",
+          "roll": 12
+        },
+        {
+          "resource": "rock",
+          "roll": 10
+        },
+        {
+          "resource": "sheep",
+          "roll": 4
+        },
+        {
+          "resource": "wood",
+          "roll": 3
+        },
+        {
+          "resource": "hay",
+          "roll": 4
+        },
+        {
+          "resource": "rock",
+          "roll": 3
+        },
+        {
+          "resource": "wood",
+          "roll": 11
+        },
+        {
+          "resource": "brick",
+          "roll": 6
+        },
+        {
+          "resource": null
+        }
+      ],
+      "ports": [
+        {
+          "resource": "hay",
+          "vertex": 0
+        },
+        {
+          "resource": "rock",
+          "vertex": 4
+        },
+        {
+          "vertex": 7
+        },
+        {
+          "resource": "sheep",
+          "vertex": 10
+        },
+        {
+          "vertex": 14
+        },
+        {
+          "vertex": 17
+        },
+        {
+          "resource": "brick",
+          "vertex": 20
+        },
+        {
+          "resource": "wood",
+          "vertex": 24
+        },
+        {
+          "vertex": 27
+        }
+      ],
+      "players": [
+        {
+          "id": "user0",
+          "color": "red"
+        },
+        {
+          "id": "user1",
+          "color": "blue"
+        },
+        {
+          "id": "user2",
+          "color": "orange"
+        },
+        {
+          "id": "user3",
+          "color": "white"
+        }
+      ]
     }
-  ],
-  "ports": [
-    {
-      "resource": "hay",
-      "vertex": 0
-    },
-    {
-      "resource": "rock",
-      "vertex": 4
-    },
-    {
-      "vertex": 7
-    },
-    {
-      "resource": "sheep",
-      "vertex": 10
-    },
-    {
-      "vertex": 14
-    },
-    {
-      "vertex": 17
-    },
-    {
-      "resource": "brick",
-      "vertex": 20
-    },
-    {
-      "resource": "wood",
-      "vertex": 24
-    },
-    {
-      "vertex": 27
-    }
-  ],
-  "players": [
-    {
-      "id": "user2",
-      "color": "red"
-    },
-    {
-      "id": "user3",
-      "color": "blue"
-    },
-    {
-      "id": "user1",
-      "color": "orange"
-    },
-    {
-      "id": "user4",
-      "color": "white"
-    }
-  ]
-}
+  }
+]

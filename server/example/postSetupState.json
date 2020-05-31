@@ -1,0 +1,119 @@
+{
+  "id": "",
+  "phase": "gameplay",
+  "houses": [
+    {
+      "color": "red",
+      "type": "settlement",
+      "vertex": 11
+    },
+    {
+      "color": "blue",
+      "type": "settlement",
+      "vertex": 43
+    },
+    {
+      "color": "orange",
+      "type": "settlement",
+      "vertex": 39
+    },
+    {
+      "color": "white",
+      "type": "settlement",
+      "vertex": 35
+    },
+    {
+      "color": "white",
+      "type": "settlement",
+      "vertex": 45
+    },
+    {
+      "color": "orange",
+      "type": "settlement",
+      "vertex": 32
+    },
+    {
+      "color": "blue",
+      "type": "settlement",
+      "vertex": 41
+    },
+    {
+      "color": "red",
+      "type": "settlement",
+      "vertex": 30
+    }
+  ],
+  "roads": [
+    {
+      "color": "red",
+      "vertex1": 11,
+      "vertex2": 37
+    },
+    {
+      "color": "blue",
+      "vertex1": 43,
+      "vertex2": 42
+    },
+    {
+      "color": "orange",
+      "vertex1": 39,
+      "vertex2": 38
+    },
+    {
+      "color": "white",
+      "vertex1": 35,
+      "vertex2": 34
+    },
+    {
+      "color": "white",
+      "vertex1": 45,
+      "vertex2": 44
+    },
+    {
+      "color": "orange",
+      "vertex1": 32,
+      "vertex2": 31
+    },
+    {
+      "color": "blue",
+      "vertex1": 41,
+      "vertex2": 40
+    },
+    {
+      "color": "red",
+      "vertex1": 30,
+      "vertex2": 47
+    }
+  ],
+  "thief": 18,
+  "bank": {
+    "brick": 15,
+    "hay": 18,
+    "sheep": 16,
+    "rock": 18,
+    "wood": 16
+  },
+  "playedDevCards": {},
+  "achievements": {
+    "longest_road": {
+      "color": null,
+      "count": 4
+    },
+    "largest_army": {
+      "color": null,
+      "count": 2
+    }
+  },
+  "currentMove": {
+    "color": "red",
+    "trades": []
+  },
+  "hand": {
+    "resources": {
+      "brick": 1,
+      "sheep": 2
+    },
+    "devCards": [],
+    "handCount": 3
+  }
+}

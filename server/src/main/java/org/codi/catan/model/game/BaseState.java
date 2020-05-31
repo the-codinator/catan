@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.EnumMap;
+import java.util.LinkedList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -22,10 +23,6 @@ import org.codi.catan.model.core.StrongEntity;
 @Getter
 @Setter
 public class BaseState implements IdentifiableEntity, StrongEntity {
-
-    public BaseState(String id) {
-        this.id = id;
-    }
 
     private String id;
     private Phase phase;
@@ -46,5 +43,9 @@ public class BaseState implements IdentifiableEntity, StrongEntity {
     @JsonIgnore
     public String getETag() {
         return this.eTag;
+    }
+
+    public void addPlayedDevCard(Color color, DevCard devCard) {
+        playedDevCards.computeIfAbsent(color, __ -> new LinkedList<>()).add(devCard);
     }
 }

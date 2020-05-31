@@ -12,5 +12,9 @@ import org.codi.catan.model.game.State;
 @FunctionalInterface
 public interface MoveRequestHandler<T> {
 
+    default boolean shouldValidateInput() {
+        return true;
+    }
+
     void play(Board board, State state, T request) throws CatanException;
 }

@@ -32,7 +32,7 @@ public class StateApiHelper {
      * Create default game state from a valid {@param board}
      */
     public State createState(Board board) throws CatanException {
-        State state = new State(board.getId(), board.getPlayers()[0].getColor(), gameUtility.findThief(board));
+        State state = new State(board.getId(), board.getPlayers()[0].getColor(), gameUtility.findDesert(board));
         try {
             dataConnector.createState(state);
         } catch (CatanException e) {

@@ -5,14 +5,18 @@
 
 package org.codi.catan.model.game;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@AllArgsConstructor
+@NoArgsConstructor
 @Getter
 @Setter
 public class House {
 
-    private HouseType type;
     private Color color;
+    private HouseType type;
     private int vertex;
 }

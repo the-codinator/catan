@@ -9,6 +9,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.Collections;
 import java.util.EnumMap;
+import java.util.LinkedList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,15 +27,20 @@ public class State extends BaseState {
 
     /**
      * Create the default state for a new board with starting player {@param color} and {@param thief} tile position
+     * Initialize everything so that we don't need to deal with nulls (except inside maps)
      */
     public State(String id, Color color, int thief) throws CatanException {
         super(id, Phase.setup1, Collections.emptyList(), Collections.emptyList(), thief, Resource.createNewBank(),
             new EnumMap<>(Color.class), new EnumMap<>(AchievementType.class), new CurrentMove(color), null);
         this.bankDevCards = DevCard.createRandomInitial();
-        hands = new EnumMap<>(Color.class);
+        this.hands = new EnumMap<>(Color.class);
+        for (AchievementType type : AchievementType.values()) {
+            this.getAchievements().put(type, new AchievementValue(type.getThreshold()));
+        }
     }
 
     public Hand getHand(Color color) {
-        return color == null || hands == null ? null : hands.get(color);
+        return color == null ? null
+            : hands.computeIfAbsent(color, __ -> new Hand(new EnumMap<>(Resource.class), new LinkedList<>()));
     }
 }

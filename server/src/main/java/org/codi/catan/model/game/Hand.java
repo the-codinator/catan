@@ -7,11 +7,16 @@ package org.codi.catan.model.game;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@AllArgsConstructor
+@NoArgsConstructor
+@Getter
 @Setter
 public class Hand {
 
@@ -19,17 +24,7 @@ public class Hand {
     private EnumMap<Resource, Integer> resources;
     private List<DevCard> devCards;
 
-    public EnumMap<Resource, Integer> getResources() {
-        if (resources == null) {
-            resources = new EnumMap<>(Resource.class);
-        }
-        return resources;
-    }
-
-    public List<DevCard> getDevCards() {
-        if (devCards == null) {
-            devCards = new ArrayList<>(1);
-        }
-        return devCards;
+    public int getHandCount() {
+        return resources.values().stream().mapToInt(x -> x).reduce(Integer::sum).orElse(0);
     }
 }

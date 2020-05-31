@@ -7,7 +7,7 @@ package org.codi.catan.model.game;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,6 +26,6 @@ public class CurrentMove {
 
     public CurrentMove(Color color) {
         this.color = color;
-        this.trades = new ArrayList<>(1);
+        this.trades = new LinkedList<>();
     }
 }

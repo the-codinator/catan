@@ -1,18 +1,30 @@
 [
   {
-    "id": "user1",
-    "pwd": "us3r1"
+    "api": "/user/login",
+    "body": {
+      "id": "user0",
+      "pwd": "us3r0"
+    }
   },
   {
-    "id": "user2",
-    "pwd": "us3r2"
+    "api": "/user/login",
+    "body": {
+      "id": "user1",
+      "pwd": "us3r1"
+    }
   },
   {
-    "id": "user3",
-    "pwd": "us3r3"
+    "api": "/user/login",
+    "body": {
+      "id": "user2",
+      "pwd": "us3r2"
+    }
   },
   {
-    "id": "user4",
-    "pwd": "us3r4"
+    "api": "/user/login",
+    "body": {
+      "id": "user3",
+      "pwd": "us3r3"
+    }
   }
 ]

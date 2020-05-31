@@ -1,0 +1,66 @@
+[
+  {
+    "user": 0,
+    "api": "/game/id/move/setup",
+    "body": {
+      "houseVertex": 11,
+      "roadVertex": 37
+    }
+  },
+  {
+    "user": 1,
+    "api": "/game/id/move/setup",
+    "body": {
+      "houseVertex": 43,
+      "roadVertex": 42
+    }
+  },
+  {
+    "user": 2,
+    "api": "/game/id/move/setup",
+    "body": {
+      "houseVertex": 39,
+      "roadVertex": 38
+    }
+  },
+  {
+    "user": 3,
+    "api": "/game/id/move/setup",
+    "body": {
+      "houseVertex": 35,
+      "roadVertex": 34
+    }
+  },
+  {
+    "user": 3,
+    "api": "/game/id/move/setup",
+    "body": {
+      "houseVertex": 45,
+      "roadVertex": 44
+    }
+  },
+  {
+    "user": 2,
+    "api": "/game/id/move/setup",
+    "body": {
+      "houseVertex": 32,
+      "roadVertex": 31
+    }
+  },
+  {
+    "user": 1,
+    "api": "/game/id/move/setup",
+    "body": {
+      "houseVertex": 41,
+      "roadVertex": 40
+    }
+  },
+  {
+    "user": 0,
+    "api": "/game/id/move/setup",
+    "body": {
+      "houseVertex": 30,
+      "roadVertex": 47
+    }
+  }
+]

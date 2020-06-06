@@ -1,10 +1,12 @@
 /*
  * @author the-codinator
- * created on 2020/5/28
+ * created on 2020/5/26
  */
 
 package org.codi.catan.model.game;
 
+import java.util.EnumMap;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +16,8 @@ import lombok.Setter;
 @AllArgsConstructor
 @Getter
 @Setter
-public class House {
+public class Ports {
 
-    private Color color;
-    private HouseType type;
+    private EnumMap<Resource, Integer> ports21;
+    private Set<Integer> ports31;
 }

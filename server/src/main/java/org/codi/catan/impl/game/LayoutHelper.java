@@ -12,9 +12,10 @@ import static org.codi.catan.util.Constants.MIN_ROLL_PER_DIE;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import java.util.Arrays;
-import java.util.Comparator;
+import java.util.EnumMap;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -25,7 +26,7 @@ import org.codi.catan.impl.user.UserApiHelper;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.Color;
 import org.codi.catan.model.game.Player;
-import org.codi.catan.model.game.Port;
+import org.codi.catan.model.game.Ports;
 import org.codi.catan.model.game.Resource;
 import org.codi.catan.model.game.Tile;
 import org.codi.catan.model.user.User;
@@ -133,33 +134,32 @@ public class LayoutHelper {
         }
     }
 
-    private void normalizeAndValidatePorts(Port[] ports) throws CatanException {
+    private void normalizeAndValidatePorts(Ports ports) throws CatanException {
         Util.validateInput(ports);
-        boolean[] portResource = new boolean[Resource.values().length];
-        for (Port port : ports) {
-            Util.validateInput(port);
-            port.setVertex(graphHelper.normalizeAndValidatePort(port.getVertex()));
-            if (port.getResource() != null) {
-                if (portResource[port.getResource().ordinal()]) {
-                    throw new CatanException("Port with duplicate resource", Status.BAD_REQUEST);
-                } else {
-                    portResource[port.getResource().ordinal()] = true;
-                }
+        EnumMap<Resource, Integer> ports21 = ports.getPorts21();
+        Set<Integer> ports31 = ports.getPorts31();
+        Util.validateInput(ports21);
+        Util.validateInput(ports31);
+        if (ports21.size() != Resource.values().length) {
+            throw new CatanException("Incorrect 2:1 resource port definition", Status.BAD_REQUEST);
+        }
+        if (ports31.size() != graphHelper.getPortCount() - Resource.values().length) {
+            throw new CatanException("Incorrect 3:1 port definition", Status.BAD_REQUEST);
+        }
+        Set<Integer> normalizedPorts31 = new TreeSet<>(); // TreeSet to maintain order during initial creation
+        for (int vertex : ports31) {
+            normalizedPorts31.add(graphHelper.normalizeAndValidatePort(vertex));
+        }
+        ports.setPorts31(normalizedPorts31);
+        for (Resource resource : Resource.values()) {
+            int vertex = ports21.get(resource);
+            int normalizedVertex = graphHelper.normalizeAndValidatePort(vertex);
+            if (normalizedPorts31.contains(normalizedVertex)) {
+                throw new CatanException("Duplicate port vertex in 2:1 and 3:1", Status.BAD_REQUEST);
             }
-        }
-        for (int i = 0; i < portResource.length; i++) {
-            if (!portResource[i]) {
-                throw new CatanException("Resource port missing - " + Resource.values()[i], Status.BAD_REQUEST);
+            if (vertex != normalizedVertex) {
+                ports21.put(resource, vertex);
             }
-        }
-        Arrays.sort(ports, Comparator.comparingInt(Port::getVertex));
-        if (ports[0].getVertex() < 0) {
-            throw new CatanException(
-                "Invalid port vertices, allowed=" + Arrays.toString(graphHelper.getPortVertexList()),
-                Status.BAD_REQUEST);
-        }
-        if (!Arrays.equals(Arrays.stream(ports).mapToInt(Port::getVertex).toArray(), graphHelper.getPortVertexList())) {
-            throw new CatanException("Invalid number of 3:1 ports", Status.BAD_REQUEST);
         }
     }
 

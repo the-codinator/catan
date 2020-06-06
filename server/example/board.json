@@ -81,40 +81,21 @@
           "resource": null
         }
       ],
-      "ports": [
-        {
-          "resource": "hay",
-          "vertex": 0
+      "ports": {
+        "ports21": {
+          "brick": 20,
+          "hay": 0,
+          "rock": 4,
+          "sheep": 10,
+          "wood": 24
         },
-        {
-          "resource": "rock",
-          "vertex": 4
-        },
-        {
-          "vertex": 7
-        },
-        {
-          "resource": "sheep",
-          "vertex": 10
-        },
-        {
-          "vertex": 14
-        },
-        {
-          "vertex": 17
-        },
-        {
-          "resource": "brick",
-          "vertex": 20
-        },
-        {
-          "resource": "wood",
-          "vertex": 24
-        },
-        {
-          "vertex": 27
-        }
-      ],
+        "ports31": [
+          14,
+          7,
+          17,
+          27
+        ]
+      },
       "players": [
         {
           "id": "user0",

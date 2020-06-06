@@ -58,10 +58,6 @@ public class GameUtility {
         return desert;
     }
 
-    public House getHouseOnVertex(State state, int vertex) {
-        return Util.find(state.getHouses(), h -> h.getVertex() == vertex);
-    }
-
     /**
      * Gain {@param count} of {@param resource} from the bank
      * If bank does not have enough resources, bank will provide only as much is available

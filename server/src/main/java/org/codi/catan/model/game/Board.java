@@ -5,6 +5,7 @@
 
 package org.codi.catan.model.game;
 
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,6 +24,6 @@ public class Board implements IdentifiableEntity {
 
     private String id;
     private Tile[] tiles;
-    private Port[] ports;
+    private Ports ports;
     private Player[] players;
 }

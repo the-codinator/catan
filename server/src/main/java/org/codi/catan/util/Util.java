@@ -97,7 +97,7 @@ public class Util {
     /**
      * Search utility
      *
-     * @return element in {@param arr} matching {@param predicate}
+     * @return index of element in {@param arr} matching {@param predicate}
      */
     public static <T> int find(T[] arr, Predicate<T> predicate) {
         if (arr != null) {
@@ -113,9 +113,43 @@ public class Util {
     /**
      * Search utility
      *
-     * @return element in {@param arr} identified by {@param id}
+     * @return index of element in {@param arr} identified by {@param id}
      */
     public static <T extends IdentifiableEntity> int find(T[] arr, String id) {
         return id == null ? -1 : find(arr, t -> id.equals(t.getId()));
+    }
+
+    /**
+     * Count utility
+     *
+     * @return number of elements in {@param iterable} matching {@param predicate}
+     */
+    public static <T> int count(Iterable<T> iterable, Predicate<T> predicate) {
+        int count = 0;
+        if (iterable != null) {
+            for (T t : iterable) {
+                if (predicate.test(t)) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Search utility
+     *
+     * @return element in {@param arr} matching {@param predicate}
+     */
+    public static <T> int count(T[] arr, Predicate<T> predicate) {
+        int count = 0;
+        if (arr != null) {
+            for (T t : arr) {
+                if (predicate.test(t)) {
+                    count++;
+                }
+            }
+        }
+        return count;
     }
 }

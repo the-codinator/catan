@@ -37,11 +37,11 @@ public class GraphHelper {
     }
 
     public int normalizeAndValidatePort(int port) throws CatanException {
-        port = normalizePort(port);
-        if (port == -1) {
-            throw new CatanException("Invalid Port Id", Status.BAD_REQUEST);
+        int normalizedPort = normalizePort(port);
+        if (normalizedPort == -1) {
+            throw new CatanException("Invalid Port Id - " + port, Status.BAD_REQUEST);
         }
-        return port;
+        return normalizedPort;
     }
 
     /**
@@ -65,8 +65,8 @@ public class GraphHelper {
         return vertexToConnectedHexMatrix[vertex].clone();
     }
 
-    public int[] getPortVertexList() {
-        return portVertexList.clone();
+    public int getPortCount() {
+        return portVertexList.length;
     }
 
     public int[] getDiceRollCount() {

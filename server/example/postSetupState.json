@@ -1,48 +1,40 @@
 {
   "id": "",
   "phase": "gameplay",
-  "houses": [
-    {
+  "houses": {
+    "11": {
       "color": "red",
-      "type": "settlement",
-      "vertex": 11
+      "type": "settlement"
     },
-    {
+    "43": {
       "color": "blue",
-      "type": "settlement",
-      "vertex": 43
+      "type": "settlement"
     },
-    {
+    "39": {
       "color": "orange",
-      "type": "settlement",
-      "vertex": 39
+      "type": "settlement"
     },
-    {
+    "35": {
       "color": "white",
-      "type": "settlement",
-      "vertex": 35
+      "type": "settlement"
     },
-    {
+    "45": {
       "color": "white",
-      "type": "settlement",
-      "vertex": 45
+      "type": "settlement"
     },
-    {
+    "32": {
       "color": "orange",
-      "type": "settlement",
-      "vertex": 32
+      "type": "settlement"
     },
-    {
+    "41": {
       "color": "blue",
-      "type": "settlement",
-      "vertex": 41
+      "type": "settlement"
     },
-    {
+    "30": {
       "color": "red",
-      "type": "settlement",
-      "vertex": 30
+      "type": "settlement"
     }
-  ],
+  },
   "roads": [
     {
       "color": "red",

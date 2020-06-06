@@ -11,6 +11,7 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.EnumMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class BaseState implements IdentifiableEntity, StrongEntity {
 
     private String id;
     private Phase phase;
-    private List<House> houses;
+    private Map<Integer, House> houses;
     private List<Road> roads;
     private int thief;
     @JsonInclude(Include.NON_NULL)

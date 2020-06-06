@@ -43,15 +43,19 @@ public class SetupMoveHelper {
         if (!graphHelper.isAdjacentVertices(request.getHouseVertex(), request.getRoadVertex())) {
             throw new CatanException("Vertices are not adjacent", Status.BAD_REQUEST);
         }
+        // Validate no house on vertex
+        if (state.getHouses().containsKey(request.getHouseVertex())) {
+            throw new CatanException("Cannot create buildings on other buildings", Status.BAD_REQUEST);
+        }
         // Validate no adjacent house
         for (int vertex : graphHelper.getAdjacentVertexListForVertex(request.getHouseVertex())) {
-            if (gameUtility.getHouseOnVertex(state, vertex) != null) {
+            if (state.getHouses().containsKey(vertex)) {
                 throw new CatanException("Cannot create buildings on adjacent vertices", Status.BAD_REQUEST);
             }
         }
         // Create settlement
         Color color = state.getCurrentMove().getColor();
-        state.getHouses().add(new House(color, HouseType.settlement, request.getHouseVertex()));
+        state.getHouses().put(request.getHouseVertex(), new House(color, HouseType.settlement));
         // Create road
         state.getRoads().add(new Road(color, request.getHouseVertex(), request.getRoadVertex()));
         // Gain resources

@@ -20,6 +20,7 @@ import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
+import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.impl.data.CatanDataConnector;
 import org.codi.catan.impl.user.UserApiHelper;
@@ -63,7 +64,7 @@ public class BoardHelper {
             }
         }
         if (!hasAuthor) {
-            throw new CatanException("Board creator is not part of game", Status.BAD_REQUEST);
+            throw new BadRequestException("Board creator is not part of game");
         }
         try {
             dataConnector.createBoard(board);
@@ -109,13 +110,13 @@ public class BoardHelper {
                     count++;
                     if (tile.getRoll() < DICE_COUNT * MIN_ROLL_PER_DIE
                         || tile.getRoll() > DICE_COUNT * MAX_ROLL_PER_DIE) { // Valid dice rolls
-                        throw new CatanException("Invalid dice role value for tile", Status.BAD_REQUEST);
+                        throw new BadRequestException("Invalid dice role value for tile");
                     }
                     diceRollCounts[tile.getRoll()]++;
                 }
             }
             if (count != resource.getTileCount()) {
-                throw new CatanException("Invalid number of tiles for " + resource.toString(), Status.BAD_REQUEST);
+                throw new BadRequestException("Invalid number of tiles for " + resource.toString());
             }
         }
         int count = 0;
@@ -127,10 +128,10 @@ public class BoardHelper {
             }
         }
         if (count != 1) { // Desert
-            throw new CatanException("Invalid number of desert tiles", Status.BAD_REQUEST);
+            throw new BadRequestException("Invalid number of desert tiles");
         }
         if (!Arrays.equals(graphHelper.getDiceRollCount(), diceRollCounts)) {
-            throw new CatanException("Invalid dice roll distribution on tiles", Status.BAD_REQUEST);
+            throw new BadRequestException("Invalid dice roll distribution on tiles");
         }
     }
 
@@ -141,10 +142,10 @@ public class BoardHelper {
         Util.validateInput(ports21);
         Util.validateInput(ports31);
         if (ports21.size() != Resource.values().length) {
-            throw new CatanException("Incorrect 2:1 resource port definition", Status.BAD_REQUEST);
+            throw new BadRequestException("Incorrect 2:1 resource port definition");
         }
         if (ports31.size() != graphHelper.getPortCount() - Resource.values().length) {
-            throw new CatanException("Incorrect 3:1 port definition", Status.BAD_REQUEST);
+            throw new BadRequestException("Incorrect 3:1 port definition");
         }
         Set<Integer> normalizedPorts31 = new TreeSet<>(); // TreeSet to maintain order during initial creation
         for (int vertex : ports31) {
@@ -155,7 +156,7 @@ public class BoardHelper {
             int vertex = ports21.get(resource);
             int normalizedVertex = graphHelper.normalizeAndValidatePort(vertex);
             if (normalizedPorts31.contains(normalizedVertex)) {
-                throw new CatanException("Duplicate port vertex in 2:1 and 3:1", Status.BAD_REQUEST);
+                throw new BadRequestException("Duplicate port vertex in 2:1 and 3:1");
             }
             if (vertex != normalizedVertex) {
                 ports21.put(resource, vertex);
@@ -169,7 +170,7 @@ public class BoardHelper {
         Set<String> users = new HashSet<>(colors.length);
         for (Player player : players) {
             if (player.getColor() == null || colors[player.getColor().ordinal()]) {
-                throw new CatanException("Missing / duplicate player color", Status.BAD_REQUEST);
+                throw new BadRequestException("Missing / duplicate player color");
             }
             colors[player.getColor().ordinal()] = true;
             userApiHelper.validateUserId(player.getId());
@@ -177,15 +178,15 @@ public class BoardHelper {
         }
         for (int i = 0; i < colors.length; i++) {
             if (!colors[i]) {
-                throw new CatanException("Missing player color - " + Color.values()[i], Status.BAD_REQUEST);
+                throw new BadRequestException("Missing player color - " + Color.values()[i]);
             }
         }
         if (users.size() != colors.length) {
-            throw new CatanException("Duplicate user", Status.BAD_REQUEST);
+            throw new BadRequestException("Duplicate user");
         }
         var invalids = invalidUsers.getAllPresent(users);
         if (!invalids.isEmpty()) {
-            throw new CatanException("Invalid Users - " + invalids.keySet(), Status.BAD_REQUEST);
+            throw new BadRequestException("Invalid Users - " + invalids.keySet());
         }
         users.removeAll(validUsers.getAllPresent(users).keySet());
         if (users.isEmpty()) {
@@ -199,7 +200,7 @@ public class BoardHelper {
             } catch (CatanException e) {
                 if (e.getErrorStatus() == Status.NOT_FOUND) {
                     invalidUsers.put(unknownUserId, Boolean.FALSE);
-                    throw new CatanException("Invalid Users - [" + unknownUserId + "]", Status.BAD_REQUEST);
+                    throw new BadRequestException("Invalid Users - [" + unknownUserId + "]");
                 } else {
                     throw e;
                 }
@@ -216,7 +217,7 @@ public class BoardHelper {
                 for (String u : users) {
                     invalidUsers.put(u, Boolean.FALSE);
                 }
-                throw new CatanException("Invalid Users - " + users.toString(), Status.BAD_REQUEST);
+                throw new BadRequestException("Invalid Users - " + users.toString());
             }
         }
     }

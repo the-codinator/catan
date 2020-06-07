@@ -50,7 +50,7 @@ public class SetupMoveHelper {
         // Gain resources
         if (state.getPhase() == Phase.setup2) {
             for (int hex : graphHelper.getConnectedHexListForVertex(request.getHouseVertex())) {
-                gameUtility.transferResources(state, null, color, board.getTiles()[hex].getResource(), 1);
+                gameUtility.transferResources(state, null, color, board.getTiles()[hex].getResource());
             }
         }
         // Auto end turn

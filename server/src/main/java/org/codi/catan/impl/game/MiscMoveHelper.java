@@ -5,14 +5,12 @@
 
 package org.codi.catan.impl.game;
 
-import static org.codi.catan.util.Constants.DROP_CARDS_FOR_THIEF_THRESHOLD;
 import static org.codi.catan.util.Constants.THIEF_ROLL;
 import static org.codi.catan.util.Constants.VICTORY_POINTS_FOR_WIN;
 
-import java.util.EnumSet;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.Response.Status;
+import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.Color;
@@ -43,7 +41,7 @@ public class MiscMoveHelper { // TODO:
      */
     public void roll(Board board, State state) throws CatanException {
         if (state.getCurrentMove().getRoll() != null) {
-            throw new CatanException("Cannot re-roll in a turn", Status.BAD_REQUEST);
+            throw new BadRequestException("Cannot re-roll in a turn");
         }
         Roll roll = new Roll(gameUtility.rollDice(), gameUtility.rollDice());
         state.getCurrentMove().setRoll(roll);

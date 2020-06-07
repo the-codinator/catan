@@ -7,7 +7,7 @@ package org.codi.catan.impl.game;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.Response.Status;
+import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Color;
 import org.codi.catan.model.game.DevCard;
@@ -30,7 +30,7 @@ public class DevCardMoveHelper { // TODO:
      */
     public void buy(State state) throws CatanException {
         if (state.getBankDevCards().isEmpty()) {
-            throw new CatanException("No Dev Cards available in Bank", Status.BAD_REQUEST);
+            throw new BadRequestException("No Dev Cards available in Bank");
         }
         Color color = state.getCurrentMove().getColor();
         gameUtility.transferResources(state, color, null, Resource.hay, Resource.sheep, Resource.rock);

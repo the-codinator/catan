@@ -7,7 +7,7 @@ package org.codi.catan.impl.game;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.Response.Status;
+import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Color;
 import org.codi.catan.model.game.House;
@@ -50,7 +50,7 @@ public class BuildMoveHelper {
      */
     public void ensureCanPlaceRoad(State state, int vertex1, int vertex2) throws CatanException {
         if (!graphHelper.isAdjacentVertices(vertex1, vertex2)) {
-            throw new CatanException("Cannot place road between non-adjacent vertices", Status.BAD_REQUEST);
+            throw new BadRequestException("Cannot place road between non-adjacent vertices");
         }
         Color color = state.getCurrentMove().getColor();
         boolean valid = state.getPhase().isSetupPhase(); // in setup phase, we can have house without connected road
@@ -69,7 +69,7 @@ public class BuildMoveHelper {
             }
         }
         if (!valid) {
-            throw new CatanException("Invalid location for road", Status.BAD_REQUEST);
+            throw new BadRequestException("Invalid location for road");
         }
     }
 
@@ -102,17 +102,17 @@ public class BuildMoveHelper {
      * @param type Type of house being created
      */
     public void ensureCanPlaceHouse(State state, int vertex, HouseType type) throws CatanException {
+        graphHelper.validateVertex(vertex);
         switch (type) {
             case settlement:
                 // Validate no house on vertex
                 if (state.getHouses().containsKey(vertex)) {
-                    throw new CatanException("Cannot create settlement on existing building", Status.BAD_REQUEST);
+                    throw new BadRequestException("Cannot create settlement on existing building");
                 }
                 // Validate no adjacent house
                 for (int adjVertex : graphHelper.getAdjacentVertexListForVertex(vertex)) {
                     if (state.getHouses().containsKey(adjVertex)) {
-                        throw new CatanException("Cannot create settlement adjacent to other buildings",
-                            Status.BAD_REQUEST);
+                        throw new BadRequestException("Cannot create settlement adjacent to other buildings");
                     }
                 }
                 break;
@@ -120,7 +120,7 @@ public class BuildMoveHelper {
                 House house = state.getHouses().get(vertex);
                 if (house == null || house.getType() != HouseType.settlement
                     || house.getColor() != state.getCurrentMove().getColor()) {
-                    throw new CatanException("Cannot upgrade to city without own settlement", Status.BAD_REQUEST);
+                    throw new BadRequestException("Cannot upgrade to city without own settlement");
                 }
                 break;
             default:

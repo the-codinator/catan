@@ -12,7 +12,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import javax.ws.rs.container.ContainerRequestContext;
-import javax.ws.rs.core.Response.Status;
+import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.core.IdentifiableEntity;
 
@@ -53,7 +53,7 @@ public class Util {
 
     public static void validateInput(Object o) throws CatanException {
         if (o == null) {
-            throw new CatanException("Invalid Input", Status.BAD_REQUEST);
+            throw new BadRequestException("Some input fields are missing");
         }
     }
 

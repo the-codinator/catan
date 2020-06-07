@@ -11,12 +11,12 @@ import org.codi.catan.model.game.Color;
 import org.codi.catan.model.game.State;
 
 @FunctionalInterface
-public interface BoardStateRequestMoveHandler<T> extends BoardStateColorRequestMoveHandler<T> {
+public interface StateColorRequestMoveHandler<T> extends BoardStateColorRequestMoveHandler<T> {
 
     @Override
     default void play(Board board, State state, Color color, T request) throws CatanException {
-        play(board, state, request);
+        play(state, color, request);
     }
 
-    void play(Board board, State state, T request) throws CatanException;
+    void play(State state, Color color, T request) throws CatanException;
 }

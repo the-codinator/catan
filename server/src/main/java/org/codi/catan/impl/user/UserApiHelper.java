@@ -13,6 +13,7 @@ import java.util.List;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
+import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.impl.data.CatanDataConnector;
 import org.codi.catan.model.request.LoginRequest;
@@ -40,22 +41,21 @@ public class UserApiHelper {
     @SuppressWarnings({"checkstyle:MissingJavadocMethod", "checkstyle:LineLength"})
     public void validateUserId(String id) throws CatanException {
         if (id == null || !id.matches(USER_ID_REGEX)) {
-            throw new CatanException(
-                "User Id must only contain (english) alphabets, (arabic) numerals, hyphen (-), underscore(_), and must be between 3 and 12 characters",
-                Status.BAD_REQUEST);
+            throw new BadRequestException(
+                "User Id must only contain (english) alphabets, (arabic) numerals, hyphen (-), underscore(_), and must be between 3 and 12 characters");
         }
     }
 
     public void validatePwd(String pwd) throws CatanException {
         // Note: `pwd` here is the password hash
         if (pwd == null || pwd.length() < 3 || pwd.length() > 100) {
-            throw new CatanException("Please use a reasonable passwords", Status.BAD_REQUEST);
+            throw new BadRequestException("Please use a reasonable passwords");
         }
     }
 
     public void validateName(String name) throws CatanException {
         if (name == null || !name.matches(NAME_REGEX)) {
-            throw new CatanException("Name does not belong to a human", Status.BAD_REQUEST);
+            throw new BadRequestException("Name does not belong to a human");
         }
     }
 
@@ -112,13 +112,13 @@ public class UserApiHelper {
         try {
             token = sessionHelper.parseToken(request.getRefreshToken());
         } catch (CatanException e) {
-            throw new CatanException("Incorrect Token Type", Status.BAD_REQUEST, e);
+            throw new CatanException("Bad Token", Status.BAD_REQUEST, e);
         }
         if (token == null) {
-            throw new CatanException("Missing Refresh Token", Status.BAD_REQUEST);
+            throw new BadRequestException("Missing Refresh Token");
         }
         if (token.getType() != TokenType.refresh) {
-            throw new CatanException("Bad Refresh Token", Status.BAD_REQUEST);
+            throw new BadRequestException("Incorrect Token Type");
         }
         sessionHelper.validateRequestTokenOffline(token);
         Token dbToken = null;
@@ -130,7 +130,7 @@ public class UserApiHelper {
             }
         }
         if (!token.equals(dbToken)) {
-            throw new CatanException("Invalid Token", Status.BAD_REQUEST);
+            throw new BadRequestException("Invalid Token");
         }
         logout(token);
         User user = new User(token.getUser());

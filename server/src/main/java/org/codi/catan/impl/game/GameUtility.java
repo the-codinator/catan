@@ -11,9 +11,12 @@ import static org.codi.catan.util.Constants.MIN_ROLL_PER_DIE;
 import java.util.Random;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
+import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.Color;
+import org.codi.catan.model.game.Hand;
+import org.codi.catan.model.game.OutOfTurnApi;
 import org.codi.catan.model.game.Phase;
 import org.codi.catan.model.game.Player;
 import org.codi.catan.model.game.Resource;
@@ -26,17 +29,43 @@ public class GameUtility {
 
     private static final int[] EMPTY_INT_ARRAY = new int[0];
 
-    private Random random = new Random();
+    private final Random random = new Random();
 
     /**
      * Validates that the current turn belongs specified {@param user}
+     *
+     * @return Color of the player making the request
      */
-    public void ensurePlayerTurn(Board board, State state, String user) throws CatanException {
-        Color color = state.getCurrentMove().getColor();
+    public Color checkPlayerTurn(Board board, State state, String user, OutOfTurnApi outOfTurnApi)
+        throws CatanException {
+        Color color = null;
+        // Move by actual player whose turn it is
         for (Player player : board.getPlayers()) {
-            if (player.getId().equals(user) && player.getColor() == color) {
-                return;
+            if (player.getId().equals(user)) {
+                color = player.getColor();
+                break;
             }
+        }
+        if (color == null) {
+            throw new CatanException("Cannot make moves in a game you aren't playing!", Status.FORBIDDEN);
+        }
+        if (outOfTurnApi == null) {
+            if (color == state.getCurrentMove().getColor()) {
+                return color;
+            } else {
+                throw new CatanException("Cannot play this move out of turn", Status.FORBIDDEN);
+            }
+        }
+        switch (outOfTurnApi) {
+            case THIEF:
+                var thieved = state.getCurrentMove().getThieved();
+                if (thieved != null && thieved.contains(color)) {
+                    return color;
+                }
+                break;
+            case TRADE:
+                return color;
+            default:
         }
         throw new CatanException("Cannot play this move out of turn", Status.FORBIDDEN);
     }
@@ -92,7 +121,7 @@ public class GameUtility {
         if (from == null) {
             count = Math.min(count, fromResources.get(resource));
         } else if (fromResources.get(resource) < count) {
-            throw new CatanException("Not enough [" + resource + "] to perform this move", Status.BAD_REQUEST);
+            throw new BadRequestException("Not enough [" + resource + "] to perform this move");
         }
         // Perform transfer
         Util.addToFrequencyMap(fromResources, resource, -count);
@@ -100,7 +129,7 @@ public class GameUtility {
     }
 
     public void transferResources(State state, Color from, Color to, Resource... resources) throws CatanException {
-        for (Resource resource: resources) {
+        for (Resource resource : resources) {
             transferResources(state, from, to, resource, 1);
         }
     }
@@ -123,5 +152,25 @@ public class GameUtility {
             }
         }
         return tile1 == -1 ? EMPTY_INT_ARRAY : tile2 == -1 ? new int[]{tile1} : new int[]{tile1, tile2};
+    }
+
+    /**
+     * Choose a random resource card from {@param color}'s hand to be stolen
+     */
+    public Resource chooseRandomlyStolenCard(State state, Color color) {
+        Hand hand = state.getHand(color);
+        int count = hand.getHandCount();
+        if (count == 0) {
+            return null;
+        }
+        int theChosenOne = random.nextInt(count);
+        var resources = hand.getResources();
+        for (Resource resource : Resource.values()) {
+            theChosenOne -= resources.get(resource);
+            if (theChosenOne < 0) {
+                return resource;
+            }
+        }
+        return null; // Will never happen
     }
 }

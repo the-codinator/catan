@@ -27,6 +27,10 @@ public class Hand {
 
     @JsonIgnore
     public int getHandCount() {
-        return resources.values().stream().mapToInt(x -> x).reduce(Integer::sum).orElse(0);
+        int count = 0;
+        for (int c : resources.values()) {
+            count += c;
+        }
+        return count;
     }
 }

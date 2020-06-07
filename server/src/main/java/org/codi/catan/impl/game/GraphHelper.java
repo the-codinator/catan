@@ -10,7 +10,7 @@ import com.google.common.collect.Multimap;
 import java.util.Arrays;
 import java.util.Collection;
 import javax.inject.Singleton;
-import javax.ws.rs.core.Response.Status;
+import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Resource;
 
@@ -19,13 +19,13 @@ public class GraphHelper {
 
     public void validateVertex(int vertex) throws CatanException {
         if (vertex < 0 || vertex >= vertexToAdjacentVertexMatrix.length) {
-            throw new CatanException("Invalid Vertex Id", Status.BAD_REQUEST);
+            throw new BadRequestException("Invalid Vertex Id");
         }
     }
 
     public void validateHex(int hex) throws CatanException {
         if (hex < 0 || hex >= hexToConnectedVertexMatrix.length) {
-            throw new CatanException("Invalid Hex Id", Status.BAD_REQUEST);
+            throw new BadRequestException("Invalid Hex Id");
         }
     }
 
@@ -39,7 +39,7 @@ public class GraphHelper {
     public int normalizeAndValidatePort(int port) throws CatanException {
         int normalizedPort = normalizePort(port);
         if (normalizedPort == -1) {
-            throw new CatanException("Invalid Port Id - " + port, Status.BAD_REQUEST);
+            throw new BadRequestException("Invalid Port Id - " + port);
         }
         return normalizedPort;
     }
@@ -48,10 +48,8 @@ public class GraphHelper {
      * Get vertices adjacent to {@param vertex}
      */
     public int[] getAdjacentVertexListForVertex(int vertex) {
-        if (vertex < 0 || vertex >= vertexToAdjacentVertexMatrix.length) {
-            return null;
-        }
-        return vertexToAdjacentVertexMatrix[vertex].clone();
+        return vertex < 0 || vertex >= vertexToAdjacentVertexMatrix.length ? null
+            : vertexToAdjacentVertexMatrix[vertex].clone();
     }
 
     public boolean isAdjacentVertices(int a, int b) {

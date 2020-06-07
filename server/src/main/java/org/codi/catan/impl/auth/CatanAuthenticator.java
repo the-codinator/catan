@@ -36,7 +36,7 @@ public class CatanAuthenticator implements Authenticator<Token, User> {
     public Optional<User> authenticate(Token token) throws AuthenticationException {
         try {
             if (token.getType() != TokenType.access) {
-                throw new CatanException("Incorrect Token Type", Status.BAD_REQUEST);
+                throw new CatanException("Incorrect Token Type", Status.UNAUTHORIZED);
             }
             sessionHelper.validateRequestTokenOffline(token);
             Token dbToken = null;
@@ -48,7 +48,7 @@ public class CatanAuthenticator implements Authenticator<Token, User> {
                 }
             }
             if (!token.equals(dbToken)) {
-                throw new CatanException("Invalid Token", Status.BAD_REQUEST);
+                throw new CatanException("Invalid Token", Status.UNAUTHORIZED);
             }
             User user = new User(token.getUser());
             user.setRoles(token.getRoles());

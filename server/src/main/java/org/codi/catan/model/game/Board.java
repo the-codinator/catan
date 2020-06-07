@@ -5,7 +5,6 @@
 
 package org.codi.catan.model.game;
 
-import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

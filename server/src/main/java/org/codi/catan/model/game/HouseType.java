@@ -11,8 +11,9 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum HouseType {
-    settlement(1),
-    city(2);
+    settlement(1, 1),
+    city(2, 2);
 
+    private final int resourceMultiplier;
     private final int victoryPoints;
 }

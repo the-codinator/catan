@@ -1,16 +1,16 @@
 /*
  * @author the-codinator
- * created on 2020/5/31
+ * created on 2020/6/7
  */
 
-package org.codi.catan.impl.game;
+package org.codi.catan.impl.handler;
 
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
 
 @FunctionalInterface
-public interface MoveRequestLessHandler extends MoveRequestHandler<Object> {
+public interface BoardStateMoveHandler extends BoardStateRequestMoveHandler<Void> {
 
     @Override
     default boolean shouldValidateInput() {
@@ -18,7 +18,7 @@ public interface MoveRequestLessHandler extends MoveRequestHandler<Object> {
     }
 
     @Override
-    default void play(Board board, State state, Object request) throws CatanException {
+    default void play(Board board, State state, Void request) throws CatanException {
         play(board, state);
     }
 

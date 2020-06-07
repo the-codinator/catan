@@ -7,6 +7,7 @@ package org.codi.catan.model.game;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.util.EnumSet;
 import java.util.LinkedList;
 import java.util.List;
 import lombok.Getter;
@@ -23,6 +24,7 @@ public class CurrentMove {
     private Roll roll;
     private DevCard devCard;
     private List<Trade> trades;
+    private EnumSet<Color> thieved; // Colors who drop cards coz thief & 8+ cards
 
     public CurrentMove(Color color) {
         this.color = color;

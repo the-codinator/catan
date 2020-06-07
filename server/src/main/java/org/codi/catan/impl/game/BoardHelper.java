@@ -33,7 +33,7 @@ import org.codi.catan.model.user.User;
 import org.codi.catan.util.Util;
 
 @Singleton
-public class LayoutHelper {
+public class BoardHelper {
 
     private final GraphHelper graphHelper;
     private final UserApiHelper userApiHelper;
@@ -42,7 +42,7 @@ public class LayoutHelper {
     private final Cache<String, Boolean> invalidUsers;
 
     @Inject
-    public LayoutHelper(GraphHelper graphHelper, UserApiHelper userApiHelper, CatanDataConnector dataConnector) {
+    public BoardHelper(GraphHelper graphHelper, UserApiHelper userApiHelper, CatanDataConnector dataConnector) {
         this.graphHelper = graphHelper;
         this.userApiHelper = userApiHelper;
         this.dataConnector = dataConnector;

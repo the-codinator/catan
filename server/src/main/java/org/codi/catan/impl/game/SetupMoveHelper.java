@@ -7,14 +7,12 @@ package org.codi.catan.impl.game;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.Color;
 import org.codi.catan.model.game.House;
 import org.codi.catan.model.game.HouseType;
 import org.codi.catan.model.game.Phase;
-import org.codi.catan.model.game.Resource;
 import org.codi.catan.model.game.Road;
 import org.codi.catan.model.game.State;
 import org.codi.catan.model.request.SetupMoveRequest;
@@ -24,12 +22,15 @@ public class SetupMoveHelper {
 
     private final GraphHelper graphHelper;
     private final GameUtility gameUtility;
+    private final BuildMoveHelper buildMoveHelper;
     private final MiscMoveHelper miscMoveHelper;
 
     @Inject
-    public SetupMoveHelper(GraphHelper graphHelper, GameUtility gameUtility, MiscMoveHelper miscMoveHelper) {
+    public SetupMoveHelper(GraphHelper graphHelper, GameUtility gameUtility, BuildMoveHelper buildMoveHelper,
+        MiscMoveHelper miscMoveHelper) {
         this.graphHelper = graphHelper;
         this.gameUtility = gameUtility;
+        this.buildMoveHelper = buildMoveHelper;
         this.miscMoveHelper = miscMoveHelper;
     }
 
@@ -40,31 +41,16 @@ public class SetupMoveHelper {
         // Validate input
         graphHelper.validateVertex(request.getHouseVertex());
         graphHelper.validateVertex(request.getRoadVertex());
-        if (!graphHelper.isAdjacentVertices(request.getHouseVertex(), request.getRoadVertex())) {
-            throw new CatanException("Vertices are not adjacent", Status.BAD_REQUEST);
-        }
-        // Validate no house on vertex
-        if (state.getHouses().containsKey(request.getHouseVertex())) {
-            throw new CatanException("Cannot create buildings on other buildings", Status.BAD_REQUEST);
-        }
-        // Validate no adjacent house
-        for (int vertex : graphHelper.getAdjacentVertexListForVertex(request.getHouseVertex())) {
-            if (state.getHouses().containsKey(vertex)) {
-                throw new CatanException("Cannot create buildings on adjacent vertices", Status.BAD_REQUEST);
-            }
-        }
-        // Create settlement
+        buildMoveHelper.ensureCanPlaceHouse(state, request.getHouseVertex(), HouseType.settlement);
+        buildMoveHelper.ensureCanPlaceRoad(state, request.getHouseVertex(), request.getRoadVertex());
+        // Create settlement & road
         Color color = state.getCurrentMove().getColor();
         state.getHouses().put(request.getHouseVertex(), new House(color, HouseType.settlement));
-        // Create road
         state.getRoads().add(new Road(color, request.getHouseVertex(), request.getRoadVertex()));
         // Gain resources
         if (state.getPhase() == Phase.setup2) {
             for (int hex : graphHelper.getConnectedHexListForVertex(request.getHouseVertex())) {
-                Resource resource = board.getTiles()[hex].getResource();
-                if (resource != null) {
-                    gameUtility.transferResourcesWithBank(state, resource, 1);
-                }
+                gameUtility.transferResources(state, null, color, board.getTiles()[hex].getResource(), 1);
             }
         }
         // Auto end turn

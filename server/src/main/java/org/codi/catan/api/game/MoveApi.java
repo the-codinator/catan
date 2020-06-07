@@ -10,15 +10,15 @@ import static org.codi.catan.util.Constants.BASE_PATH_MOVE;
 import static org.codi.catan.util.Constants.BEARER_AUTHORIZATION_KEY;
 import static org.codi.catan.util.Constants.HEADER_IF_MATCH;
 import static org.codi.catan.util.Constants.PARAM_GAME_ID;
-import static org.codi.catan.util.Constants.PATH_BUILD_CITY;
+import static org.codi.catan.util.Constants.PATH_BUILD_HOUSE;
 import static org.codi.catan.util.Constants.PATH_BUILD_ROAD;
-import static org.codi.catan.util.Constants.PATH_BUILD_SETTLEMENT;
 import static org.codi.catan.util.Constants.PATH_DEV_BUY;
 import static org.codi.catan.util.Constants.PATH_DEV_PLAY;
 import static org.codi.catan.util.Constants.PATH_END;
 import static org.codi.catan.util.Constants.PATH_ROLL;
 import static org.codi.catan.util.Constants.PATH_SETUP;
-import static org.codi.catan.util.Constants.PATH_THIEF;
+import static org.codi.catan.util.Constants.PATH_THIEF_DROP;
+import static org.codi.catan.util.Constants.PATH_THIEF_PLAY;
 
 import io.dropwizard.auth.Auth;
 import io.swagger.annotations.Api;
@@ -42,6 +42,8 @@ import org.codi.catan.impl.game.MoveApiHelper;
 import org.codi.catan.impl.game.SetupMoveHelper;
 import org.codi.catan.impl.game.StateApiHelper;
 import org.codi.catan.model.game.Phase;
+import org.codi.catan.model.request.HouseRequest;
+import org.codi.catan.model.request.RoadRequest;
 import org.codi.catan.model.request.SetupMoveRequest;
 import org.codi.catan.model.response.StateResponse;
 import org.codi.catan.model.user.User;
@@ -83,36 +85,29 @@ public class MoveApi { // TODO:
     @POST
     @Path(PATH_ROLL)
     public StateResponse roll(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag) {
-        return null;
+        @HeaderParam(HEADER_IF_MATCH) String etag) throws CatanException {
+        return moveApiHelper.play(user.getId(), gameId, etag, miscMoveHelper::roll, Phase.gameplay);
     }
 
     @POST
     @Path(PATH_BUILD_ROAD)
     public StateResponse road(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag) {
-        return null;
+        @HeaderParam(HEADER_IF_MATCH) String etag, RoadRequest request) throws CatanException {
+        return moveApiHelper.play(user.getId(), gameId, etag, request, buildMoveHelper::road, Phase.gameplay);
     }
 
     @POST
-    @Path(PATH_BUILD_SETTLEMENT)
+    @Path(PATH_BUILD_HOUSE)
     public StateResponse house(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag) {
-        return null;
-    }
-
-    @POST
-    @Path(PATH_BUILD_CITY)
-    public StateResponse city(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag) {
-        return null;
+        @HeaderParam(HEADER_IF_MATCH) String etag, HouseRequest request) throws CatanException {
+        return moveApiHelper.play(user.getId(), gameId, etag, request, buildMoveHelper::house, Phase.gameplay);
     }
 
     @POST
     @Path(PATH_DEV_BUY)
     public StateResponse devBuy(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag) {
-        return null;
+        @HeaderParam(HEADER_IF_MATCH) String etag) throws CatanException {
+        return moveApiHelper.play(user.getId(), gameId, etag, devCardMoveHelper::buy, Phase.gameplay);
     }
 
     @POST
@@ -123,8 +118,15 @@ public class MoveApi { // TODO:
     }
 
     @POST
-    @Path(PATH_THIEF)
-    public StateResponse thief(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
+    @Path(PATH_THIEF_DROP)
+    public StateResponse thiefDrop(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
+        @HeaderParam(HEADER_IF_MATCH) String etag) {
+        return null;
+    }
+
+    @POST
+    @Path(PATH_THIEF_PLAY)
+    public StateResponse thiefPlay(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
         @HeaderParam(HEADER_IF_MATCH) String etag) {
         return null;
     }
@@ -133,7 +135,6 @@ public class MoveApi { // TODO:
     @Path(PATH_END)
     public StateResponse end(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
         @HeaderParam(HEADER_IF_MATCH) String etag) throws CatanException {
-        return moveApiHelper.play(user.getId(), gameId, etag, miscMoveHelper::endTurn, Phase.setup1, Phase.setup2,
-            Phase.gameplay);
+        return moveApiHelper.play(user.getId(), gameId, etag, miscMoveHelper::endTurn, Phase.gameplay);
     }
 }

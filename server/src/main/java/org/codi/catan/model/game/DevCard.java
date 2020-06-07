@@ -27,17 +27,17 @@ public enum DevCard {
     university;
 
     DevCard(int count) {
-        this(count, false);
+        this(count, 0);
     }
 
     DevCard() {
-        this(1, true);
+        this(1, 1);
     }
 
     private static final int TOTAL_COUNT = 25;
     private final int count;
     @Getter
-    private final boolean victoryPoint;
+    private final int victoryPoint;
 
     /**
      * Create a random list of dev cards for the bank of a new game

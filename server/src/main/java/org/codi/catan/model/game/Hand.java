@@ -5,6 +5,7 @@
 
 package org.codi.catan.model.game;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.EnumMap;
@@ -24,6 +25,7 @@ public class Hand {
     private EnumMap<Resource, Integer> resources;
     private List<DevCard> devCards;
 
+    @JsonIgnore
     public int getHandCount() {
         return resources.values().stream().mapToInt(x -> x).reduce(Integer::sum).orElse(0);
     }

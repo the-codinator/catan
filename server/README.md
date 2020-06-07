@@ -41,6 +41,7 @@ Implementation TODOs
 
 - Dynamo DB integration
 - Moves & Trades API
-- Admin APIs 
+- Admin APIs
+- Find my Games API
 - Long Poll for GET State
 - Server Hosting

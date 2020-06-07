@@ -16,11 +16,11 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Resource {
+    wood(4),
     brick(3),
     hay(4),
     sheep(4),
-    rock(3),
-    wood(4);
+    rock(3);
 
     private static final int RESOURCE_COUNT = 19;
     private final int tileCount;

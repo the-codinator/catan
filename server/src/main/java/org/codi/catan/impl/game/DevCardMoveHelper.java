@@ -5,13 +5,37 @@
 
 package org.codi.catan.impl.game;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.core.Response.Status;
+import org.codi.catan.core.CatanException;
+import org.codi.catan.model.game.Color;
 import org.codi.catan.model.game.DevCard;
+import org.codi.catan.model.game.Resource;
 import org.codi.catan.model.game.State;
 import org.codi.catan.model.request.DevCardRequest;
 
 @Singleton
 public class DevCardMoveHelper { // TODO:
+
+    private final GameUtility gameUtility;
+
+    @Inject
+    public DevCardMoveHelper(GameUtility gameUtility) {
+        this.gameUtility = gameUtility;
+    }
+
+    /**
+     * Buy a Development Card
+     */
+    public void buy(State state) throws CatanException {
+        if (state.getBankDevCards().isEmpty()) {
+            throw new CatanException("No Dev Cards available in Bank", Status.BAD_REQUEST);
+        }
+        Color color = state.getCurrentMove().getColor();
+        gameUtility.transferResources(state, color, null, Resource.hay, Resource.sheep, Resource.rock);
+        state.getHand(color).getDevCards().add(state.getBankDevCards().remove(0));
+    }
 
     /**
      * Play a dev card and mutate the game's state as per its rules

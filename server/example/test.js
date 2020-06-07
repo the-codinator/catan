@@ -27,6 +27,10 @@
     return require(`./${file}.json`);
   }
 
+  function jsonState(file) {
+    return Object.assign(json(file), {id});
+  }
+
   function log(k, v) {
     if (v) {
       console.log();
@@ -81,10 +85,9 @@
     pass();
   }
 
-  function assertState(state, file) {
-    const expected = json(file);
-    expected.id = id;
-    if (JSON.stringify(state) !== JSON.stringify(expected)) {
+  async function assertState(expected, stateMapper = state => state, user = 0) {
+    const state = await callWithData(user, '/game/id/state');
+    if (JSON.stringify(stateMapper(state)) === JSON.stringify(expected)) {
       throw Error('State did not match expected');
     }
     log('[PASS] State Match Check');
@@ -94,7 +97,7 @@
 
   // Create users
   if (args.signup !== 'false') {
-    await callFromFile('signup')
+    await callFromFile('signup');
   }
 
   // Login
@@ -108,14 +111,14 @@
   });
   log('Game id', id);
 
-  start('get game')
+  start('get game');
   await callWithData(0, '/game/id');
   pass();
 
   // Setup
   await callFromFile('setup');
 
-  assertState(await callWithData(0, '/game/id/state'), 'postSetupState');
+  await assertState(jsonState('postSetupState'));
 
   // TODO:
 })();

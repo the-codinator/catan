@@ -59,10 +59,12 @@ public class GraphHelper {
     }
 
     public int[] getConnectedHexListForVertex(int vertex) {
-        if (vertex < 0 || vertex >= vertexToConnectedHexMatrix.length) {
-            return null;
-        }
-        return vertexToConnectedHexMatrix[vertex].clone();
+        return vertex < 0 || vertex >= vertexToConnectedHexMatrix.length ? null
+            : vertexToConnectedHexMatrix[vertex].clone();
+    }
+
+    public int[] getVerticesAroundHex(int hex) {
+        return hex < 0 || hex >= hexToConnectedVertexMatrix.length ? null : hexToConnectedVertexMatrix[hex].clone();
     }
 
     public int getPortCount() {

@@ -123,6 +123,9 @@
     <module name="MultipleVariableDeclarations"/>
     <module name="ArrayTypeStyle"/>
     <module name="MissingSwitchDefault"/>
+    <module name="DefaultComesLast">
+      <property name="skipIfLastAndSharedWithCase" value="true"/>
+    </module>
     <module name="FallThrough"/>
     <module name="UpperEll"/>
     <module name="ModifierOrder"/>

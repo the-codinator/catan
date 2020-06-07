@@ -5,21 +5,28 @@
 
 package org.codi.catan.impl.game;
 
+import static org.codi.catan.util.Constants.MAX_ROLL_PER_DIE;
+import static org.codi.catan.util.Constants.MIN_ROLL_PER_DIE;
+
+import java.util.Random;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.Color;
-import org.codi.catan.model.game.Hand;
-import org.codi.catan.model.game.House;
 import org.codi.catan.model.game.Phase;
 import org.codi.catan.model.game.Player;
 import org.codi.catan.model.game.Resource;
 import org.codi.catan.model.game.State;
+import org.codi.catan.model.game.Tile;
 import org.codi.catan.util.Util;
 
 @Singleton
 public class GameUtility {
+
+    private static final int[] EMPTY_INT_ARRAY = new int[0];
+
+    private Random random = new Random();
 
     /**
      * Validates that the current turn belongs specified {@param user}
@@ -59,28 +66,62 @@ public class GameUtility {
     }
 
     /**
-     * Gain {@param count} of {@param resource} from the bank
+     * Transfer {@param count} of {@param resource} from color {@param from} to color {@param to}
+     * If either of the transfer participants is null, it is replaced with the bank
+     * If color does not have enough resources, it will error
      * If bank does not have enough resources, bank will provide only as much is available
-     * Positive count indicates player is earning from bank
-     * Negative count indicates player is spending to bank
+     * Negative count indicates reverse transfer
      */
-    public void transferResourcesWithBank(State state, Resource resource, int count) throws CatanException {
-        if (resource == null) {
-            throw new CatanException("Attempting to transfer null resource");
-        }
-        if (count == 0) {
+    public void transferResources(State state, Color from, Color to, Resource resource, int count)
+        throws CatanException {
+        // No transfer
+        if (from == to || resource == null || count == 0) {
             return;
         }
-        Hand hand = state.getHand(state.getCurrentMove().getColor());
-        if (count > 0) {
-            count = Math.min(count, state.getBank().get(resource));
-        } else {
-            if (hand.getResources().get(resource) < -count) {
-                throw new CatanException("Not enough [" + resource + "] resources available in hand",
-                    Status.BAD_REQUEST);
+        // Inverse transfer
+        if (count < 0) {
+            count = -count;
+            var c = from;
+            from = to;
+            to = c;
+        }
+        // Get required resource maps
+        var fromResources = from == null ? state.getBank() : state.getHand(from).getResources();
+        var toResources = to == null ? state.getBank() : state.getHand(to).getResources();
+        // Ensure available resources to transfer
+        if (from == null) {
+            count = Math.min(count, fromResources.get(resource));
+        } else if (fromResources.get(resource) < count) {
+            throw new CatanException("Not enough [" + resource + "] to perform this move", Status.BAD_REQUEST);
+        }
+        // Perform transfer
+        Util.addToFrequencyMap(fromResources, resource, -count);
+        Util.addToFrequencyMap(toResources, resource, count);
+    }
+
+    public void transferResources(State state, Color from, Color to, Resource... resources) throws CatanException {
+        for (Resource resource: resources) {
+            transferResources(state, from, to, resource, 1);
+        }
+    }
+
+    public int rollDice() {
+        return random.nextInt(MAX_ROLL_PER_DIE) + MIN_ROLL_PER_DIE;
+    }
+
+    /**
+     * Get all tiles from board matching roll
+     */
+    public int[] findTileHexesForRoll(Board board, int roll) {
+        int tile1 = -1;
+        int tile2 = -1;
+        Tile[] tiles = board.getTiles();
+        for (int i = 0; i < tiles.length; i++) {
+            if (tiles[i].getRoll() == roll) {
+                tile2 = tile1;
+                tile1 = i;
             }
         }
-        Util.addToFrequencyMap(hand.getResources(), resource, count);
-        Util.addToFrequencyMap(state.getBank(), resource, -count);
+        return tile1 == -1 ? EMPTY_INT_ARRAY : tile2 == -1 ? new int[]{tile1} : new int[]{tile1, tile2};
     }
 }

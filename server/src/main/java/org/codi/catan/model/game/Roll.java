@@ -5,6 +5,7 @@
 
 package org.codi.catan.model.game;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class Roll {
     private int die1;
     private int die2;
 
+    @JsonIgnore
     public int getRoll() {
         return die1 + die2;
     }

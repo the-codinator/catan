@@ -5,10 +5,21 @@
 
 package org.codi.catan.model.game;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+
+@AllArgsConstructor
+@Getter
 public enum Phase {
-    setup1,
-    setup2,
+    setup1(true),
+    setup2(true),
     gameplay,
     thief,
-    end
+    end;
+
+    Phase() {
+        this(false);
+    }
+
+    private final boolean setupPhase;
 }

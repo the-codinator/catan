@@ -46,8 +46,7 @@ public class Constants {
     // Paths - Move
     public static final String BASE_PATH_MOVE = BASE_PATH_GAME + PATH_GAME_ID + "/move";
     public static final String PATH_BUILD = "/build";
-    public static final String PATH_BUILD_CITY = PATH_BUILD + "/city";
-    public static final String PATH_BUILD_SETTLEMENT = PATH_BUILD + "/settlement";
+    public static final String PATH_BUILD_HOUSE = PATH_BUILD + "/house";
     public static final String PATH_BUILD_ROAD = PATH_BUILD + "/road";
     public static final String PATH_DEV = "/dev";
     public static final String PATH_DEV_BUY = PATH_DEV + "/buy";
@@ -56,6 +55,8 @@ public class Constants {
     public static final String PATH_ROLL = "/roll";
     public static final String PATH_SETUP = "/setup";
     public static final String PATH_THIEF = "/thief";
+    public static final String PATH_THIEF_DROP = PATH_THIEF + "/drop";
+    public static final String PATH_THIEF_PLAY = PATH_THIEF + "/play";
 
     // Paths - Trade
     public static final String BASE_PATH_TRADE = BASE_PATH_MOVE + "/trade";
@@ -71,6 +72,7 @@ public class Constants {
 
     // Game
     public static final int DICE_COUNT = 2;
+    public static final int DROP_CARDS_FOR_THIEF_THRESHOLD = 7;
     public static final int MAX_ROLL_PER_DIE = 6;
     public static final int MIN_ROLL_PER_DIE = 1;
     public static final int THIEF_ROLL = 7;

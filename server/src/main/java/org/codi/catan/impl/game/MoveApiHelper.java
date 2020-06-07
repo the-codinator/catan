@@ -10,6 +10,10 @@ import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.impl.data.CatanDataConnector;
+import org.codi.catan.impl.handler.BoardStateMoveHandler;
+import org.codi.catan.impl.handler.BoardStateRequestMoveHandler;
+import org.codi.catan.impl.handler.StateMoveHandler;
+import org.codi.catan.impl.handler.StateRequestMoveHandler;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.Color;
 import org.codi.catan.model.game.Phase;
@@ -20,15 +24,15 @@ import org.codi.catan.util.Util;
 @Singleton
 public class MoveApiHelper {
 
-    private final LayoutHelper layoutHelper;
+    private final BoardHelper boardHelper;
     private final StateApiHelper stateApiHelper;
     private final GameUtility gameUtility;
     private final CatanDataConnector dataConnector;
 
     @Inject
-    public MoveApiHelper(LayoutHelper layoutHelper, StateApiHelper stateApiHelper, GameUtility gameUtility,
+    public MoveApiHelper(BoardHelper boardHelper, StateApiHelper stateApiHelper, GameUtility gameUtility,
         CatanDataConnector dataConnector) {
-        this.layoutHelper = layoutHelper;
+        this.boardHelper = boardHelper;
         this.stateApiHelper = stateApiHelper;
         this.gameUtility = gameUtility;
         this.dataConnector = dataConnector;
@@ -37,9 +41,9 @@ public class MoveApiHelper {
     /**
      * Generic function to play a move
      */
-    public <T> StateResponse play(String userId, String gameId, String etag, T request, MoveRequestHandler<T> handler,
-        Phase... validPhases) throws CatanException {
-        Board board = layoutHelper.getBoard(gameId);
+    public <T> StateResponse play(String userId, String gameId, String etag, T request,
+        BoardStateRequestMoveHandler<T> handler, Phase... validPhases) throws CatanException {
+        Board board = boardHelper.getBoard(gameId);
         State state = stateApiHelper.getState(gameId, null);
         if (etag != null && !state.getETag().equals(etag)) {
             throw new CatanException("Someone made a move before you. Please retry with updated game state.",
@@ -65,8 +69,18 @@ public class MoveApiHelper {
         return new StateResponse(state, color);
     }
 
-    public StateResponse play(String userId, String gameId, String etag, MoveRequestLessHandler handler,
+    public StateResponse play(String userId, String gameId, String etag, BoardStateMoveHandler handler,
         Phase... validPhases) throws CatanException {
-        return play(userId, gameId, etag, null, handler, validPhases);
+        return play(userId, gameId, etag, null, handler.asBaseType(), validPhases);
+    }
+
+    public <T> StateResponse play(String userId, String gameId, String etag, T request,
+        StateRequestMoveHandler<T> handler, Phase... validPhases) throws CatanException {
+        return play(userId, gameId, etag, request, handler.asBaseType(), validPhases);
+    }
+
+    public StateResponse play(String userId, String gameId, String etag, StateMoveHandler handler, Phase... validPhases)
+        throws CatanException {
+        return play(userId, gameId, etag, null, handler.asBaseType(), validPhases);
     }
 }

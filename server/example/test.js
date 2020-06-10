@@ -11,87 +11,8 @@
  */
 
 (async () => {
-  const args = (process.argv || []).slice(2).reduce((map, arg) => {
-    const keyVal = arg.split('=');
-    map[keyVal[0]] = keyVal[1];
-    return map;
-  }, {});
-  const fetch = require('node-fetch');
-  const authTokens = [];
-  let id = undefined;
-  let board = undefined;
-  let etag;
-  let tag;
-
-  function json(file) {
-    return require(`./${file}.json`);
-  }
-
-  function jsonState(file) {
-    return Object.assign(json(file), {id});
-  }
-
-  function log(k, v) {
-    if (v) {
-      console.log();
-    }
-    console.log(k);
-    if (v) {
-      console.log(v);
-      console.log();
-    }
-  }
-
-  function start(t) {
-    tag = t;
-  }
-
-  function pass() {
-    log(`[PASS] ${tag}`);
-  }
-
-  async function callWithData(user, api, body) {
-    api = api.replace('/id', `/${id}`);
-    const data = {headers: {accept: 'application/json'}};
-    if (typeof user === 'number') {
-      data.headers.authorization = `Bearer ${authTokens[user]}`
-    }
-    if (body) {
-      data.method = 'POST';
-      data.headers['content-type'] = 'application/json';
-      if (etag) {
-        data.headers['If-Match'] = etag;
-      }
-      data.body = JSON.stringify(body);
-    }
-    const server = args.server || 'http://localhost:8080';
-    const response = await fetch(`${server}${api}`, data);
-    if (!response.ok) {
-      log(`[FAIL] ${tag}`);
-      console.log();
-      console.error('API call failed', JSON.stringify({user, api, data, response: await response.json()}, null, 2));
-      throw Error('API call failed');
-    }
-    etag = response.headers.get('ETag') || etag;
-    return response.json();
-  }
-
-  async function callFromFile(file, func) {
-    start(file);
-    for (const data of json(file)) {
-      const resp = await callWithData(data.user, data.api, data.body);
-      func && func(resp);
-    }
-    pass();
-  }
-
-  async function assertState(expected, stateMapper = state => state, user = 0) {
-    const state = await callWithData(user, '/game/id/state');
-    if (JSON.stringify(stateMapper(state)) === JSON.stringify(expected)) {
-      throw Error('State did not match expected');
-    }
-    log('[PASS] State Match Check');
-  }
+  const {args, deepEqual, vars, json, jsonState, log, prettyStringify, start, pass, callWithData, callFromFile, assertEqual, assertState} = require(
+      './utils');
 
   log('Starting test...');
 
@@ -101,15 +22,17 @@
   }
 
   // Login
-  await callFromFile('login', resp => authTokens.push(resp.access_token));
-  log('Token - user0', `Bearer ${authTokens[0]}`);
+  await callFromFile('login', resp => vars.authTokens.push(resp.access_token));
+  log('Token - user0', `Bearer ${vars.authTokens[0]}`);
+
+  // Logout & Refresh
 
   // Game
   await callFromFile('board', resp => {
-    id = resp.id;
-    board = resp.board;
+    vars.id = resp.id;
+    vars.board = resp.board;
   });
-  log('Game id', id);
+  log('Game id', vars.id);
 
   start('get game');
   await callWithData(0, '/game/id');
@@ -119,6 +42,15 @@
   await callFromFile('setup');
 
   await assertState(jsonState('postSetupState'));
+
+  // Validate Games API
+  start('user games');
+  const games = await callWithData(0, '/user/games');
+  const expected = json('postSetupGames');
+  expected.ongoing[0].id = vars.id;
+  expected.ongoing[0].created = games.ongoing[0].created;
+  assertEqual(games, expected);
+  pass('user games');
 
   // TODO:
 })();

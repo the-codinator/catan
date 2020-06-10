@@ -1,16 +1,16 @@
 {
-  "id": "",
+  "id": "0ad61990-d653-4f58-b78c-1d5d0fb51bb0",
   "phase": "gameplay",
   "houses": {
     "11": {
       "color": "red",
       "type": "settlement"
     },
-    "43": {
-      "color": "blue",
+    "30": {
+      "color": "red",
       "type": "settlement"
     },
-    "39": {
+    "32": {
       "color": "orange",
       "type": "settlement"
     },
@@ -18,11 +18,7 @@
       "color": "white",
       "type": "settlement"
     },
-    "45": {
-      "color": "white",
-      "type": "settlement"
-    },
-    "32": {
+    "39": {
       "color": "orange",
       "type": "settlement"
     },
@@ -30,8 +26,12 @@
       "color": "blue",
       "type": "settlement"
     },
-    "30": {
-      "color": "red",
+    "43": {
+      "color": "blue",
+      "type": "settlement"
+    },
+    "45": {
+      "color": "white",
       "type": "settlement"
     }
   },
@@ -79,11 +79,11 @@
   ],
   "thief": 18,
   "bank": {
+    "wood": 16,
     "brick": 15,
     "hay": 18,
     "sheep": 16,
-    "rock": 18,
-    "wood": 16
+    "rock": 18
   },
   "playedDevCards": {},
   "achievements": {
@@ -105,7 +105,11 @@
       "brick": 1,
       "sheep": 2
     },
-    "devCards": [],
-    "handCount": 3
+    "devCards": []
+  },
+  "otherHandCounts": {
+    "blue": 3,
+    "orange": 3,
+    "white": 3
   }
 }

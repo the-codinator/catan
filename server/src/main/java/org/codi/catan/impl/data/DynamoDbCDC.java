@@ -8,6 +8,7 @@ package org.codi.catan.impl.data;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
+import org.codi.catan.model.user.Games;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
@@ -35,6 +36,16 @@ public class DynamoDbCDC implements CatanDataConnector { // TODO:
 
     @Override
     public void deleteUser(String id) throws CatanException {
+
+    }
+
+    @Override
+    public Games getGames(String id) throws CatanException {
+        return null;
+    }
+
+    @Override
+    public void putGames(Games games) throws CatanException {
 
     }
 

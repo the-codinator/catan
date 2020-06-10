@@ -10,6 +10,7 @@ import org.codi.catan.core.CatanException;
 import org.codi.catan.model.core.StrongEntity;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
+import org.codi.catan.model.user.Games;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
@@ -34,6 +35,9 @@ public interface CatanDataConnector {
     void createUser(User user) throws CatanException;
     void updateUser(User user) throws CatanException;
     void deleteUser(String id) throws CatanException;
+
+    Games getGames(String id) throws CatanException;
+    void putGames(Games games) throws CatanException;
 
     Token getToken(String id) throws CatanException;
     void createToken(Token token) throws CatanException;

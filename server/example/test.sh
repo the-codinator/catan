@@ -10,7 +10,7 @@ if [ -d "${DIR}" ]; then
 fi
 
 if [ ! -d "node_modules" ]; then
-  npm i node-fetch
+  npm i node-fetch deep-equal
   rm -f package-lock.json
 fi
 

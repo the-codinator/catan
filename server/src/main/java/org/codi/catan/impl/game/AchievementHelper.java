@@ -6,6 +6,10 @@
 package org.codi.catan.impl.game;
 
 import javax.inject.Singleton;
+import org.codi.catan.model.game.AchievementType;
+import org.codi.catan.model.game.AchievementValue;
+import org.codi.catan.model.game.Color;
+import org.codi.catan.model.game.DevCard;
 import org.codi.catan.model.game.Road;
 import org.codi.catan.model.game.State;
 
@@ -21,7 +25,19 @@ public class AchievementHelper {
 
     }
 
+    /**
+     * Check for any changes to the largest army achievement
+     */
     public void handleLargestArmy(State state) {
-        // TODO:
+        Color color = state.getCurrentMove().getColor();
+        AchievementValue achievement = state.getAchievements().get(AchievementType.largest_army);
+        if (achievement.getColor() == color) {
+            return;
+        }
+        int knights = (int) state.getPlayedDevCards().get(color).stream().filter(DevCard.knight::equals).count();
+        if (knights > achievement.getCount()) {
+            achievement.setColor(color);
+            achievement.setCount(knights);
+        }
     }
 }

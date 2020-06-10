@@ -12,8 +12,6 @@ import static org.codi.catan.util.Constants.HEADER_IF_MATCH;
 import static org.codi.catan.util.Constants.PARAM_GAME_ID;
 import static org.codi.catan.util.Constants.PATH_BUILD_HOUSE;
 import static org.codi.catan.util.Constants.PATH_BUILD_ROAD;
-import static org.codi.catan.util.Constants.PATH_DEV_BUY;
-import static org.codi.catan.util.Constants.PATH_DEV_PLAY;
 import static org.codi.catan.util.Constants.PATH_END;
 import static org.codi.catan.util.Constants.PATH_ROLL;
 import static org.codi.catan.util.Constants.PATH_SETUP;
@@ -36,11 +34,9 @@ import javax.ws.rs.core.MediaType;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.filter.ETagHeaderFilter.ETagHeaderSupport;
 import org.codi.catan.impl.game.BuildMoveHelper;
-import org.codi.catan.impl.game.DevCardMoveHelper;
 import org.codi.catan.impl.game.MiscMoveHelper;
 import org.codi.catan.impl.game.MoveApiHelper;
 import org.codi.catan.impl.game.SetupMoveHelper;
-import org.codi.catan.impl.game.StateApiHelper;
 import org.codi.catan.impl.game.ThiefMoveHelper;
 import org.codi.catan.model.game.OutOfTurnApi;
 import org.codi.catan.model.game.Phase;
@@ -58,25 +54,20 @@ import org.codi.catan.model.user.User;
 @PermitAll
 @Path(BASE_PATH_MOVE)
 @ETagHeaderSupport
-public class MoveApi { // TODO:
+public class MoveApi {
 
     private final MoveApiHelper moveApiHelper;
-    private final StateApiHelper stateApiHelper;
     private final SetupMoveHelper setupMoveHelper;
     private final BuildMoveHelper buildMoveHelper;
-    private final DevCardMoveHelper devCardMoveHelper;
     private final ThiefMoveHelper thiefMoveHelper;
     private final MiscMoveHelper miscMoveHelper;
 
     @Inject
-    public MoveApi(MoveApiHelper moveApiHelper, StateApiHelper stateApiHelper, SetupMoveHelper setupMoveHelper,
-        BuildMoveHelper buildMoveHelper, DevCardMoveHelper devCardMoveHelper, ThiefMoveHelper thiefMoveHelper,
-        MiscMoveHelper miscMoveHelper) {
+    public MoveApi(MoveApiHelper moveApiHelper, SetupMoveHelper setupMoveHelper, BuildMoveHelper buildMoveHelper,
+        ThiefMoveHelper thiefMoveHelper, MiscMoveHelper miscMoveHelper) {
         this.moveApiHelper = moveApiHelper;
-        this.stateApiHelper = stateApiHelper;
         this.setupMoveHelper = setupMoveHelper;
         this.buildMoveHelper = buildMoveHelper;
-        this.devCardMoveHelper = devCardMoveHelper;
         this.thiefMoveHelper = thiefMoveHelper;
         this.miscMoveHelper = miscMoveHelper;
     }
@@ -108,20 +99,6 @@ public class MoveApi { // TODO:
     public StateResponse house(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
         @HeaderParam(HEADER_IF_MATCH) String etag, HouseRequest request) throws CatanException {
         return moveApiHelper.play(user.getId(), gameId, etag, request, buildMoveHelper::house, Phase.gameplay);
-    }
-
-    @POST
-    @Path(PATH_DEV_BUY)
-    public StateResponse devBuy(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag) throws CatanException {
-        return moveApiHelper.play(user.getId(), gameId, etag, devCardMoveHelper::buy, Phase.gameplay);
-    }
-
-    @POST
-    @Path(PATH_DEV_PLAY)
-    public StateResponse devPlay(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag) {
-        return null;
     }
 
     @POST

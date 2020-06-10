@@ -1,0 +1,17 @@
+{
+  "id": "user0",
+  "ongoing": [
+    {
+      "id": "e2fd0d92-016a-46e7-aee2-057e98be52e3",
+      "players": [
+        "user0",
+        "user1",
+        "user2",
+        "user3"
+      ],
+      "created": 1591744096217,
+      "completed": 0
+    }
+  ],
+  "completed": []
+}

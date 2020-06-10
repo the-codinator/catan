@@ -11,14 +11,17 @@ import static org.codi.catan.util.Constants.BEARER_AUTHORIZATION_KEY;
 import static org.codi.catan.util.Constants.PARAM_REMEMBER_ME;
 import static org.codi.catan.util.Constants.PARAM_USER_ID;
 import static org.codi.catan.util.Constants.PATH_FIND;
+import static org.codi.catan.util.Constants.PATH_GAMES;
 import static org.codi.catan.util.Constants.PATH_LOGIN;
 import static org.codi.catan.util.Constants.PATH_LOGOUT;
 import static org.codi.catan.util.Constants.PATH_REFRESH;
 import static org.codi.catan.util.Constants.PATH_SIGNUP;
 import static org.codi.catan.util.Constants.TOKEN;
 
+import io.dropwizard.auth.Auth;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import java.util.Collection;
 import javax.annotation.security.PermitAll;
@@ -35,13 +38,16 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.impl.user.UserApiHelper;
+import org.codi.catan.impl.user.UserGamesHelper;
 import org.codi.catan.model.request.LoginRequest;
 import org.codi.catan.model.request.RefreshTokenRequest;
 import org.codi.catan.model.request.SignUpRequest;
 import org.codi.catan.model.response.FindUserResponse;
 import org.codi.catan.model.response.MessageResponse;
 import org.codi.catan.model.response.SessionResponse;
+import org.codi.catan.model.user.Games;
 import org.codi.catan.model.user.Token;
+import org.codi.catan.model.user.User;
 
 @Api(API_USER)
 @Path(BASE_PATH_USER)
@@ -50,10 +56,12 @@ import org.codi.catan.model.user.Token;
 public class UserApi {
 
     private final UserApiHelper userApiHelper;
+    private final UserGamesHelper userGamesHelper;
 
     @Inject
-    public UserApi(UserApiHelper userApiHelper) {
+    public UserApi(UserApiHelper userApiHelper, UserGamesHelper userGamesHelper) {
         this.userApiHelper = userApiHelper;
+        this.userGamesHelper = userGamesHelper;
     }
 
     @POST
@@ -92,5 +100,13 @@ public class UserApi {
     @PermitAll
     public Collection<FindUserResponse> find(@QueryParam(PARAM_USER_ID) String userId) throws CatanException {
         return userApiHelper.find(userId);
+    }
+
+    @GET
+    @Path(PATH_GAMES)
+    @ApiOperation(value = "", authorizations = @Authorization(BEARER_AUTHORIZATION_KEY))
+    @PermitAll
+    public Games games(@ApiParam(hidden = true) @Auth User user) throws CatanException {
+        return userGamesHelper.games(user.getId());
     }
 }

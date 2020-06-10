@@ -40,8 +40,8 @@ Implementation TODOs
 ---
 
 - Dynamo DB integration
-- Moves & Trades API
+- DevCard & Trades API
+- Longest Road achievements
 - Admin APIs
-- Find my Games API
 - Long Poll for GET State
 - Server Hosting

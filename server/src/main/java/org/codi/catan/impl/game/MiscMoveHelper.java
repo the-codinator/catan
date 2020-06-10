@@ -12,6 +12,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
+import org.codi.catan.impl.user.UserGamesHelper;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.Color;
 import org.codi.catan.model.game.CurrentMove;
@@ -23,17 +24,20 @@ import org.codi.catan.model.game.State;
 import org.codi.catan.util.Util;
 
 @Singleton
-public class MiscMoveHelper { // TODO:
+public class MiscMoveHelper {
 
     private final GameUtility gameUtility;
     private final GraphHelper graphHelper;
     private final ThiefMoveHelper thiefMoveHelper;
+    private final UserGamesHelper userGamesHelper;
 
     @Inject
-    public MiscMoveHelper(GameUtility gameUtility, GraphHelper graphHelper, ThiefMoveHelper thiefMoveHelper) {
+    public MiscMoveHelper(GameUtility gameUtility, GraphHelper graphHelper, ThiefMoveHelper thiefMoveHelper,
+        UserGamesHelper userGamesHelper) {
         this.gameUtility = gameUtility;
         this.graphHelper = graphHelper;
         this.thiefMoveHelper = thiefMoveHelper;
+        this.userGamesHelper = userGamesHelper;
     }
 
     /**
@@ -66,13 +70,14 @@ public class MiscMoveHelper { // TODO:
     /**
      * Complete current turn
      */
-    public void endTurn(Board board, State state) {
+    public void endTurn(Board board, State state) throws CatanException {
         Color color = state.getCurrentMove().getColor();
         int index = Util.find(board.getPlayers(), p -> p.getColor() == color);
         int minIndex = 0;
         int maxIndex = board.getPlayers().length - 1;
         if (state.getPhase() == Phase.gameplay && isVictory(state)) {
             state.setPhase(Phase.end);
+            userGamesHelper.handleCompletedGame(board);
         } else {
             switch (state.getPhase()) {
                 case setup1:

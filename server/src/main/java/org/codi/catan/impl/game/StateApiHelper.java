@@ -45,7 +45,7 @@ public class StateApiHelper {
      * Create {@link StateResponse} from the overall {@param state} of the game based on the color of the player in the
      * {@param board} with id = {@param userId}
      */
-    public StateResponse createStateResponse(State state, Board board, String userId) throws CatanException {
+    public StateResponse createStateResponse(Board board, State state, String userId) throws CatanException {
         if (state == null) {
             return null;
         }

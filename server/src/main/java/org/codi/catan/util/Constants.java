@@ -32,6 +32,7 @@ public class Constants {
     // Paths - User
     public static final String BASE_PATH_USER = "/user";
     public static final String PATH_FIND = "/find";
+    public static final String PATH_GAMES = "/games";
     public static final String PATH_LOGIN = "/login";
     public static final String PATH_LOGOUT = "/logout";
     public static final String PATH_REFRESH = "/refresh";
@@ -48,9 +49,9 @@ public class Constants {
     public static final String PATH_BUILD = "/build";
     public static final String PATH_BUILD_HOUSE = PATH_BUILD + "/house";
     public static final String PATH_BUILD_ROAD = PATH_BUILD + "/road";
-    public static final String PATH_DEV = "/dev";
-    public static final String PATH_DEV_BUY = PATH_DEV + "/buy";
-    public static final String PATH_DEV_PLAY = PATH_DEV + "/play";
+    public static final String BASE_PATH_DEV = BASE_PATH_MOVE + "/dev";
+    public static final String PATH_DEV_BUY = "/buy";
+    public static final String PATH_DEV_PLAY = "/play";
     public static final String PATH_END = "/end";
     public static final String PATH_ROLL = "/roll";
     public static final String PATH_SETUP = "/setup";
@@ -88,5 +89,7 @@ public class Constants {
     public static final String BEARER_AUTHORIZATION_KEY = "Bearer [access_token]";
     public static final long DAY_MILLIS = 24 * 60 * 60 * 1000L;
     public static final String DELEGATE = "delegate";
+    public static final int MAX_ONGOING_GAMES_PER_USER = 4;
+    public static final int MAX_RECENTLY_COMPLETED_GAMES_PER_USER = 10;
     public static final String TOKEN = "token";
 }

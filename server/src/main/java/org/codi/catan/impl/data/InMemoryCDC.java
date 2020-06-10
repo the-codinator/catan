@@ -27,6 +27,7 @@ import org.codi.catan.model.core.IdentifiableEntity;
 import org.codi.catan.model.core.StrongEntity;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
+import org.codi.catan.model.user.Games;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 import org.codi.catan.util.Util;
@@ -125,6 +126,15 @@ public class InMemoryCDC implements CatanDataConnector {
         }
     }
 
+    private <T extends IdentifiableEntity> void put(Class<T> clazz, T value) throws CatanException {
+        try {
+            String serialized = objectMapper.writeValueAsString(value);
+            db.get(clazz).put(value.getId(), serialized);
+        } catch (ExecutionException | JsonProcessingException e) {
+            throw new CatanException("DB error", e);
+        }
+    }
+
     private <T extends IdentifiableEntity> void delete(Class<T> clazz, String id) throws CatanException {
         try {
             if (db.get(clazz).remove(id) == null) {
@@ -168,6 +178,16 @@ public class InMemoryCDC implements CatanDataConnector {
     @Override
     public void deleteUser(String id) throws CatanException {
         delete(User.class, id);
+    }
+
+    @Override
+    public Games getGames(String id) throws CatanException {
+        return get(Games.class, id, null);
+    }
+
+    @Override
+    public void putGames(Games games) throws CatanException {
+        put(Games.class, games);
     }
 
     @Override

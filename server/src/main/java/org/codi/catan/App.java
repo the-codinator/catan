@@ -14,6 +14,7 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.codi.catan.api.game.BoardApi;
+import org.codi.catan.api.game.DevCardApi;
 import org.codi.catan.api.game.MoveApi;
 import org.codi.catan.api.game.TradeApi;
 import org.codi.catan.api.health.Health;
@@ -108,6 +109,7 @@ public class App extends Application<CatanConfiguration> {
         // Game
         registerJerseyDI(BoardApi.class);
         registerJerseyDI(MoveApi.class);
+        registerJerseyDI(DevCardApi.class);
         registerJerseyDI(TradeApi.class);
         logger.debug("[ BOOT ] APIs configured");
 

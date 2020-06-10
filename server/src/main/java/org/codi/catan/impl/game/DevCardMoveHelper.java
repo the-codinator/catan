@@ -16,7 +16,7 @@ import org.codi.catan.model.game.State;
 import org.codi.catan.model.request.DevCardRequest;
 
 @Singleton
-public class DevCardMoveHelper { // TODO:
+public class DevCardMoveHelper {
 
     private final GameUtility gameUtility;
 
@@ -40,7 +40,7 @@ public class DevCardMoveHelper { // TODO:
     /**
      * Play a dev card and mutate the game's state as per its rules
      */
-    public void playCard(DevCardRequest input, State state) { // TODO:
+    public void play(State state, DevCardRequest input) throws CatanException { // TODO:
         DevCard devCard = input.getDevCard();
         // Update state based on dev card's rules. player from state.getCurrentTurn. check state.currentMove.devCard
         switch (devCard) {

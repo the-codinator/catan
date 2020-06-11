@@ -5,6 +5,7 @@
 
 package org.codi.catan.impl.game;
 
+import static org.codi.catan.util.Constants.EMPTY_INT_ARRAY;
 import static org.codi.catan.util.Constants.MAX_ROLL_PER_DIE;
 import static org.codi.catan.util.Constants.MIN_ROLL_PER_DIE;
 
@@ -26,8 +27,6 @@ import org.codi.catan.util.Util;
 
 @Singleton
 public class GameUtility {
-
-    private static final int[] EMPTY_INT_ARRAY = new int[0];
 
     private final Random random = new Random();
 

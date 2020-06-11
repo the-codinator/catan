@@ -69,6 +69,10 @@ public class GraphHelper {
         return portVertexList.length;
     }
 
+    public int getVertexCount() {
+        return vertexToAdjacentVertexMatrix.length;
+    }
+
     public int[] getDiceRollCount() {
         return diceRollCount.clone();
     }

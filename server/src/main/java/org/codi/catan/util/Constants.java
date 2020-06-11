@@ -74,6 +74,8 @@ public class Constants {
     // Game
     public static final int DICE_COUNT = 2;
     public static final int DROP_CARDS_FOR_THIEF_THRESHOLD = 7;
+    public static final int MAX_HOUSES_PER_PLAYER = 5;
+    public static final int MAX_ROADS_PER_PLAYER = 14;
     public static final int MAX_ROLL_PER_DIE = 6;
     public static final int MIN_ROLL_PER_DIE = 1;
     public static final int THIEF_ROLL = 7;
@@ -89,6 +91,7 @@ public class Constants {
     public static final String BEARER_AUTHORIZATION_KEY = "Bearer [access_token]";
     public static final long DAY_MILLIS = 24 * 60 * 60 * 1000L;
     public static final String DELEGATE = "delegate";
+    public static final int[] EMPTY_INT_ARRAY = new int[0];
     public static final int MAX_ONGOING_GAMES_PER_USER = 4;
     public static final int MAX_RECENTLY_COMPLETED_GAMES_PER_USER = 10;
     public static final String TOKEN = "token";

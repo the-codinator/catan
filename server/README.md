@@ -41,7 +41,6 @@ Implementation TODOs
 
 - Dynamo DB integration
 - DevCard & Trades API
-- Longest Road achievements
 - Admin APIs
 - Long Poll for GET State
 - Server Hosting

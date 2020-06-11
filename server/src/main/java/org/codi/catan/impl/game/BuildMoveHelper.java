@@ -5,6 +5,9 @@
 
 package org.codi.catan.impl.game;
 
+import static org.codi.catan.util.Constants.MAX_HOUSES_PER_PLAYER;
+import static org.codi.catan.util.Constants.MAX_ROADS_PER_PLAYER;
+
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.codi.catan.core.BadRequestException;
@@ -41,7 +44,7 @@ public class BuildMoveHelper {
         gameUtility.transferResources(state, color, null, Resource.wood, Resource.brick);
         Road road = new Road(color, request.getVertex1(), request.getVertex2());
         state.getRoads().add(road);
-        achievementHelper.handleLongestRoad(state, road);
+        achievementHelper.handleLongestRoad(state);
     }
 
     /**
@@ -54,7 +57,12 @@ public class BuildMoveHelper {
         }
         Color color = state.getCurrentMove().getColor();
         boolean valid = state.getPhase().isSetupPhase(); // in setup phase, we can have house without connected road
+        int count = 0;
         for (Road road : state.getRoads()) {
+            // Max road count
+            if (road.getColor() == color) {
+                count++;
+            }
             // Check existing road
             if (road.getVertex1() == vertex1 && road.getVertex2() == vertex2
                 || road.getVertex1() == vertex2 && road.getVertex2() == vertex1) {
@@ -67,6 +75,9 @@ public class BuildMoveHelper {
                 valid = true;
                 // Don't break, need to test all roads for "existing road"
             }
+        }
+        if (count >= MAX_ROADS_PER_PLAYER) {
+            throw new BadRequestException("Cannot create more than " + MAX_ROADS_PER_PLAYER + " roads");
         }
         if (!valid) {
             throw new BadRequestException("Invalid location for road");
@@ -103,23 +114,28 @@ public class BuildMoveHelper {
      */
     public void ensureCanPlaceHouse(State state, int vertex, HouseType type) throws CatanException {
         graphHelper.validateVertex(vertex);
+        Color color = state.getCurrentMove().getColor();
+        var houses = state.getHouses();
+        long count = houses.values().stream().map(House::getColor).filter(color::equals).count();
+        if (count >= MAX_HOUSES_PER_PLAYER) {
+            throw new BadRequestException("Cannot create more than " + MAX_HOUSES_PER_PLAYER + " houses");
+        }
         switch (type) {
             case settlement:
                 // Validate no house on vertex
-                if (state.getHouses().containsKey(vertex)) {
+                if (houses.containsKey(vertex)) {
                     throw new BadRequestException("Cannot create settlement on existing building");
                 }
                 // Validate no adjacent house
                 for (int adjVertex : graphHelper.getAdjacentVertexListForVertex(vertex)) {
-                    if (state.getHouses().containsKey(adjVertex)) {
+                    if (houses.containsKey(adjVertex)) {
                         throw new BadRequestException("Cannot create settlement adjacent to other buildings");
                     }
                 }
                 break;
             case city:
-                House house = state.getHouses().get(vertex);
-                if (house == null || house.getType() != HouseType.settlement
-                    || house.getColor() != state.getCurrentMove().getColor()) {
+                House house = houses.get(vertex);
+                if (house == null || house.getType() != HouseType.settlement || house.getColor() != color) {
                     throw new BadRequestException("Cannot upgrade to city without own settlement");
                 }
                 break;

@@ -41,6 +41,6 @@ Implementation TODOs
 
 - Dynamo DB integration
 - DevCard & Trades API
-- Admin APIs
+- Test cases
 - Long Poll for GET State
 - Server Hosting

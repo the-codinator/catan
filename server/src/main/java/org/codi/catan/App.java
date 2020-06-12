@@ -13,6 +13,8 @@ import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
+import org.codi.catan.api.admin.AdminApi;
+import org.codi.catan.api.admin.DbResetApi;
 import org.codi.catan.api.game.BoardApi;
 import org.codi.catan.api.game.DevCardApi;
 import org.codi.catan.api.game.MoveApi;
@@ -29,6 +31,7 @@ import org.codi.catan.filter.CatanAuthFilter;
 import org.codi.catan.filter.ETagHeaderFilter;
 import org.codi.catan.filter.RequestIdAndAccessLogFilter;
 import org.codi.catan.model.user.User;
+import org.codi.catan.util.Util;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +107,10 @@ public class App extends Application<CatanConfiguration> {
         registerJerseyDI(Health.class);
         registerJerseyDI(Favicon.class);
         // Admin
+        registerJerseyDI(AdminApi.class);
+        if (!Util.isAwsEnabled(configuration)) {
+            registerJerseyDI(DbResetApi.class);
+        }
         // User
         registerJerseyDI(UserApi.class);
         // Game

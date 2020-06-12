@@ -65,6 +65,14 @@ public class UserGamesHelper {
      * Handle completed game for players
      */
     public void handleCompletedGame(Board board) throws CatanException {
+        handleCompletedGameInternal(board, false);
+    }
+
+    public void handleDeletedGame(Board board) throws CatanException {
+        handleCompletedGameInternal(board, true);
+    }
+
+    private void handleCompletedGameInternal(Board board, boolean isDelete) throws CatanException {
         List<Games> gamesList = new ArrayList<>(4); // 4 players per game
         for (Player player : board.getPlayers()) {
             try {
@@ -76,7 +84,12 @@ public class UserGamesHelper {
             }
         }
         for (Games games : gamesList) {
-            games.completeGame(board.getId());
+            if (isDelete) {
+                games.getOngoing().removeIf(game -> game.getId().equals(board.getId()));
+                games.getCompleted().removeIf(game -> game.getId().equals(board.getId()));
+            } else {
+                games.completeGame(board.getId());
+            }
         }
         for (Games games : gamesList) {
             dataConnector.putGames(games);

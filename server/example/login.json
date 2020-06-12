@@ -26,5 +26,12 @@
       "id": "user3",
       "pwd": "us3r3"
     }
+  },
+  {
+    "api": "/user/login",
+    "body": {
+      "id": "admin",
+      "pwd": "admin"
+    }
   }
 ]

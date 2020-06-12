@@ -12,7 +12,6 @@ import org.codi.catan.model.user.User;
 public class CatanAuthorizer implements Authorizer<User> {
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean authorize(User user, String role) {
         return user != null && user.getRoles() != null && user.getRoles().contains(Role.valueOf(role));
     }

@@ -10,6 +10,7 @@ import static org.codi.catan.util.Constants.USER_ID_REGEX;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
@@ -32,10 +33,16 @@ public class UserApiHelper {
     private final SessionHelper sessionHelper;
     private final CatanDataConnector dataConnector;
 
+    private Consumer<User> newUserEventListener;
+
     @Inject
     public UserApiHelper(SessionHelper sessionHelper, CatanDataConnector dataConnector) {
         this.sessionHelper = sessionHelper;
         this.dataConnector = dataConnector;
+    }
+
+    public void setNewUserEventListener(Consumer<User> newUserEventListener) {
+        this.newUserEventListener = newUserEventListener;
     }
 
     @SuppressWarnings({"checkstyle:MissingJavadocMethod", "checkstyle:LineLength"})
@@ -81,6 +88,9 @@ public class UserApiHelper {
         validateName(request.getName());
         validatePwd(request.getPwd());
         User user = new User(request.getId(), request.getName(), request.getPwd(), null);
+        if (newUserEventListener != null) {
+            newUserEventListener.accept(user);
+        }
         try {
             dataConnector.createUser(user);
         } catch (CatanException e) {

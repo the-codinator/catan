@@ -43,6 +43,10 @@ public class InMemoryCDC implements CatanDataConnector {
         db = CacheBuilder.newBuilder().build(CacheLoader.from((Supplier<Map<String, String>>) ConcurrentHashMap::new));
     }
 
+    public void reset() {
+        db.invalidateAll();
+    }
+
     private String generateETag(String serialized) {
         // Make something that can easily be treated as opaque, but is a consistent algorithm (idempotent)
         return serialized == null ? null : Util.base64Encode(String.valueOf(serialized.hashCode()));

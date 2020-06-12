@@ -76,11 +76,13 @@ async function callWithData(user, api, body) {
   return response.json();
 }
 
-async function callFromFile(file, func) {
+async function callFromFile(file, respHandler, dataHandler) {
   start(file);
-  for (const data of json(file)) {
-    const resp = await callWithData(data.user, data.api, data.body);
-    func && func(resp);
+  const data = json(file);
+  dataHandler && dataHandler(data);
+  for (let i = 0; i < data.length; i++) {
+    const resp = await callWithData(data[i].user, data[i].api, data[i].body);
+    respHandler && respHandler(resp, data, i);
   }
   pass();
 }

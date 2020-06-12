@@ -13,6 +13,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import javax.ws.rs.container.ContainerRequestContext;
 import org.codi.catan.core.BadRequestException;
+import org.codi.catan.core.CatanConfiguration;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.core.IdentifiableEntity;
 
@@ -151,5 +152,10 @@ public class Util {
             }
         }
         return count;
+    }
+
+    public static boolean isAwsEnabled(CatanConfiguration configuration) {
+        String key = configuration.getDynamodb().getKey();
+        return key != null && !key.isBlank() && !key.startsWith("$");
     }
 }

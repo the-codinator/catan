@@ -11,10 +11,15 @@
  */
 
 (async () => {
-  const {args, deepEqual, vars, json, jsonState, log, prettyStringify, start, pass, callWithData, callFromFile, assertEqual, assertState} = require(
-      './utils');
+  const {args, fetch, vars, json, jsonState, log, start, pass, callWithData, callFromFile, assertEqual, assertState} = require('./utils');
 
   log('Starting test...');
+
+  // Reset DB for local
+  if (args.reset === 'true') {
+    await fetch((args.server || 'http://localhost:8080') + '/reset');
+    console.log('DB Reset');
+  }
 
   // Create users
   if (args.signup !== 'false') {
@@ -22,10 +27,14 @@
   }
 
   // Login
-  await callFromFile('login', resp => vars.authTokens.push(resp.access_token));
-  log('Token - user0', `Bearer ${vars.authTokens[0]}`);
+  await callFromFile('login', resp => vars.authTokens.push(resp.access_token), data => args.admin_pwd && (data[4].body.pwd = args.admin_pwd));
+  log('Token - admin', `Bearer ${vars.authTokens[4]}`);
 
   // Logout & Refresh
+  await callFromFile('logoutAndRefresh',
+      (resp, data, i) => (i === 1 && (data[2].body.refresh_token = resp.refresh_token)) || (i === 2
+          && (vars.authTokens[data[0].user] = resp.access_token)));
+  log('Token - user0', `Bearer ${vars.authTokens[0]}`);
 
   // Game
   await callFromFile('board', resp => {

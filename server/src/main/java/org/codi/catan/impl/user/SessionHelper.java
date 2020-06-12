@@ -74,7 +74,7 @@ public class SessionHelper {
         try {
             return mapper.readValue(Util.base64Decode(token), Token.class);
         } catch (Exception e) {
-            throw new CatanException("Error parsing session from token", e);
+            throw new CatanException("Error parsing session from token", Status.UNAUTHORIZED, e);
         }
     }
 

@@ -28,6 +28,7 @@ import org.codi.catan.impl.data.DynamoDbCDC;
 import org.codi.catan.impl.data.InMemoryCDC;
 import org.codi.catan.impl.health.AwsDynamoDbHealthChecker;
 import org.codi.catan.impl.health.InMemoryHealthChecker;
+import org.codi.catan.util.Util;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,7 +56,7 @@ public class GuiceDI extends AbstractModule {
         bind(HealthCheckRegistry.class).toInstance(health);
         bind(CatanConfiguration.class).toInstance(configuration);
         Multibinder<HealthCheck> health = Multibinder.newSetBinder(binder(), HealthCheck.class);
-        if (isAwsEnabled()) {
+        if (Util.isAwsEnabled(configuration)) {
             health.addBinding().to(AwsDynamoDbHealthChecker.class);
             bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(DynamoDbCDC.class);
         } else {
@@ -64,11 +65,6 @@ public class GuiceDI extends AbstractModule {
             bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(InMemoryCDC.class);
         }
         bind(CatanDataConnector.class).to(CachedDelegateCDC.class).asEagerSingleton();
-    }
-
-    private boolean isAwsEnabled() {
-        String key = configuration.getDynamodb().getKey();
-        return key != null && !key.isBlank() && !key.startsWith("$");
     }
 
     /**

@@ -30,5 +30,13 @@
       "name": "User Three",
       "pwd": "us3r3"
     }
+  },
+  {
+    "api": "/user/signup",
+    "body": {
+      "id": "admin",
+      "name": "admin",
+      "pwd": "admin"
+    }
   }
 ]

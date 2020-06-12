@@ -2,8 +2,10 @@
 
 DIR=example
 SCRIPT=test.js
-SIGNUP=$1 # true
+RESET=$1 # false
 SERVER=$2 # http://localhost:8080
+SIGNUP=$3 # true
+ADMIN_PWD=$4 # empty
 
 if [ -d "${DIR}" ]; then
   cd ${DIR}
@@ -14,4 +16,4 @@ if [ ! -d "node_modules" ]; then
   rm -f package-lock.json
 fi
 
-node ${SCRIPT} "signup=${SIGNUP}" "server=${SERVER}"
+node ${SCRIPT} "reset=${RESET}" "server=${SERVER}" "signup=${SIGNUP}" "admin_pwd=${ADMIN_PWD}"

@@ -35,7 +35,7 @@ public class RequestIdAndAccessLogFilter implements ContainerRequestFilter, Cont
         }
         String id = request.getHeaderString(HEADER_REQUEST_ID);
         if (id == null || id.isBlank()) {
-            id = Util.generateRandomUuid().toString();
+            id = Util.generateRandomUuid();
             request.getHeaders().putSingle(HEADER_REQUEST_ID, id);
         }
         MDC.put("requestId", id);

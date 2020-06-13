@@ -44,6 +44,11 @@ public class GraphHelper {
         return normalizedPort;
     }
 
+    public int getComplementaryPortVertex(int vertex) {
+        int port = normalizePort(vertex);
+        return port == -1 ? -1 : (2 * port + 1 - vertex); // port + complement = normalized + (normalized+1)
+    }
+
     /**
      * Get vertices adjacent to {@param vertex}
      */

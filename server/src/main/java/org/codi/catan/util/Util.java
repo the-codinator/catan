@@ -6,6 +6,7 @@
 package org.codi.catan.util;
 
 import java.util.Base64;
+import java.util.EnumMap;
 import java.util.Map;
 import java.util.Random;
 import java.util.UUID;
@@ -13,7 +14,6 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.function.Predicate;
 import javax.ws.rs.container.ContainerRequestContext;
 import org.codi.catan.core.BadRequestException;
-import org.codi.catan.core.CatanConfiguration;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.core.IdentifiableEntity;
 
@@ -27,7 +27,7 @@ public class Util {
     /**
      * Copied from {@link io.dropwizard.jersey.filter.RequestIdFilter}
      */
-    public static UUID generateRandomUuid() {
+    public static String generateRandomUuid() {
         final Random rnd = ThreadLocalRandom.current();
         long mostSig = rnd.nextLong();
         long leastSig = rnd.nextLong();
@@ -41,7 +41,7 @@ public class Util {
         leastSig &= 0x3fffffffffffffffL;
         leastSig |= 0x8000000000000000L;
 
-        return new UUID(mostSig, leastSig);
+        return new UUID(mostSig, leastSig).toString();
     }
 
     public static String base64Encode(String str) {
@@ -154,8 +154,11 @@ public class Util {
         return count;
     }
 
-    public static boolean isAwsEnabled(CatanConfiguration configuration) {
-        String key = configuration.getDynamodb().getKey();
-        return key != null && !key.isBlank() && !key.startsWith("$");
+    public static <T extends Enum<T>> EnumMap<T, Integer> arrayToEnumMap(Class<T> clazz, T... arr) {
+        EnumMap<T, Integer> map = new EnumMap<>(clazz);
+        for (T t : arr) {
+            map.put(t, 1 + map.getOrDefault(t, 0));
+        }
+        return map;
     }
 }

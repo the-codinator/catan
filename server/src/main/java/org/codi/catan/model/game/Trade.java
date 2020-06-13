@@ -8,18 +8,21 @@ package org.codi.catan.model.game;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import java.util.EnumMap;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
-public class Trade { // TODO:
+public class Trade {
 
-    // Trade ID is defined by its index in State.currentMove.trades
     private Color partner;
     private boolean offeredByPartner;
     @JsonInclude(Include.NON_NULL)
-    private EnumMap<Resource, Integer> turnResources;
-    @JsonInclude(Include.NON_NULL)
     private EnumMap<Resource, Integer> partnerResources;
+    @JsonInclude(Include.NON_NULL)
+    private EnumMap<Resource, Integer> turnResources;
 }

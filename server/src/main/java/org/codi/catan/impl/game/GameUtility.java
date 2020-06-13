@@ -9,7 +9,10 @@ import static org.codi.catan.util.Constants.EMPTY_INT_ARRAY;
 import static org.codi.catan.util.Constants.MAX_ROLL_PER_DIE;
 import static org.codi.catan.util.Constants.MIN_ROLL_PER_DIE;
 
+import java.util.Map;
 import java.util.Random;
+import java.util.Set;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.BadRequestException;
@@ -17,6 +20,7 @@ import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.Color;
 import org.codi.catan.model.game.Hand;
+import org.codi.catan.model.game.House;
 import org.codi.catan.model.game.OutOfTurnApi;
 import org.codi.catan.model.game.Phase;
 import org.codi.catan.model.game.Player;
@@ -28,7 +32,13 @@ import org.codi.catan.util.Util;
 @Singleton
 public class GameUtility {
 
+    private final GraphHelper graphHelper;
     private final Random random = new Random();
+
+    @Inject
+    public GameUtility(GraphHelper graphHelper) {
+        this.graphHelper = graphHelper;
+    }
 
     /**
      * Validates that the current turn belongs specified {@param user}
@@ -99,12 +109,14 @@ public class GameUtility {
      * If color does not have enough resources, it will error
      * If bank does not have enough resources, bank will provide only as much is available
      * Negative count indicates reverse transfer
+     *
+     * @return Actual number of resources transferred
      */
-    public void transferResources(State state, Color from, Color to, Resource resource, int count)
+    public int transferResources(State state, Color from, Color to, Resource resource, int count)
         throws CatanException {
         // No transfer
         if (from == to || resource == null || count == 0) {
-            return;
+            return 0;
         }
         // Inverse transfer
         if (count < 0) {
@@ -125,12 +137,25 @@ public class GameUtility {
         // Perform transfer
         Util.addToFrequencyMap(fromResources, resource, -count);
         Util.addToFrequencyMap(toResources, resource, count);
+        // Return actual transfer amount
+        return count;
     }
 
-    public void transferResources(State state, Color from, Color to, Resource... resources) throws CatanException {
+    public int transferResources(State state, Color from, Color to, Resource... resources) throws CatanException {
+        int count = 0;
         for (Resource resource : resources) {
-            transferResources(state, from, to, resource, 1);
+            count += transferResources(state, from, to, resource, 1);
         }
+        return count;
+    }
+
+    public int transferResources(State state, Color from, Color to, Map<Resource, Integer> resources)
+        throws CatanException {
+        int count = 0;
+        for (var entry : resources.entrySet()) {
+            count += transferResources(state, from, to, entry.getKey(), entry.getValue());
+        }
+        return count;
     }
 
     public int rollDice() {
@@ -171,5 +196,28 @@ public class GameUtility {
             }
         }
         return null; // Will never happen
+    }
+
+    /**
+     * Check if current player has a house on 2:1 {@param resource} port or 3:1 (resource = null) port
+     */
+    public boolean hasHouseOnPort(Board board, State state, Resource resource) {
+        Color color = state.getCurrentMove().getColor();
+        Set<Integer> ports;
+        if (resource != null) {
+            ports = Set.of(board.getPorts().getPorts21().get(resource));
+        } else {
+            ports = board.getPorts().getPorts31();
+        }
+        for (int port : ports) {
+            House house = state.getHouses().get(port);
+            if (house == null) {
+                house = state.getHouses().get(graphHelper.getComplementaryPortVertex(port));
+            }
+            if (house != null && house.getColor() == color) {
+                return true;
+            }
+        }
+        return false;
     }
 }

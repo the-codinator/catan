@@ -61,11 +61,9 @@ public class Constants {
 
     // Paths - Trade
     public static final String BASE_PATH_TRADE = BASE_PATH_MOVE + "/trade";
-    public static final String PATH_TRADE_ID = "/{" + PARAM_TRADE_ID + "}";
-    public static final String PATH_TRADE_ACCEPT = PATH_TRADE_ID + "/accept";
-    public static final String PATH_TRADE_GAME = "/game";
-    public static final String PATH_TRADE_PLAYER = "/player";
-    public static final String PATH_TRADE_REJECT = PATH_TRADE_ID + "/reject";
+    public static final String PATH_TRADE_BANK = "/bank";
+    public static final String PATH_TRADE_OFFER = "/offer";
+    public static final String PATH_TRADE_RESPOND = "/respond";
 
     // Validators
     public static final String NAME_REGEX = "[\\w-'\\. ]{2,50}";
@@ -74,6 +72,7 @@ public class Constants {
     // Game
     public static final int DICE_COUNT = 2;
     public static final int DROP_CARDS_FOR_THIEF_THRESHOLD = 7;
+    public static final int MAX_ACTIVE_TRADES = 5;
     public static final int MAX_HOUSES_PER_PLAYER = 5;
     public static final int MAX_ROADS_PER_PLAYER = 14;
     public static final int MAX_ROLL_PER_DIE = 6;

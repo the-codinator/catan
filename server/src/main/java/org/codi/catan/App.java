@@ -108,7 +108,7 @@ public class App extends Application<CatanConfiguration> {
         registerJerseyDI(Favicon.class);
         // Admin
         registerJerseyDI(AdminApi.class);
-        if (!Util.isAwsEnabled(configuration)) {
+        if (!configuration.isAwsEnabled()) {
             registerJerseyDI(DbResetApi.class);
         }
         // User

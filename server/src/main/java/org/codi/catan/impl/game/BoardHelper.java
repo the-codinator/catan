@@ -91,7 +91,7 @@ public class BoardHelper {
 
     private void normalizeAndValidateBoard(Board board) throws CatanException {
         Util.validateInput(board);
-        board.setId(Util.generateRandomUuid().toString());
+        board.setId(Util.generateRandomUuid());
         normalizeAndValidateTiles(board.getTiles());
         normalizeAndValidatePorts(board.getPorts());
         validatePlayers(board.getPlayers());

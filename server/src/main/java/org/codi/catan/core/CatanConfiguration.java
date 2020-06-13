@@ -17,4 +17,9 @@ public class CatanConfiguration extends Configuration {
     private SwaggerBundleConfiguration swagger;
     private DynamoDbCreds dynamodb;
     private CaffeineSpec authenticationCachePolicy;
+
+    public boolean isAwsEnabled() {
+        String key = dynamodb == null ? null : dynamodb.getKey();
+        return key != null && !key.isBlank() && !key.startsWith("$");
+    }
 }

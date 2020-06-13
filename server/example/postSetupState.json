@@ -98,7 +98,8 @@
   },
   "currentMove": {
     "color": "red",
-    "trades": []
+    "activeTrades": {},
+    "acceptedTrades": []
   },
   "hand": {
     "resources": {

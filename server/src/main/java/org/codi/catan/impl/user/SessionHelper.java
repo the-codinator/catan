@@ -35,7 +35,7 @@ public class SessionHelper {
             throw new CatanException("User is null");
         }
         long created = System.currentTimeMillis();
-        String id = Util.generateRandomUuid().toString();
+        String id = Util.generateRandomUuid();
         if (type == null) {
             type = TokenType.access;
         }

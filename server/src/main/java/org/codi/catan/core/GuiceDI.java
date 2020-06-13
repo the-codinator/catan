@@ -56,7 +56,7 @@ public class GuiceDI extends AbstractModule {
         bind(HealthCheckRegistry.class).toInstance(health);
         bind(CatanConfiguration.class).toInstance(configuration);
         Multibinder<HealthCheck> health = Multibinder.newSetBinder(binder(), HealthCheck.class);
-        if (Util.isAwsEnabled(configuration)) {
+        if (configuration.isAwsEnabled()) {
             health.addBinding().to(AwsDynamoDbHealthChecker.class);
             bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(DynamoDbCDC.class);
         } else {

@@ -40,7 +40,7 @@ Implementation TODOs
 ---
 
 - Dynamo DB integration
-- DevCard & Trades API
+- Play DevCard API
 - Test cases
 - Long Poll for GET State
 - Server Hosting

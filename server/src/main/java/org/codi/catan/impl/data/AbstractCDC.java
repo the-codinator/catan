@@ -34,7 +34,7 @@ public abstract class AbstractCDC implements CatanDataConnector {
 
     /**
      * Get entity of type {@param clazz} by {@param id}
-     * Does not honor {@code etag} from {@link StrongEntity}
+     * Does not support {@code etag} from {@link StrongEntity}
      *
      * @throws CatanException Underlying db error OR entity not found (errorStatus = {@link Status#NOT_FOUND})
      */
@@ -70,7 +70,7 @@ public abstract class AbstractCDC implements CatanDataConnector {
 
     /**
      * Create / Overwrite entity {@param value} of type {@param clazz}
-     * Does not honor {@code etag} from {@link StrongEntity}
+     * Does not support {@code etag} from {@link StrongEntity}
      *
      * @throws CatanException Underlying db error
      */

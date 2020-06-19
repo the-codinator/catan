@@ -49,14 +49,16 @@ public class AchievementHelper {
      * Note: Even if current player holds the achievement, we may need to update the count
      */
     public void handleLongestRoad(State state) throws CatanException {
-        /* Note: Calculating this in a generic graph is an NP-Hard problem, so we'll try to solve this by cutting some
-         * corners.
-         * The last road added is considered as the "seed" road, which must be part of the "new" longest chain (if any)
-         * Get rid of scenarios where you can't be longest, and limit algorithm upto depth of MAX_ROADS_PER_USER
+        /* Note: Calculating this in a generic graph is an NP-Hard problem. We're going ahead with a brute force
+         * approach since we have tight upper bound on the graph size.
          * Algorithm: Apply DFS with backtracking from every vertex where we have an edge and search longest path
+         * starting from there
          */
         Color color = state.getCurrentMove().getColor();
         AchievementValue achievement = state.getAchievements().get(AchievementType.longest_road);
+        if (achievement.getCount() == MAX_ROADS_PER_PLAYER) {
+            return;
+        }
         int count = 0;
         int size = state.getRoads().size();
         for (Road road : state.getRoads()) {
@@ -65,7 +67,7 @@ public class AchievementHelper {
                 count++;
             } else if (size == 0) {
                 // Invoked with bad state context
-                throw new CatanException("Seed road does not belong to current player");
+                throw new CatanException("Last created road does not belong to current player");
             }
         }
         if (count <= achievement.getCount()) {
@@ -112,8 +114,7 @@ public class AchievementHelper {
                 }
             }
         }
-        // Ensure seed road visited
-        return visited[visited.length - 1] ? Math.max(curr, max) : max;
+        return Math.max(curr, max);
     }
 
     private int getOtherVertex(Road road, int vertex) {

@@ -78,7 +78,7 @@ public class ThiefMoveHelper {
             throw new BadRequestException("Thief MUST be moved to a different tile");
         }
         Color color = state.getCurrentMove().getColor();
-        if (color == request.getColor()) {
+        if (color == request.getVictim()) {
             throw new BadRequestException("Cannot steal from self");
         }
         graphHelper.validateHex(request.getHex());
@@ -87,23 +87,23 @@ public class ThiefMoveHelper {
         for (int vertex : vertices) {
             House house = state.getHouses().get(vertex);
             if (house != null && house.getColor() != color) {
-                if (request.getColor() == null && state.getHand(house.getColor()).getHandCount() > 0) {
-                    throw new BadRequestException("Must steal from a player if possible");
+                if (request.getVictim() == null && state.getHand(house.getColor()).getHandCount() > 0) {
+                    throw new BadRequestException("Must steal from a player if possible (missing field - victim)");
                 }
-                if (house.getColor() == request.getColor()) {
+                if (house.getColor() == request.getVictim()) {
                     hasHouse = true;
                     break;
                 }
             }
         }
-        if (request.getColor() == null) {
+        if (request.getVictim() == null) {
             return;
         }
         if (!hasHouse) {
             throw new BadRequestException("Cannot steal from player without house on thief tile");
         }
-        Resource resource = gameUtility.chooseRandomlyStolenCard(state, request.getColor());
+        Resource resource = gameUtility.chooseRandomlyStolenCard(state, request.getVictim());
         // Note: resource can be null if chosen player has no cards
-        gameUtility.transferResources(state, request.getColor(), color, resource);
+        gameUtility.transferResources(state, request.getVictim(), color, resource);
     }
 }

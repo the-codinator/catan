@@ -75,6 +75,19 @@ public class Util {
     }
 
     /**
+     * Get the sum of all counts in a frequency map
+     */
+    public static int getFrequencyMapTotalCount(Map<?, Integer> map) {
+        int count = 0;
+        // We don't much care about auto-unboxing null Integer values, since if this function is invoked in such a
+        // context, we are doing something wrong anyway...
+        for (int x : map.values()) {
+            count += x;
+        }
+        return count;
+    }
+
+    /**
      * Search utility
      *
      * @return element in {@param iterable} matching {@param predicate}

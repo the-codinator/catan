@@ -42,7 +42,7 @@ Implementation TODOs
 ---
 
 - Actual DB integration
-- Play DevCard API
 - Test cases
 - Long Poll for GET State
-- Server Hosting
+- Server Hosting (GCP K8s engine, Azure Container Instances, AWS Elastic Container Service, ...)
+- Server Monitoring (New Relic Lite?)

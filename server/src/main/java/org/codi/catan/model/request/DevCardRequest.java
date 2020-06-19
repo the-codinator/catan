@@ -16,10 +16,19 @@ import org.codi.catan.model.game.Resource;
 public class DevCardRequest {
 
     private DevCard type;
-    private Resource resource1; // for monopoly & year of plenty
-    private Resource resource2; // for year of plenty
-    private RoadRequest road1; // for road building
-    private RoadRequest road2; // for road building
-    private int thief; // for knight
-    private Color color; // for knight
+
+    // Monopoly
+    private Resource resource;
+
+    // Year of Plenty
+    private Resource resource1;
+    private Resource resource2;
+
+    // Road Building
+    private RoadRequest road1;
+    private RoadRequest road2;
+
+    // Knight
+    private Integer hex;
+    private Color victim;
 }

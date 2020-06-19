@@ -14,6 +14,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.codi.catan.util.Util;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -27,10 +28,6 @@ public class Hand {
 
     @JsonIgnore
     public int getHandCount() {
-        int count = 0;
-        for (int c : resources.values()) {
-            count += c;
-        }
-        return count;
+        return Util.getFrequencyMapTotalCount(resources);
     }
 }

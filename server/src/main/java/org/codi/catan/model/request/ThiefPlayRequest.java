@@ -5,14 +5,18 @@
 
 package org.codi.catan.model.request;
 
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.codi.catan.model.game.Color;
 
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 public class ThiefPlayRequest {
 
     private int hex;
-    private Color color; // Who we are stealing a card from
+    private Color victim;
 }

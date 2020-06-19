@@ -13,10 +13,12 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import org.codi.catan.core.CatanCacheLoader;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 
+@Singleton
 public class CachedDelegateCDC extends DelegateCDC implements CatanDataConnector {
 
     private final LoadingCache<String, Board> boards;

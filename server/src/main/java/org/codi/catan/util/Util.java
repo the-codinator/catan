@@ -53,8 +53,12 @@ public class Util {
     }
 
     public static void validateInput(Object o) throws CatanException {
+        validateInput(o, null);
+    }
+
+    public static void validateInput(Object o, String field) throws CatanException {
         if (o == null) {
-            throw new BadRequestException("Some input fields are missing");
+            throw new BadRequestException("Missing required input field - " + (field == null ? "request body" : field));
         }
     }
 

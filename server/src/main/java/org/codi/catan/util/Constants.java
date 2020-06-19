@@ -15,13 +15,12 @@ public class Constants {
     public static final String HEADER_REQUEST_ID = "X-Request-Id";
     public static final String PARAM_GAME_ID = "game";
     public static final String PARAM_REMEMBER_ME = "rememberMe";
-    public static final String PARAM_TRADE_ID = "trade";
     public static final String PARAM_USER_ID = "user";
 
     // API
     public static final String API_BOARD = "Game State APIs";
+    public static final String API_HEALTH_AND_PING = "Health & Ping Check";
     public static final String API_MOVE = "Game Move APIs";
-    public static final String API_PING = "Ping Check";
     public static final String API_USER = "User APIs";
 
     // Paths - Core

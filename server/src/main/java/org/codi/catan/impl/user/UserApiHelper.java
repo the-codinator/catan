@@ -207,7 +207,7 @@ public class UserApiHelper {
      * Find users based on {@param userId}
      */
     public List<FindUserResponse> find(String userId) throws CatanException {
-        Util.validateInput(userId);
+        Util.validateInput(userId, "userId");
         try {
             User user = dataConnector.getUser(userId);
             return Collections.singletonList(new FindUserResponse(user.getId(), user.getName()));

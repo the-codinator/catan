@@ -17,12 +17,12 @@ import org.codi.catan.impl.data.InMemoryCDC;
 
 @Api(AdminApi.API_GROUP)
 @Path("reset")
-public class DbResetApi {
+public class InMemDbResetApi {
 
     private final InMemoryCDC imcdc;
 
     @Inject
-    public DbResetApi(CatanDataConnector dataConnector) {
+    public InMemDbResetApi(CatanDataConnector dataConnector) {
         if (dataConnector instanceof DelegateCDC) {
             try {
                 Field field = DelegateCDC.class.getDeclaredField("delegate");

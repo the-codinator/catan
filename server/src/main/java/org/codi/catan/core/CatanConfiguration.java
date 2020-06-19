@@ -9,17 +9,12 @@ import com.github.benmanes.caffeine.cache.CaffeineSpec;
 import io.dropwizard.Configuration;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import lombok.Getter;
-import org.codi.catan.model.core.DynamoDbCreds;
+import org.codi.catan.model.core.DatabaseConfig;
 
 @Getter
 public class CatanConfiguration extends Configuration {
 
     private SwaggerBundleConfiguration swagger;
-    private DynamoDbCreds dynamodb;
+    private DatabaseConfig database;
     private CaffeineSpec authenticationCachePolicy;
-
-    public boolean isAwsEnabled() {
-        String key = dynamodb == null ? null : dynamodb.getKey();
-        return key != null && !key.isBlank() && !key.startsWith("$");
-    }
 }

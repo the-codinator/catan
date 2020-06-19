@@ -15,7 +15,7 @@ import org.codi.catan.model.game.Resource;
 @Setter
 public class DevCardRequest {
 
-    private DevCard devCard;
+    private DevCard type;
     private Resource resource1; // for monopoly & year of plenty
     private Resource resource2; // for year of plenty
     private RoadRequest road1; // for road building

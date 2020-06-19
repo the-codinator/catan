@@ -41,7 +41,7 @@ public class DevCardMoveHelper {
      * Play a dev card and mutate the game's state as per its rules
      */
     public void play(State state, DevCardRequest input) throws CatanException { // TODO:
-        DevCard devCard = input.getDevCard();
+        DevCard devCard = input.getType();
         // Update state based on dev card's rules. player from state.getCurrentTurn. check state.currentMove.devCard
         switch (devCard) {
             case knight:

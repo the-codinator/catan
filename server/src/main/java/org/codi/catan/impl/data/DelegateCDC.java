@@ -5,6 +5,7 @@
 
 package org.codi.catan.impl.data;
 
+import com.codahale.metrics.health.HealthCheck.Result;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
@@ -18,6 +19,16 @@ public class DelegateCDC implements CatanDataConnector {
 
     public DelegateCDC(CatanDataConnector delegate) {
         this.delegate = delegate;
+    }
+
+    @Override
+    public void init() throws CatanException {
+        delegate.init();
+    }
+
+    @Override
+    public Result check() throws CatanException {
+        return delegate.check();
     }
 
     @Override

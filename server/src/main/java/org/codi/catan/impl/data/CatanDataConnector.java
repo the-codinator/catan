@@ -5,6 +5,7 @@
 
 package org.codi.catan.impl.data;
 
+import com.codahale.metrics.health.HealthCheck;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.core.StrongEntity;
@@ -13,6 +14,8 @@ import org.codi.catan.model.game.State;
 import org.codi.catan.model.user.Games;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
+
+;
 
 /**
  * Single GET operations here return requested object if available, throw {@link Status#NOT_FOUND} error otherwise.
@@ -29,6 +32,13 @@ import org.codi.catan.model.user.User;
  */
 @SuppressWarnings("checkstyle:EmptyLineSeparator")
 public interface CatanDataConnector {
+
+    void init() throws CatanException;
+
+    /**
+     * Maps to {@code check()} in {@link HealthCheck()}
+     */
+    HealthCheck.Result check() throws CatanException;
 
     User getUser(String id) throws CatanException;
     User[] getUsers(String... ids) throws CatanException;

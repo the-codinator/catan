@@ -21,9 +21,11 @@ swagger:
   title: "Catan Server"
   contact: "github/the-codinator"
   resourcePackage: org.codi.catan.api
-dynamodb:
-  key: ${AWS_ACCESS_KEY_ID}
-  secret: ${AWS_SECRET_ACCESS_KEY}
+database:
+  type: ${CATAN_DATABASE_TYPE:-inMemory}
+  key: ${CATAN_AWS_ACCESS_KEY_ID}
+  secret: ${CATAN_AWS_SECRET_ACCESS_KEY}
+  connection: ${CATAN_AZURE_COSMOS_DB_CONNECTION_STRING}
 #httpClient:
 #  timeout: 10s
 #  connectionTimeout: 1s

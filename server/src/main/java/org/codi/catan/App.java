@@ -14,7 +14,7 @@ import io.dropwizard.setup.Environment;
 import io.federecio.dropwizard.swagger.SwaggerBundle;
 import io.federecio.dropwizard.swagger.SwaggerBundleConfiguration;
 import org.codi.catan.api.admin.AdminApi;
-import org.codi.catan.api.admin.DbResetApi;
+import org.codi.catan.api.admin.InMemDbResetApi;
 import org.codi.catan.api.game.BoardApi;
 import org.codi.catan.api.game.DevCardApi;
 import org.codi.catan.api.game.MoveApi;
@@ -25,13 +25,15 @@ import org.codi.catan.api.misc.Favicon;
 import org.codi.catan.api.user.UserApi;
 import org.codi.catan.core.CatanConfiguration;
 import org.codi.catan.core.CatanConfigurationSourceProvider;
+import org.codi.catan.core.CatanException;
 import org.codi.catan.core.CatanExceptionMapper;
 import org.codi.catan.core.GuiceDI;
 import org.codi.catan.filter.CatanAuthFilter;
 import org.codi.catan.filter.ETagHeaderFilter;
 import org.codi.catan.filter.RequestIdAndAccessLogFilter;
+import org.codi.catan.impl.data.CatanDataConnector;
+import org.codi.catan.impl.data.DatabaseType;
 import org.codi.catan.model.user.User;
-import org.codi.catan.util.Util;
 import org.glassfish.jersey.server.filter.RolesAllowedDynamicFeature;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,6 +82,14 @@ public class App extends Application<CatanConfiguration> {
         GuiceDI.setup(configuration, environment);
         logger.debug("[ BOOT ] Guice bindings configured");
 
+        // Database
+        try {
+            GuiceDI.get(CatanDataConnector.class).init();
+        } catch (CatanException e) {
+            throw new RuntimeException("Failed to initialize DB", e);
+        }
+        logger.debug("[ BOOT ] Database initialized");
+
         // Exception Mapper
         registerJerseyDI(CatanExceptionMapper.class);
         logger.debug("[ BOOT ] Default ErrorHandlers configured");
@@ -108,8 +118,8 @@ public class App extends Application<CatanConfiguration> {
         registerJerseyDI(Favicon.class);
         // Admin
         registerJerseyDI(AdminApi.class);
-        if (!configuration.isAwsEnabled()) {
-            registerJerseyDI(DbResetApi.class);
+        if (configuration.getDatabase().getType() == DatabaseType.inMemory) {
+            registerJerseyDI(InMemDbResetApi.class);
         }
         // User
         registerJerseyDI(UserApi.class);

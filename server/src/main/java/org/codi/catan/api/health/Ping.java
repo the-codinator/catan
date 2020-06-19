@@ -5,7 +5,7 @@
 
 package org.codi.catan.api.health;
 
-import static org.codi.catan.util.Constants.API_PING;
+import static org.codi.catan.util.Constants.API_HEALTH_AND_PING;
 import static org.codi.catan.util.Constants.PATH_PING;
 
 import io.swagger.annotations.Api;
@@ -14,7 +14,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-@Api(API_PING)
+@Api(API_HEALTH_AND_PING)
 @Path(PATH_PING)
 @Produces(MediaType.TEXT_PLAIN)
 public class Ping {

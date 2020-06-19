@@ -98,9 +98,9 @@ public class BoardHelper {
     }
 
     private void normalizeAndValidateTiles(Tile[] tiles) throws CatanException {
-        Util.validateInput(tiles);
+        Util.validateInput(tiles, "tiles");
         for (Tile tile : tiles) {
-            Util.validateInput(tile);
+            Util.validateInput(tile, "tile");
         }
         int[] diceRollCounts = new int[DICE_COUNT * MAX_ROLL_PER_DIE + 1];
         for (Resource resource : Resource.values()) {
@@ -139,8 +139,8 @@ public class BoardHelper {
         Util.validateInput(ports);
         EnumMap<Resource, Integer> ports21 = ports.getPorts21();
         Set<Integer> ports31 = ports.getPorts31();
-        Util.validateInput(ports21);
-        Util.validateInput(ports31);
+        Util.validateInput(ports21, "2:1 ports");
+        Util.validateInput(ports31, "3:1 ports");
         if (ports21.size() != Resource.values().length) {
             throw new BadRequestException("Incorrect 2:1 resource port definition");
         }
@@ -165,7 +165,7 @@ public class BoardHelper {
     }
 
     private void validatePlayers(Player[] players) throws CatanException {
-        Util.validateInput(players);
+        Util.validateInput(players, "players");
         boolean[] colors = new boolean[Color.values().length];
         Set<String> users = new HashSet<>(colors.length);
         for (Player player : players) {

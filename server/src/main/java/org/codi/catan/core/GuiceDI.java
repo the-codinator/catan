@@ -24,17 +24,9 @@ import java.util.Collection;
 import java.util.Set;
 import org.codi.catan.impl.data.CachedDelegateCDC;
 import org.codi.catan.impl.data.CatanDataConnector;
-import org.codi.catan.impl.data.DynamoDbCDC;
-import org.codi.catan.impl.data.InMemoryCDC;
-import org.codi.catan.impl.health.AwsDynamoDbHealthChecker;
-import org.codi.catan.impl.health.InMemoryHealthChecker;
-import org.codi.catan.util.Util;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.codi.catan.impl.data.DatabaseHealthCheck;
 
 public class GuiceDI extends AbstractModule {
-
-    private static final Logger logger = LoggerFactory.getLogger(GuiceDI.class);
 
     private static Injector injector = null;
     private final ObjectMapper mapper;
@@ -55,16 +47,12 @@ public class GuiceDI extends AbstractModule {
         bind(MetricRegistry.class).toInstance(metrics);
         bind(HealthCheckRegistry.class).toInstance(health);
         bind(CatanConfiguration.class).toInstance(configuration);
+        bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE))
+            .to(configuration.getDatabase().getType().getImpl())
+            .asEagerSingleton();
+        bind(CatanDataConnector.class).to(CachedDelegateCDC.class);
         Multibinder<HealthCheck> health = Multibinder.newSetBinder(binder(), HealthCheck.class);
-        if (configuration.isAwsEnabled()) {
-            health.addBinding().to(AwsDynamoDbHealthChecker.class);
-            bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(DynamoDbCDC.class);
-        } else {
-            logger.warn("AWS Credentials not found, using an In-Memory data store instead");
-            health.addBinding().to(InMemoryHealthChecker.class);
-            bind(CatanDataConnector.class).annotatedWith(Names.named(DELEGATE)).to(InMemoryCDC.class);
-        }
-        bind(CatanDataConnector.class).to(CachedDelegateCDC.class).asEagerSingleton();
+        health.addBinding().to(DatabaseHealthCheck.class);
     }
 
     /**

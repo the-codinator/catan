@@ -201,6 +201,7 @@ public class GameUtility {
     /**
      * Check if current player has a house on 2:1 {@param resource} port or 3:1 (resource = null) port
      */
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     public boolean hasHouseOnPort(Board board, State state, Resource resource) {
         Color color = state.getCurrentMove().getColor();
         Set<Integer> ports;

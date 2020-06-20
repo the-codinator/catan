@@ -15,8 +15,6 @@ import org.codi.catan.model.user.Games;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
-;
-
 /**
  * Single GET operations here return requested object if available, throw {@link Status#NOT_FOUND} error otherwise.
  * Batch GET operations return available objects (skip missing objects)
@@ -36,7 +34,7 @@ public interface CatanDataConnector {
     void init() throws CatanException;
 
     /**
-     * Maps to {@code check()} in {@link HealthCheck()}
+     * Maps to {@code check()} in {@link HealthCheck}
      */
     HealthCheck.Result check() throws CatanException;
 

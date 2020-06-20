@@ -44,7 +44,7 @@ public class InMemoryCDC extends AbstractCDC implements CatanDataConnector {
 
     @Override
     public Result check() {
-        return Result.healthy();
+        return Result.builder().healthy().withDetail("type", "inMemory").withMessage("running").build();
     }
 
     public void reset() {

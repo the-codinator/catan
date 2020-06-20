@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCDC implements CatanDataConnector {
 
-    protected Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     /**
      * Get entity of type {@param clazz} by {@param id} if {@param etag} does not match

@@ -45,8 +45,4 @@ public class BaseState implements IdentifiableEntity, StrongEntity {
     public String getETag() {
         return this.eTag;
     }
-
-    public void addPlayedDevCard(Color color, DevCard devCard) {
-        playedDevCards.computeIfAbsent(color, __ -> new LinkedList<>()).add(devCard);
-    }
 }

@@ -14,6 +14,7 @@ import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Resource;
 
+@SuppressWarnings("ConstantConditions")
 @Singleton
 public class GraphHelper {
 
@@ -94,7 +95,6 @@ public class GraphHelper {
     private static final int EDGE_COUNT = 72;
     private static final int HEX_COUNT = 19;
     private static final int PORT_COUNT = 9;
-    private static final int TOTAL_DICE_ROLL_COUNT = 13; // 2 dice * 6 per dice + rolling a 0 (for desert)
 
     private static final int MIN_ADJ_VERTEX = 2;
     private static final int MAX_ADJ_VERTEX = 3;

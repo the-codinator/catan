@@ -171,6 +171,7 @@ public class Util {
         return count;
     }
 
+    @SafeVarargs
     public static <T extends Enum<T>> EnumMap<T, Integer> arrayToEnumMap(Class<T> clazz, T... arr) {
         EnumMap<T, Integer> map = new EnumMap<>(clazz);
         for (T t : arr) {

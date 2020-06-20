@@ -24,7 +24,7 @@ import javax.ws.rs.core.MediaType;
 @Produces(MediaType.APPLICATION_JSON)
 public class Health {
 
-    private HealthCheckRegistry registry;
+    private final HealthCheckRegistry registry;
 
     @Inject
     public Health(HealthCheckRegistry registry) {

@@ -26,17 +26,20 @@ public class StateResponse extends BaseState {
     public StateResponse(State state, Color color) {
         super(state.getId(), state.getPhase(), state.getHouses(), state.getRoads(), state.getThief(), state.getBank(),
             state.getPlayedDevCards(), state.getAchievements(), state.getCurrentMove(), state.getETag());
-        this.otherHandCounts = new EnumMap<>(Color.class);
+        this.playerResourceCounts = new EnumMap<>(Color.class);
+        this.playerDevCardCounts = new EnumMap<>(Color.class);
         for (Color c : Color.values()) {
             Hand hand = state.getHand(color);
             if (c == color) {
                 this.hand = hand;
             } else {
-                otherHandCounts.put(c, hand.getHandCount());
+                playerResourceCounts.put(c, hand.getResourceCount());
+                playerDevCardCounts.put(c, hand.getDevCardCount());
             }
         }
     }
 
     private Hand hand;
-    private EnumMap<Color, Integer> otherHandCounts;
+    private EnumMap<Color, Integer> playerResourceCounts;
+    private EnumMap<Color, Integer> playerDevCardCounts;
 }

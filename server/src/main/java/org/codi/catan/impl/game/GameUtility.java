@@ -183,7 +183,7 @@ public class GameUtility {
      */
     public Resource chooseRandomlyStolenCard(State state, Color color) {
         Hand hand = state.getHand(color);
-        int count = hand.getHandCount();
+        int count = hand.getResourceCount();
         if (count == 0) {
             return null;
         }

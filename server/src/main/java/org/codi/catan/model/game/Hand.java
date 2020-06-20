@@ -27,7 +27,12 @@ public class Hand {
     private List<DevCard> devCards;
 
     @JsonIgnore
-    public int getHandCount() {
+    public int getResourceCount() {
         return Util.getFrequencyMapTotalCount(resources);
+    }
+
+    @JsonIgnore
+    public int getDevCardCount() {
+        return devCards == null ? 0 : devCards.size();
     }
 }

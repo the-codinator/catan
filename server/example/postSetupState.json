@@ -108,9 +108,14 @@
     },
     "devCards": []
   },
-  "otherHandCounts": {
+  "playerResourceCounts": {
     "blue": 3,
     "orange": 3,
     "white": 3
+  },
+  "playerDevCardCounts": {
+    "blue": 0,
+    "orange": 0,
+    "white": 0
   }
 }

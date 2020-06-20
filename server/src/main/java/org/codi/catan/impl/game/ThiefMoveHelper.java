@@ -41,7 +41,7 @@ public class ThiefMoveHelper {
         state.setPhase(Phase.thief);
         EnumSet<Color> thieved = EnumSet.noneOf(Color.class);
         for (var colorHand : state.getHands().entrySet()) {
-            if (colorHand.getValue().getHandCount() > DROP_CARDS_FOR_THIEF_THRESHOLD) {
+            if (colorHand.getValue().getResourceCount() > DROP_CARDS_FOR_THIEF_THRESHOLD) {
                 thieved.add(colorHand.getKey());
             }
         }
@@ -56,8 +56,8 @@ public class ThiefMoveHelper {
     public void thiefDrop(State state, Color color, ThiefDropRequest request) throws CatanException {
         Hand hand = state.getHand(color);
         Util.validateInput(request.getResources(), "resources");
-        if (request.getResources().length != hand.getHandCount()) {
-            throw new BadRequestException("Incorrect number of resource cards - need " + hand.getHandCount() / 2);
+        if (request.getResources().length != hand.getResourceCount()) {
+            throw new BadRequestException("Incorrect number of resource cards - need " + hand.getResourceCount() / 2);
         }
         gameUtility.transferResources(state, color, null, request.getResources());
         state.getCurrentMove().getThieved().remove(color);
@@ -87,7 +87,7 @@ public class ThiefMoveHelper {
         for (int vertex : vertices) {
             House house = state.getHouses().get(vertex);
             if (house != null && house.getColor() != color) {
-                if (request.getVictim() == null && state.getHand(house.getColor()).getHandCount() > 0) {
+                if (request.getVictim() == null && state.getHand(house.getColor()).getResourceCount() > 0) {
                     throw new BadRequestException("Must steal from a player if possible (missing field - victim)");
                 }
                 if (house.getColor() == request.getVictim()) {

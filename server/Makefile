@@ -17,10 +17,12 @@ build-safe:
 	docker run --rm -w /build -v ${HOME}/.m2:/root/.m2 -v `pwd`:/build ${BUILDER_IMAGE} sh ${BUILD_SCRIPT}
 
 image: build-safe
-	docker build -t catan-server .
+	docker build -t catan-server
+
+local-docker: image
+	docker run --rm -p 8080:8080 catan-server
 
 publish: image
 	docker tag catan-server ${PUBLISH_DOCKER_REPOSITORY}:${PUBLISH_IMAGE_TAG}
-	docker login
 	docker push ${PUBLISH_DOCKER_REPOSITORY}:${PUBLISH_IMAGE_TAG}
-	docker logout
+

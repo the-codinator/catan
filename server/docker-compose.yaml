@@ -5,17 +5,13 @@ services:
     image: amazon/dynamodb-local
     ports:
       - '8000:8000'
-    networks:
-      - catan
-  server:
+  catan:
     image: catan-server
     ports:
       - '8080:8080'
     environment:
-      - CATAN_DATABASE_TYPE: dynamoDb
-      - CATAN_AWS_ACCESS_KEY_ID
-      - CATAN_AWS_SECRET_ACCESS_KEY
-    networks:
-      - catan
+      - CATAN_DATABASE_TYPE=dynamoDb
+      - CATAN_AWS_ACCESS_KEY_ID=fakeKey
+      - CATAN_AWS_SECRET_ACCESS_KEY=fakeSecret
     depends_on:
       - dynamodb

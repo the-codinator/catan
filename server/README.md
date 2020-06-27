@@ -40,6 +40,7 @@ Health Check is also available at `http://localhost:8081/healthcheck` (default D
 ## Deployment
 
 Build and publish the image to `docker.io` (DockerHub) using `make publish` \
+Ensure that you have logged into the Docker repository (`docker login`) before running the command to ensure push access is available \
 Set a custom repository using the environment variable `PUBLISH_DOCKER_REPOSITORY` before running the `make` command
 
 ## Implementation TODOs

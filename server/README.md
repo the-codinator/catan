@@ -27,6 +27,12 @@ Run `make image` first for building the image (in not built already) \
 Run using `docker-compose up -d` (`-d` for background mode) - starts the server with a local dynamo db container as persistence \
 Use `docker-compose down` to stop the server
 
+### JVM Options
+
+The `JDK_JAVA_OPTIONS` environment can be set to include JVM args. \
+This is as per the standard [Java docs](https://docs.oracle.com/en/java/javase/11/tools/java.html#GUID-3B1CE181-CD30-4178-9602-230B800D4FAE__USINGTHEJDK_JAVA_OPTIONSLAUNCHERENV-F3C0E3BA) by Oracle \
+For example `-e JDK_JAVA_OPTIONS="-Xmx512m -Xms512m`
+
 ## Swagger
 
 View Swagger docs at `/swagger`

@@ -20,7 +20,7 @@ image: build-safe
 	docker build -t catan-server .
 
 local-docker: image
-	docker run --rm -p 8080:8080 catan-server
+	docker run --rm -c 1 -m 1536m -p 8080:8080 -e JAVA_OPTIONS="-Xmx=1024m -Xms=1024m" catan-server
 
 publish: image
 	docker tag catan-server ${PUBLISH_DOCKER_REPOSITORY}:${PUBLISH_IMAGE_TAG}

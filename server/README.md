@@ -27,6 +27,11 @@ Run `make image` first for building the image (in not built already) \
 Run using `docker-compose up -d` (`-d` for background mode) - starts the server with a local dynamo db container as persistence \
 Use `docker-compose down` to stop the server
 
+### JVM Options
+
+The `JAVA_OPTIONS` environment can be set to include JVM args.\
+For example `-e JAVA_OPTIONS="-Xmx=1024m -Xms=1024m`
+
 ## Swagger
 
 View Swagger docs at `/swagger`

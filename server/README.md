@@ -29,8 +29,8 @@ Use `docker-compose down` to stop the server
 
 ### JVM Options
 
-The `JAVA_OPTIONS` environment can be set to include JVM args.\
-For example `-e JAVA_OPTIONS="-Xmx=1024m -Xms=1024m`
+The `JDK_JAVA_OPTIONS` environment can be set to include JVM args.\
+For example `-e JDK_JAVA_OPTIONS="-Xmx1024m -Xms1024m`
 
 ## Swagger
 

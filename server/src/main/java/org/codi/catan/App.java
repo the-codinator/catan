@@ -19,6 +19,7 @@ import org.codi.catan.api.game.BoardApi;
 import org.codi.catan.api.game.DevCardApi;
 import org.codi.catan.api.game.MoveApi;
 import org.codi.catan.api.game.TradeApi;
+import org.codi.catan.api.health.Get;
 import org.codi.catan.api.health.Health;
 import org.codi.catan.api.health.Ping;
 import org.codi.catan.api.misc.Favicon;
@@ -113,6 +114,7 @@ public class App extends Application<CatanConfiguration> {
 
         // APIs
         // Core
+        registerJerseyDI(Get.class);
         registerJerseyDI(Ping.class);
         registerJerseyDI(Health.class);
         registerJerseyDI(Favicon.class);

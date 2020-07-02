@@ -27,6 +27,7 @@ public class Constants {
     public static final String PATH_FAVICON = "/favicon.ico";
     public static final String PATH_HEALTH = "/healthcheck";
     public static final String PATH_PING = "/ping";
+    public static final String PATH_ROOT = "/";
 
     // Paths - User
     public static final String BASE_PATH_USER = "/user";

@@ -20,8 +20,11 @@ import org.codi.catan.model.core.IdentifiableEntity;
 public class Util {
 
     public static boolean shouldSkipFilters(ContainerRequestContext request) {
-        return request.getMethod().equals("OPTIONS") || request.getUriInfo().getPath().equals("ping")
-            || request.getUriInfo().getPath().startsWith("swagger");
+        if (request.getMethod().equals("OPTIONS")) {
+            return true;
+        }
+        String path = request.getUriInfo().getPath();
+        return path.isEmpty() || path.equals("ping") || path.startsWith("swagger");
     }
 
     /**

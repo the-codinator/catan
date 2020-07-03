@@ -55,10 +55,7 @@
   // Validate Games API
   start('user games');
   const games = await callWithData(0, '/user/games');
-  const expected = json('postSetupGames');
-  expected.ongoing[0].id = vars.id;
-  expected.ongoing[0].created = games.ongoing[0].created;
-  assertEqual(games, expected);
+  assertEqual(games, [vars.id]);
   pass('user games');
 
   // TODO:

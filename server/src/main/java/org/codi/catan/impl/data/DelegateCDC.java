@@ -6,10 +6,10 @@
 package org.codi.catan.impl.data;
 
 import com.codahale.metrics.health.HealthCheck.Result;
+import java.util.List;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
-import org.codi.catan.model.user.Games;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
@@ -57,13 +57,8 @@ public class DelegateCDC implements CatanDataConnector {
     }
 
     @Override
-    public Games getGames(String id) throws CatanException {
-        return delegate.getGames(id);
-    }
-
-    @Override
-    public void putGames(Games games) throws CatanException {
-        delegate.putGames(games);
+    public List<String> getGames(String userId, Boolean ongoing) throws CatanException {
+        return delegate.getGames(userId, ongoing);
     }
 
     @Override

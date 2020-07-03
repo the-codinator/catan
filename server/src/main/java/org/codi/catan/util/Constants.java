@@ -14,6 +14,7 @@ public class Constants {
     public static final String HEADER_IF_NONE_MATCH = "If-None-Match";
     public static final String HEADER_REQUEST_ID = "X-Request-Id";
     public static final String PARAM_GAME_ID = "game";
+    public static final String PARAM_ONGOING = "ongoing";
     public static final String PARAM_REMEMBER_ME = "rememberMe";
     public static final String PARAM_USER_ID = "user";
 

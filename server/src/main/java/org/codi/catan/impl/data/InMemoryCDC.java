@@ -16,6 +16,8 @@ import com.google.common.base.Supplier;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -24,6 +26,8 @@ import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.core.IdentifiableEntity;
 import org.codi.catan.model.core.StrongEntity;
+import org.codi.catan.model.game.Board;
+import org.codi.catan.model.game.Player;
 import org.codi.catan.util.Util;
 
 public class InMemoryCDC extends AbstractCDC implements CatanDataConnector {
@@ -154,6 +158,26 @@ public class InMemoryCDC extends AbstractCDC implements CatanDataConnector {
                 throw new CatanException(String.format(ENTITY_NOT_FOUND, clazz.getSimpleName(), id), Status.NOT_FOUND);
             }
         } catch (ExecutionException e) {
+            throw new CatanException("DB error", e);
+        }
+    }
+
+    @Override
+    public List<String> getGames(String userId, Boolean ongoing) throws CatanException {
+        List<String> list = new ArrayList<>();
+        try {
+            for (String json : db.get(Board.class).values()) {
+                Board board = objectMapper.readValue(json, Board.class);
+                for (Player player : board.getPlayers()) {
+                    if (player.getId().equals(userId) && (ongoing == null
+                        || ongoing && board.getCompleted() <= board.getCreated()
+                        || !ongoing && board.getCompleted() > board.getCreated())) {
+                        list.add(board.getId());
+                    }
+                }
+            }
+            return list;
+        } catch (ExecutionException | JsonProcessingException e) {
             throw new CatanException("DB error", e);
         }
     }

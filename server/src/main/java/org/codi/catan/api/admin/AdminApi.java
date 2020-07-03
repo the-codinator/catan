@@ -28,10 +28,8 @@ import org.codi.catan.core.CatanException;
 import org.codi.catan.impl.data.CatanDataConnector;
 import org.codi.catan.impl.game.MiscMoveHelper;
 import org.codi.catan.impl.user.UserApiHelper;
-import org.codi.catan.impl.user.UserGamesHelper;
 import org.codi.catan.model.admin.AdminAction;
 import org.codi.catan.model.admin.AdminRequest;
-import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.Phase;
 import org.codi.catan.model.game.State;
 import org.codi.catan.model.user.Role;
@@ -58,15 +56,13 @@ public class AdminApi {
     private final ObjectMapper objectMapper;
     private final CatanDataConnector dataConnector;
     private final MiscMoveHelper miscMoveHelper;
-    private final UserGamesHelper userGamesHelper;
 
     @Inject
     public AdminApi(ObjectMapper objectMapper, CatanDataConnector dataConnector, MiscMoveHelper miscMoveHelper,
-        UserGamesHelper userGamesHelper, UserApiHelper userApiHelper) {
+        UserApiHelper userApiHelper) {
         this.objectMapper = objectMapper;
         this.dataConnector = dataConnector;
         this.miscMoveHelper = miscMoveHelper;
-        this.userGamesHelper = userGamesHelper;
         // Note: userApiHelper can never be a proxy object since no-once depends on AdminApi
         userApiHelper.setNewUserEventListener(this::handleNewUser);
     }
@@ -87,10 +83,8 @@ public class AdminApi {
                 dataConnector.deleteUser(id);
                 break;
             case delete_game:
-                Board board = dataConnector.getBoard(id);
                 dataConnector.deleteState(id, null);
                 dataConnector.deleteBoard(id);
-                userGamesHelper.handleDeletedGame(board);
                 break;
             case end_turn:
                 State state = dataConnector.getState(id, null);

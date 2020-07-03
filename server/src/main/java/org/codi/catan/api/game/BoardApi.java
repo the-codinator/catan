@@ -32,9 +32,9 @@ import org.codi.catan.core.CatanException;
 import org.codi.catan.filter.ETagHeaderFilter.ETagHeaderSupport;
 import org.codi.catan.impl.game.BoardHelper;
 import org.codi.catan.impl.game.StateApiHelper;
-import org.codi.catan.impl.user.UserGamesHelper;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
+import org.codi.catan.model.request.BoardRequest;
 import org.codi.catan.model.response.GameResponse;
 import org.codi.catan.model.response.StateResponse;
 import org.codi.catan.model.user.User;
@@ -48,21 +48,18 @@ public class BoardApi {
 
     private final BoardHelper boardHelper;
     private final StateApiHelper stateApiHelper;
-    private final UserGamesHelper userGamesHelper;
 
     @Inject
-    public BoardApi(BoardHelper boardHelper, StateApiHelper stateApiHelper, UserGamesHelper userGamesHelper) {
+    public BoardApi(BoardHelper boardHelper, StateApiHelper stateApiHelper) {
         this.boardHelper = boardHelper;
         this.stateApiHelper = stateApiHelper;
-        this.userGamesHelper = userGamesHelper;
     }
 
     @POST
-    public GameResponse create(@ApiParam(hidden = true) @Auth User user, Board board) throws CatanException {
-        board = boardHelper.createBoard(board, user.getId());
+    public GameResponse create(@ApiParam(hidden = true) @Auth User user, BoardRequest request) throws CatanException {
+        Board board = boardHelper.createBoard(request, user.getId());
         State state = stateApiHelper.createState(board);
         StateResponse stateResponse = stateApiHelper.createStateResponse(board, state, user.getId());
-        userGamesHelper.handleNewGame(board);
         return new GameResponse(board, stateResponse);
     }
 

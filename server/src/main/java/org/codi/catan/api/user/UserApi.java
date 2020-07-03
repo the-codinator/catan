@@ -8,6 +8,7 @@ package org.codi.catan.api.user;
 import static org.codi.catan.util.Constants.API_USER;
 import static org.codi.catan.util.Constants.BASE_PATH_USER;
 import static org.codi.catan.util.Constants.BEARER_AUTHORIZATION_KEY;
+import static org.codi.catan.util.Constants.PARAM_ONGOING;
 import static org.codi.catan.util.Constants.PARAM_REMEMBER_ME;
 import static org.codi.catan.util.Constants.PARAM_USER_ID;
 import static org.codi.catan.util.Constants.PATH_FIND;
@@ -24,6 +25,7 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.Authorization;
 import java.util.Collection;
+import java.util.List;
 import javax.annotation.security.PermitAll;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
@@ -45,7 +47,6 @@ import org.codi.catan.model.request.SignUpRequest;
 import org.codi.catan.model.response.FindUserResponse;
 import org.codi.catan.model.response.MessageResponse;
 import org.codi.catan.model.response.SessionResponse;
-import org.codi.catan.model.user.Games;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
@@ -106,7 +107,8 @@ public class UserApi {
     @Path(PATH_GAMES)
     @ApiOperation(value = "", authorizations = @Authorization(BEARER_AUTHORIZATION_KEY))
     @PermitAll
-    public Games games(@ApiParam(hidden = true) @Auth User user) throws CatanException {
-        return userGamesHelper.games(user.getId());
+    public List<String> games(@ApiParam(hidden = true) @Auth User user, @QueryParam(PARAM_ONGOING) Boolean ongoing)
+        throws CatanException {
+        return userGamesHelper.games(user.getId(), ongoing);
     }
 }

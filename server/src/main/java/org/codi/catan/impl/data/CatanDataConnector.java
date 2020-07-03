@@ -6,12 +6,12 @@
 package org.codi.catan.impl.data;
 
 import com.codahale.metrics.health.HealthCheck;
+import java.util.List;
 import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.core.StrongEntity;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
-import org.codi.catan.model.user.Games;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
@@ -44,8 +44,7 @@ public interface CatanDataConnector {
     void updateUser(User user) throws CatanException;
     void deleteUser(String id) throws CatanException;
 
-    Games getGames(String id) throws CatanException;
-    void putGames(Games games) throws CatanException;
+    List<String> getGames(String userId, Boolean ongoing) throws CatanException;
 
     Token getToken(String id) throws CatanException;
     void createToken(Token token) throws CatanException;

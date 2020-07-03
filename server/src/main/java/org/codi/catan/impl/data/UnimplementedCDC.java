@@ -6,6 +6,7 @@
 package org.codi.catan.impl.data;
 
 import com.codahale.metrics.health.HealthCheck.Result;
+import java.util.List;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.core.IdentifiableEntity;
 
@@ -19,6 +20,11 @@ public class UnimplementedCDC extends AbstractCDC implements CatanDataConnector 
     @Override
     public Result check() {
         return Result.unhealthy("Unsupported");
+    }
+
+    @Override
+    public List<String> getGames(String userId, Boolean ongoing) throws CatanException {
+        return null;
     }
 
     @Override

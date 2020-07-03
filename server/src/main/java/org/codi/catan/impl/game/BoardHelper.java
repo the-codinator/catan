@@ -30,6 +30,7 @@ import org.codi.catan.model.game.Player;
 import org.codi.catan.model.game.Ports;
 import org.codi.catan.model.game.Resource;
 import org.codi.catan.model.game.Tile;
+import org.codi.catan.model.request.BoardRequest;
 import org.codi.catan.model.user.User;
 import org.codi.catan.util.Util;
 
@@ -54,8 +55,8 @@ public class BoardHelper {
     /**
      * Normalize and validate created {@param board}, ensuring {@param author} is also a player
      */
-    public Board createBoard(Board board, String author) throws CatanException {
-        normalizeAndValidateBoard(board);
+    public Board createBoard(BoardRequest request, String author) throws CatanException {
+        Board board = normalizeAndValidateBoard(request);
         boolean hasAuthor = false;
         for (Player player : board.getPlayers()) {
             if (player.getId().equals(author)) {
@@ -89,12 +90,13 @@ public class BoardHelper {
         }
     }
 
-    private void normalizeAndValidateBoard(Board board) throws CatanException {
-        Util.validateInput(board);
-        board.setId(Util.generateRandomUuid());
+    private Board normalizeAndValidateBoard(BoardRequest request) throws CatanException {
+        Util.validateInput(request);
+        Board board = new Board(Util.generateRandomUuid(), request);
         normalizeAndValidateTiles(board.getTiles());
         normalizeAndValidatePorts(board.getPorts());
         validatePlayers(board.getPlayers());
+        return board;
     }
 
     private void normalizeAndValidateTiles(Tile[] tiles) throws CatanException {

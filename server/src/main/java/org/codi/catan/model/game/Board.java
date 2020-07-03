@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.codi.catan.model.core.IdentifiableEntity;
+import org.codi.catan.model.request.BoardRequest;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -17,11 +18,13 @@ import org.codi.catan.model.core.IdentifiableEntity;
 @Setter
 public class Board implements IdentifiableEntity {
 
-    public Board(String id) {
-        this.id = id;
+    public Board(String id, BoardRequest request) {
+        this(id, System.currentTimeMillis(), 0, request.getTiles(), request.getPorts(), request.getPlayers());
     }
 
     private String id;
+    private long created;
+    private long completed;
     private Tile[] tiles;
     private Ports ports;
     private Player[] players;

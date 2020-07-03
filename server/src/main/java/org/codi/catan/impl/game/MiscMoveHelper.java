@@ -77,7 +77,6 @@ public class MiscMoveHelper {
         int maxIndex = board.getPlayers().length - 1;
         if (state.getPhase() == Phase.gameplay && isVictory(state)) {
             state.setPhase(Phase.end);
-            userGamesHelper.handleCompletedGame(board);
         } else {
             switch (state.getPhase()) {
                 case setup1:

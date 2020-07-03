@@ -1,0 +1,24 @@
+{
+  "version": "2.0",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "[1.*, 2.0.0)"
+  },
+  "functionTimeout": "00:00:10",
+  "aggregator": {
+    "batchSize": 100
+  },
+  "logging": {
+    "logLevel": {
+      "default": "Information"
+    }
+  },
+  "extensions": {
+    "http": {
+      "dynamicThrottlesEnabled": false,
+      "routePrefix": "api",
+      "maxConcurrentRequests": 10,
+      "maxOutstandingRequests": 40
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "extends": "./node_modules/gts/",
+  "rules": {
+    "object-property-newline": [
+      "error",
+      {
+        "allowAllPropertiesOnSameLine": true
+      }
+    ],
+    "comma-dangle": [
+      "error",
+      "never"
+    ],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "node/no-unpublished-import": [
+      "error",
+      {
+        "allowModules": [
+          "@azure/functions"
+        ]
+      }
+    ]
+  }
+}

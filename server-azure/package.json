@@ -16,12 +16,17 @@
     "pretest": "npm run compile",
     "posttest": "npm run check"
   },
-  "dependencies": {},
+  "dependencies": {
+    "cls-hooked": "^4.2.2",
+    "http-status-codes": "^1.4.0"
+  },
   "devDependencies": {
     "@azure/functions": "^1.0.2-beta2",
-    "typescript": "^3.8.3",
+    "@types/cls-hooked": "^4.3.0",
+    "@types/http-status-codes": "^1.2.0",
+    "@types/node": "^13.11.1",
     "gts": "^2.0.2",
-    "@types/node": "^13.11.1"
+    "typescript": "^3.8.3"
   },
   "eslintIgnore": [
     "dist/**/*"

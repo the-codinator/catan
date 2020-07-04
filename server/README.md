@@ -17,8 +17,14 @@ Additional required environment variables for database credentials based on prov
 
 ## Run with Docker
 
+### Automatically Run with `make`
+
+Run `make local-docker` to start it with some basic options and resources
+
+### Manually Build and Run Docker Image
+
 Build the docker images using `make image` \
-Run the image manually using `docker run -p 8080:8080 -e CATAN_DATABASE_TYPE=inMemory catan-server`\
+Run the image manually using `docker run -p 8080:8080 -e CATAN_DATABASE_TYPE=inMemory catan-server` \
 If using a different database, add any other necessary env vars for credentials using `-e key=val` per var.
 
 ### Docker Compose

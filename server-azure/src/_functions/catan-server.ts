@@ -7,11 +7,16 @@ const httpTrigger: AzureFunction = async function (context: Context, req: HttpRe
   if (name) {
     context.res = {
       // status: 200, /* Defaults to 200 */
-      body: { t: 'Hello ' + (req.query.name || req.body.name), r: context.bindingData }
+      body: { t: 'Hello ' + (req.query.name || req.body.name), r: context.bindingData, q: req }
     };
   } else {
     context.res = {
       status: 400,
+      headers: {
+        'content-type': 'application/json',
+        'x-request-id': context.invocationId,
+        etag: ''
+      },
       body: { X: 'Please pass a name on the query string or in the request body' }
     };
   }

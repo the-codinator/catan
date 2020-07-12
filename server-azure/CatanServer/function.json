@@ -9,7 +9,7 @@
         "get",
         "post"
       ],
-      "route": "{pathSegment1?}/{pathSegment2?}/{pathSegment3?}/{pathSegment4?}/{pathSegment5?}/{pathSegment6}"
+      "route": "{pathSegment1?}/{pathSegment2?}/{pathSegment3?}/{pathSegment4?}/{pathSegment5?}/{pathSegment6?}"
     },
     {
       "type": "http",
@@ -17,5 +17,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/functions/catan-server.js"
+  "scriptFile": "../dist/_functions/catan-server.js"
 }

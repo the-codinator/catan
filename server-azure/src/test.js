@@ -8,13 +8,13 @@ async function f() {
   const options = {
     accessCondition: {
       type: 'IfMatch',
-      condition: '"e0013889-0000-1800-0000-"'
-    }
+      condition: '"e0013889-0000-1800-0000-"',
+    },
   };
 
-  const t1 = await test.items.create({
+  await test.items.create({
     id: 'user6',
-    data: '12345'
+    data: '12345',
   });
 
   // const t = await test.item('user1', 'user1').replace(
@@ -48,5 +48,3 @@ f().catch(e => {
   console.log('---------------');
   console.log(JSON.stringify(e));
 });
-
-

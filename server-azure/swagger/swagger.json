@@ -24,7 +24,7 @@
     }
   ],
   "schemes": [
-    "http"
+    "https"
   ],
   "paths": {
     "/admin": {
@@ -63,25 +63,6 @@
             "Bearer [access_token]": []
           }
         ]
-      }
-    },
-    "/reset": {
-      "get": {
-        "tags": [
-          "Admin API"
-        ],
-        "summary": "In Memory Local Dev Only",
-        "description": "",
-        "operationId": "get",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "schema": {
-              "type": "string"
-            }
-          }
-        }
       }
     },
     "/game/{game}": {
@@ -810,31 +791,6 @@
             "Bearer [access_token]": []
           }
         ]
-      }
-    },
-    "/healthcheck": {
-      "get": {
-        "tags": [
-          "Health & Ping Check"
-        ],
-        "operationId": "health",
-        "produces": [
-          "application/json"
-        ],
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "successful operation",
-            "headers": {},
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/EntryStringResult"
-              },
-              "uniqueItems": true
-            }
-          }
-        }
       }
     },
     "/ping": {

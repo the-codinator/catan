@@ -2,10 +2,6 @@
   "extends": "./node_modules/gts/",
   "root": true,
   "rules": {
-    "comma-dangle": [
-      "error",
-      "never"
-    ],
     "node/no-missing-import": [
       "error",
       {
@@ -43,6 +39,12 @@
       ],
       "parser": "@typescript-eslint/parser",
       "rules": {
+        "@typescript-eslint/explicit-function-return-type": [
+          "error",
+          {
+            "allowExpressions": true
+          }
+        ],
         "@typescript-eslint/naming-convention": "error",
         "@typescript-eslint/no-explicit-any": "error"
       }

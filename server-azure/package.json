@@ -8,15 +8,15 @@
     "prestart": "npm run build",
     "start": "func start",
     "test": "echo \"No tests yet...\"",
-    "check": "gts check",
-    "fix": "gts fix",
+    "check": "gts check src",
+    "fix": "gts fix src",
     "clean": "gts clean",
     "compile": "npm run build",
     "postcompile": "npm run fix",
     "prepare": "npm run compile",
     "pretest": "npm run compile",
     "posttest": "npm run check",
-    "dep:upgrade": "npx npm-check-updates ncu -u && npm install"
+    "dep:upgrade": "npx npm-check-updates -u && npm install"
   },
   "dependencies": {
     "@azure/cosmos": "^3.7.4",
@@ -28,11 +28,11 @@
     "@types/cls-hooked": "^4.3.0",
     "@types/http-status-codes": "^1.2.0",
     "@types/node": "^14.0.22",
-    "@types/node-cache": "^4.2.5",
     "gts": "^2.0.2",
     "typescript": "^3.9.6"
   },
   "eslintIgnore": [
-    "dist/**/*"
+    "dist/**/*",
+    "node_modules/**/*"
   ]
 }

@@ -1,25 +1,8 @@
 import type { AzureFunction, Context, HttpRequest } from '@azure/functions';
+import { router } from '../router';
 
 const httpTrigger: AzureFunction = async function (context: Context, req: HttpRequest): Promise<void> {
-  context.log('HTTP trigger function processed a request.');
-  const name = req.query.name || (req.body && req.body.name);
-
-  if (name) {
-    context.res = {
-      // status: 200, /* Defaults to 200 */
-      body: { t: 'Hello ' + (req.query.name || req.body.name), r: context.bindingData, q: req }
-    };
-  } else {
-    context.res = {
-      status: 400,
-      headers: {
-        'content-type': 'application/json',
-        'x-request-id': context.invocationId,
-        etag: ''
-      },
-      body: { X: 'Please pass a name on the query string or in the request body' }
-    };
-  }
+  context.res = await router(context, req);
 };
 
 export default httpTrigger;

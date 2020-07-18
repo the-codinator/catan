@@ -1,3 +1,6 @@
 import MessageResponse from './message-response';
 
-export type CatanResponse = MessageResponse;
+export type SwaggerResponse = Buffer;
+export type StringResponse = string;
+
+export type CatanResponse = MessageResponse | SwaggerResponse | StringResponse;

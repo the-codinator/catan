@@ -64,7 +64,7 @@ function handlePopulateETag<T extends IdentifiableEntity>(
   strong: EntityStore<T>['strong'],
   val: T | undefined,
   resource: Resource | undefined
-) {
+): void {
   if (val && resource && isStrongEntity(strong, val)) {
     val.etag = resource._etag;
   }

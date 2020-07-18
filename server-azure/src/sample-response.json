@@ -1,0 +1,83 @@
+{
+  "t": "Hello 111133311313",
+  "r": {
+    "invocationId": "8e9218d6-d33b-413a-bb0c-a7a5c222d25e",
+    "name": 111133311313,
+    "pathSegment1": "CatanServer",
+    "pathSegment2": 21,
+    "query": {
+      "code": "***REDACTED***",
+      "name": "111133311313"
+    },
+    "headers": {
+      "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+      "accept-Encoding": "gzip, deflate, br",
+      "accept-Language": "en-US,en;q=0.5",
+      "cache-Control": "max-age=0",
+      "connection": "Keep-Alive",
+      "cookie": "ARRAffinity=a1d21e8439d9fb9db8d3b8e0abbb83456be2f33bebc8f1f8f2311bb75283dd8a",
+      "host": "catan-function.azurewebsites.net",
+      "max-Forwards": "8",
+      "te": "trailers",
+      "user-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0",
+      "upgrade-insecure-requests": "1",
+      "x-WAWS-Unencoded-URL": "/api/CatanServer/21?code=***REDACTED***&name=111133311313",
+      "cLIENT-IP": "10.0.128.30:64322",
+      "x-ARR-LOG-ID": "2b24559b-8a8b-48e3-9107-5da862daebcb",
+      "x-SITE-DEPLOYMENT-ID": "catan-function",
+      "wAS-DEFAULT-HOSTNAME": "catan-function.azurewebsites.net",
+      "x-Original-URL": "/api/CatanServer/21?code=***REDACTED***&name=111133311313",
+      "x-Forwarded-For": "49.207.192.40:30160, 49.207.192.40",
+      "x-ARR-SSL": "2048|256|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 5|CN=*.azurewebsites.net",
+      "x-Forwarded-Proto": "https",
+      "x-AppService-Proto": "https",
+      "x-Forwarded-TlsVersion": "1.2",
+      "dISGUISED-HOST": "catan-function.azurewebsites.net",
+      "x-MS-COLDSTART": "1"
+    },
+    "sys": {
+      "methodName": "CatanServer",
+      "utcNow": "2020-07-18T00:04:29.167168Z",
+      "randGuid": "49dec5ac-ebae-4eff-ade6-fd017bd9854b"
+    }
+  },
+  "q": {
+    "method": "GET",
+    "url": "https://catan-function.azurewebsites.net/api/CatanServer/21?code=***REDACTED***&name=111133311313",
+    "originalUrl": "https://catan-function.azurewebsites.net/api/CatanServer/21?code=***REDACTED***&name=111133311313",
+    "headers": {
+      "accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8",
+      "accept-encoding": "gzip, deflate, br",
+      "accept-language": "en-US,en;q=0.5",
+      "cache-control": "max-age=0",
+      "connection": "Keep-Alive",
+      "cookie": "ARRAffinity=a1d21e8439d9fb9db8d3b8e0abbb83456be2f33bebc8f1f8f2311bb75283dd8a",
+      "host": "catan-function.azurewebsites.net",
+      "max-forwards": "8",
+      "te": "trailers",
+      "user-agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101 Firefox/78.0",
+      "upgrade-insecure-requests": "1",
+      "x-waws-unencoded-url": "/api/CatanServer/21?code=***REDACTED***&name=111133311313",
+      "client-ip": "10.0.128.30:64322",
+      "x-arr-log-id": "2b24559b-8a8b-48e3-9107-5da862daebcb",
+      "x-site-deployment-id": "catan-function",
+      "was-default-hostname": "catan-function.azurewebsites.net",
+      "x-original-url": "/api/CatanServer/21?code=***REDACTED***&name=111133311313",
+      "x-forwarded-for": "49.207.192.40:30160, 49.207.192.40",
+      "x-arr-ssl": "2048|256|C=US, S=Washington, L=Redmond, O=Microsoft Corporation, OU=Microsoft IT, CN=Microsoft IT TLS CA 5|CN=*.azurewebsites.net",
+      "x-forwarded-proto": "https",
+      "x-appservice-proto": "https",
+      "x-forwarded-tlsversion": "1.2",
+      "disguised-host": "catan-function.azurewebsites.net",
+      "x-ms-coldstart": "1"
+    },
+    "query": {
+      "code": "***REDACTED***",
+      "name": "111133311313"
+    },
+    "params": {
+      "pathSegment1": "CatanServer",
+      "pathSegment2": "21"
+    }
+  }
+}

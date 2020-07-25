@@ -64,7 +64,7 @@ public class CatanAuthFilter extends AuthFilter<Token, User> {
             throw new CatanException("Missing authorization header", Status.UNAUTHORIZED);
         }
         if (!authHeader.startsWith(BEARER_PREFIX)) {
-            throw new CatanException("Bad authorization header format");
+            throw new CatanException("Bad authorization header format", Status.UNAUTHORIZED);
         }
         String token = authHeader.substring(BEARER_PREFIX.length());
         return sessionHelper.parseToken(token);

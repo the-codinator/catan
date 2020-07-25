@@ -1,15 +1,11 @@
-import type {
-  AuthenticatedCatanRequest,
-  BodyLessRequest,
-  CatanRequest,
-  ETagCatanRequest,
-  GameCatanRequest
-} from '../model/request';
+import type { AuthenticatedRequest, BodyLessRequest, CatanRequest, ETagRequest, GameRequest } from '../model/request';
 import { CatanError } from './catan-error';
+import type { DeepReadonly } from 'ts-essentials';
 import type { Token } from '../model/user';
 import { createNamespace } from 'cls-hooked';
 
 export type CatanLogger = Readonly<{
+  requestId: string;
   info(message: string): void;
   warn(message: string, error?: Error): void;
   error(message: string, error?: Error): void;
@@ -17,32 +13,35 @@ export type CatanLogger = Readonly<{
 
 /*
 export type CatanContext<T extends CatanRequest> = Readonly<{
+  // Core
   logger: CatanLogger;
-  token: T extends AuthenticatedCatanRequest ? Token : never;
-  user: T extends AuthenticatedCatanRequest ? string : never;
-  gameId: T extends GameCatanRequest ? string : never;
-  etag: T extends ETagCatanRequest ? string | undefined : never;
-  request: T extends BodyLessRequest ? never : T;
-  params?: Record<string, string | undefined>;
+  params: Record<string, string | undefined>;
+  request: T extends BodyLessRequest ? undefined : T;
+  // Auth
+  token: T extends AuthenticatedRequest ? Token : undefined;
+  user: T extends AuthenticatedRequest ? string : undefined;
+  // Game API
+  gameId: T extends GameRequest ? string : undefined;
+  etag: T extends ETagRequest ? string | undefined : undefined;
 }>;
 */
 
-export type CatanContext<T extends CatanRequest> = Readonly<
+export type CatanContext<T extends CatanRequest> = DeepReadonly<
   {
     logger: CatanLogger;
-    params?: Record<string, string | undefined>;
-  } & (T extends AuthenticatedCatanRequest
+    params: Record<string, string | undefined>;
+  } & (T extends AuthenticatedRequest
     ? {
         token: Token;
         user: string;
       }
     : {}) &
-    (T extends GameCatanRequest
+    (T extends GameRequest
       ? {
           gameId: string;
         }
       : {}) &
-    (T extends ETagCatanRequest
+    (T extends ETagRequest
       ? {
           etag: string;
         }
@@ -57,7 +56,7 @@ export type CatanContext<T extends CatanRequest> = Readonly<
 const ns = createNamespace('catan');
 const key = 'context';
 
-export function setContext(context: CatanContext<CatanRequest>, callback: () => void) {
+export function setContext(context: CatanContext<CatanRequest>, callback: () => void): void {
   ns.run(() => {
     ns.set(key, context);
     callback();

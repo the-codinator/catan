@@ -5,6 +5,9 @@
     "node/no-missing-import": [
       "error",
       {
+        "allowModules": [
+          "@azure/functions"
+        ],
         "tryExtensions": [
           ".js",
           ".json",
@@ -16,7 +19,8 @@
       "error",
       {
         "allowModules": [
-          "@azure/functions"
+          "@azure/functions",
+          "ts-essentials"
         ]
       }
     ],

@@ -1,3 +1,4 @@
+*.md
 *.js.map
 *.ts
 .git*
@@ -6,5 +7,6 @@
 .vscode
 local.settings.json
 package*.json
+src
 test
 tsconfig.json

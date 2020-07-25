@@ -1,5 +1,5 @@
 import getContext from '../core/catan-context';
 
-export function signup() {
+export function signup(): void {
   getContext();
 }

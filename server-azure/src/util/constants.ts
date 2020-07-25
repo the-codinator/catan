@@ -1,3 +1,10 @@
+// Headers, Params, etc
+export const HEADER_IF_MATCH = 'If-Match';
+export const HEADER_IF_NONE_MATCH = 'If-None-Match';
+
+// Game
+export const INIT_BANK_RESOURCE_COUNT = 19;
+
 // Error Messages
 export const DB_ERROR_BAD_STATUS_CODE = 'DB [%s] error - bad status code [%d]';
 export const DB_ERROR_MISSING_RESOURCE = 'DB [%s] error - Missing resource in response';

@@ -8,8 +8,8 @@
     "prestart": "npm run build",
     "start": "func start",
     "test": "echo \"No tests yet...\"",
-    "check": "gts check src",
-    "fix": "gts fix src",
+    "check": "gts check src/*.ts src/**/*.ts",
+    "fix": "gts fix src src/*.ts src/**/*.ts",
     "clean": "gts clean",
     "compile": "npm run build",
     "postcompile": "npm run fix",
@@ -29,6 +29,7 @@
     "@types/http-status-codes": "^1.2.0",
     "@types/node": "^14.0.22",
     "gts": "^2.0.2",
+    "ts-essentials": "^7.0.0",
     "typescript": "^3.9.6"
   },
   "eslintIgnore": [

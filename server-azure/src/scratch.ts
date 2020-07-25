@@ -1,9 +1,3 @@
-
-
-
-
-
-
 /*impo
 
 rt getContext, { CatanContext, setContext } from './core/catan-context';

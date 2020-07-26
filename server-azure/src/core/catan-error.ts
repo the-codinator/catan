@@ -22,6 +22,10 @@ export class CatanError extends Error {
   public asMessageResponse(): MessageResponse {
     return { code: this.errorStatus, message: this.message };
   }
+
+  static wrap(e: Error, message?: string): CatanError {
+    return e instanceof CatanError ? e : new CatanError(message || e.message, undefined, e);
+  }
 }
 
 CatanError.prototype.name = 'CatanError';

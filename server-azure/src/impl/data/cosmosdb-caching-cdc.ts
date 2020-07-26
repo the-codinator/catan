@@ -11,7 +11,7 @@ import {
   METHOD_GET,
   METHOD_PATCH,
   METHOD_POST,
-  METHOD_PUT
+  METHOD_PUT,
 } from '../../util/constants';
 import type { IdentifiableEntity, StrongEntity } from '../../model/core';
 import type { Token, User } from '../../model/user';
@@ -75,8 +75,8 @@ function requestOptions(etag: string | undefined, ifMatch: boolean): RequestOpti
     return {
       accessCondition: {
         type: ifMatch ? 'IfMatch' : 'IfNoneMatch',
-        condition: etag
-      }
+        condition: etag,
+      },
     };
   } else {
     return undefined;
@@ -96,21 +96,21 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
     this.users = {
       container: database.container(COLLECTION_USERS_NAME),
       cache: new MyCache(100, 86400), // 1 day
-      strong: false
+      strong: false,
     };
     this.tokens = {
       container: database.container(COLLECTION_TOKENS_NAME),
       cache: new MyCache(200, 900), // 15 min,
-      strong: false
+      strong: false,
     };
     this.boards = {
       container: database.container(COLLECTION_BOARDS_NAME),
       cache: new MyCache(50, 21600), // 6 hr
-      strong: false
+      strong: false,
     };
     this.states = {
       container: database.container(COLLECTION_STATES_NAME),
-      strong: true
+      strong: true,
     };
   }
 

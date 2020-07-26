@@ -276,7 +276,7 @@ async function execute(
     }
   } catch (e) {
     // Error Handling
-    const error: CatanError = e instanceof CatanError ? e : new CatanError('Uncaught Error', e);
+    const error = CatanError.wrap(e, 'Execution Error');
     status = error.errorStatus;
     if (status / 100 === 4) {
       // Client Error - Warning

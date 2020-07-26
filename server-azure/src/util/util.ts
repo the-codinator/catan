@@ -39,3 +39,11 @@ export function createPartialEnumMap<E extends Record<string, string>, T>(
   }
   return map;
 }
+
+export function base64Encode(val: object): string {
+  return Buffer.from(JSON.stringify(val)).toString('base64');
+}
+
+export function base64Decode(val: string): unknown {
+  return JSON.parse(Buffer.from(val, 'base64').toString('utf-8'));
+}

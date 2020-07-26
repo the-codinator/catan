@@ -4,7 +4,7 @@ export type User = IdentifiableEntity &
   Readonly<{
     name: string;
     pwd: string;
-    roles: Role[];
+    roles?: Role[];
   }>;
 
 export enum Role {

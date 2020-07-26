@@ -11,12 +11,12 @@ export class MyCache<T extends IdentifiableEntity> {
     this.expires = expires;
   }
 
-  private getExpiry() {
+  private getExpiry(): number {
     // We dont care tooooooo much so we're dropping the nanoseconds part
     return process.hrtime()[0] + this.expires;
   }
 
-  private clean(minimum = 0) {
+  private clean(minimum = 0): void {
     const now = process.hrtime()[0];
     for (const [k, { expiry }] of this.map) {
       if (minimum <= 0 && expiry > now) {
@@ -32,7 +32,7 @@ export class MyCache<T extends IdentifiableEntity> {
     return this.map.get(id)?.val;
   }
 
-  put(val: T) {
+  put(val: T): void {
     this.clean();
     this.map.set(val.id, { val, expiry: this.getExpiry() }); // Replaces if exists
     if (this.map.size > this.capacity) {
@@ -40,7 +40,7 @@ export class MyCache<T extends IdentifiableEntity> {
     }
   }
 
-  del(id: string) {
+  del(id: string): void {
     this.clean();
     this.map.delete(id);
   }

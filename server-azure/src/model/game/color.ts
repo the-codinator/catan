@@ -4,5 +4,3 @@ export enum Color {
   red = 'red',
   white = 'white',
 }
-
-const x: Record<string, string> = Color;

@@ -19,3 +19,6 @@ export const METHOD_POST = 'POST';
 export const METHOD_PUT = 'PUT';
 export const METHOD_PATCH = 'PATCH';
 export const METHOD_DELETE = 'DELETE';
+
+// Misc
+export const BEARER_PREFIX = 'Bearer ';

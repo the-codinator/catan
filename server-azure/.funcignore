@@ -3,6 +3,7 @@
 *.ts
 .git*
 .eslintrc.json
+.prettierignore
 .prettierrc.js
 .vscode
 local.settings.json

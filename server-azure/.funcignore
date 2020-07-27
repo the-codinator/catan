@@ -8,6 +8,4 @@
 azure-functions-core-tools
 local.settings.json
 request-schema-validation
-src
-test
 tsconfig.json

@@ -1,4 +1,4 @@
-import type { CatanLogger } from '../core/catan-context';
+import type { CatanLogger } from './core/catan-context';
 
 export function accessLog(logger: CatanLogger, user: string | undefined, method: string, path: string): void {
   logger.info(`[ ACCESS ] method=${method} path=/${path} user=${user}`);

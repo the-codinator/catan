@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "description": "",
   "scripts": {
+    "generate-request-schema-validations": "ts-node --dir request-schema-validation src/generator.ts",
+    "prebuild": "npm run generate-request-schema-validations",
     "build": "tsc",
     "watch": "tsc -w",
     "prestart": "npm run build",
@@ -24,16 +26,14 @@
   },
   "devDependencies": {
     "@azure/functions": "^1.2.2",
-    "@types/http-status-codes": "^1.2.0",
-    "@types/node": "^14.0.22",
+    "@exodus/schemasafe": "^1.0.0-rc.1",
+    "@types/fs-extra": "^9.0.1",
+    "@types/node": "^14.0.26",
+    "fs-extra": "^9.0.1",
     "gts": "^2.0.2",
     "ts-essentials": "^7.0.0",
-    "typescript": "^3.9.6"
-  },
-  "eslintIgnore": [
-    ".vscode",
-    "dist/**/*",
-    "node_modules/**/*",
-    "swagger/*"
-  ]
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7",
+    "typescript-json-schema": "^0.42.0"
+  }
 }

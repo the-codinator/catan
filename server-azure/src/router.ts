@@ -1,15 +1,17 @@
-import type { AsyncOrSync, DeepReadonly } from 'ts-essentials';
+import * as UserApi from './api/user-api';
+import * as Validator from './model/request/generated-validator';
 import type { AuthenticatedRequest, CatanRequest, ETagRequest, GameRequest } from './model/request/index';
+import { BadRequestError, CatanError } from './core/catan-error';
 import type { CatanContext, CatanLogger } from './core/catan-context';
 import type { CatanResponse, SwaggerResponse } from './model/response/index';
 import type { Context, HttpRequest } from '@azure/functions';
 import { METHOD_GET, METHOD_POST } from './util/constants';
 import { NOT_FOUND, OK } from 'http-status-codes';
 import type { Role, Token } from './model/user';
-import { accessLog, requestLog } from './filter/tracing';
-import { authenticate, authorize } from './filter/auth';
-import { CatanError } from './core/catan-error';
-import { StrongEntity } from './model/core';
+import type { RouteHandler, StrongEntity } from './model/core';
+import { accessLog, requestLog } from './filter';
+import { authenticate, authorize } from './impl/auth';
+import type { DeepReadonly } from 'ts-essentials';
 import { readFile } from 'fs';
 
 export interface CatanHttpResponse {
@@ -25,13 +27,10 @@ export interface CatanHttpResponseHeaders {
   [_: string]: string | undefined;
 }
 
-type RouteHandler<T extends CatanRequest, U extends CatanResponse> =
-  | AsyncOrSync<U>
-  | ((context: CatanContext<T>) => AsyncOrSync<U>);
-
 type Route<T extends CatanRequest, U extends CatanResponse> = DeepReadonly<
   {
     handler: RouteHandler<T, U>;
+    validator?: (request: T) => boolean;
     req?: {
       headers?: string[];
       query?: string[];
@@ -66,6 +65,8 @@ type Route<T extends CatanRequest, U extends CatanResponse> = DeepReadonly<
         }
       : {})
 >;
+
+type RCC = Route<CatanRequest, CatanResponse>;
 
 function createLogger(context: Context): CatanLogger {
   return {
@@ -139,26 +140,22 @@ function swagger(context: Context, req: HttpRequest, segments: PathSegments): Pr
 
 /* Route Resolution */
 
-function resolve(context: Context, req: HttpRequest, segments: PathSegments): Route<CatanRequest, CatanResponse> {
+function resolve(req: HttpRequest, segments: PathSegments): RCC {
   return (
-    routeBase(context, req, segments) || {
+    routeBase(req, segments) || {
       handler: { code: NOT_FOUND, message: 'Unknown Route' },
     }
   );
 }
 
-function routeBase(
-  context: Context,
-  req: HttpRequest,
-  segments: PathSegments
-): Route<CatanRequest, CatanResponse> | undefined {
+function routeBase(req: HttpRequest, segments: PathSegments): RCC | undefined {
   switch (segments[0]) {
     case undefined:
       return undefined;
     case 'game':
-      return routeGame(context, req, segments);
+      return routeGame(req, segments);
     case 'user':
-      return routeUser(context, req, segments);
+      return routeUser(req, segments);
     case 'ping':
       return {
         handler: 'pong',
@@ -170,20 +167,27 @@ function routeBase(
   return undefined;
 }
 
-function routeUser(
-  context: Context,
-  req: HttpRequest,
-  segments: PathSegments
-): Route<CatanRequest, CatanResponse> | undefined {
-  // TODO:
+function routeUser(req: HttpRequest, segments: PathSegments): RCC | undefined {
+  if (segments.length !== 2) {
+    return undefined;
+  }
+  switch (req.method) {
+    case METHOD_GET:
+      // TODO
+      return undefined;
+    case METHOD_POST:
+      switch (segments[1]) {
+        case 'signup':
+          return {
+            handler: UserApi.signup,
+            validator: Validator.validateSignUpRequest,
+          } as RCC;
+      }
+  }
   return undefined;
 }
 
-function routeGame(
-  context: Context,
-  req: HttpRequest,
-  segments: PathSegments
-): Route<CatanRequest, CatanResponse> | undefined {
+function routeGame(req: HttpRequest, segments: PathSegments): RCC | undefined {
   // TODO:
   return undefined;
 }
@@ -194,27 +198,28 @@ function isStrongEntity<T extends CatanResponse & (StrongEntity | {})>(val: T): 
   return 'etag' in val;
 }
 
-function requiresAuth<T extends Route<CatanRequest, CatanResponse> | Route<AuthenticatedRequest, CatanResponse>>(
+function requiresAuth<T extends RCC | Route<AuthenticatedRequest, CatanResponse>>(
   route: T
 ): route is T & Route<AuthenticatedRequest, CatanResponse> {
   return (route.filters && 'authenticate' in route.filters && route.filters.authenticate) || false;
 }
 
 async function execute(
-  route: Route<CatanRequest, CatanResponse>,
+  route: RCC,
   segments: PathSegments,
   req: HttpRequest,
   logger: CatanLogger,
   start: [number, number]
 ): Promise<CatanHttpResponse> {
   // Azure Response fields
-  let status = 200;
+  let status = OK;
   let user = '-';
   const headers: CatanHttpResponseHeaders = {
     'x-request-id': logger.requestId,
     'content-type': 'application/json',
   };
   let body: CatanResponse;
+
   try {
     // Auth
     let token: Token | undefined;
@@ -223,6 +228,7 @@ async function execute(
       const authInfo = await authenticate(req.headers.authorization);
       token = authInfo.token;
       user = authInfo.user.id;
+
       // AuthZ
       if (route.filters.authorize) {
         authorize(authInfo?.user, route.filters.authorize);
@@ -232,27 +238,36 @@ async function execute(
     // Access Log
     accessLog(logger, user, segments.method, segments.path);
 
+    // Input Validation
+    if (route.validator && !route.validator(req.body)) {
+      throw new BadRequestError('Incorrect Input Request Format');
+    }
+
     if (typeof route.handler === 'function') {
       // Context vars
       const params: Record<string, string | undefined> = {};
       let gameId: string | undefined;
       let etag: string | undefined;
+
       // Route Filters
       if (route.filters) {
         // Game Id
         if ('gameId' in route.filters && route.filters.gameId) {
           gameId = segments[1];
         }
+
         // ETag
         if (route.filters.etag && 'request' in route.filters.etag) {
           etag = req.headers[route.filters.etag.request];
         }
       }
+
       // Params
       if (route.req) {
         route.req.headers?.forEach(x => (params[x] = req.headers[x]));
         route.req.query?.forEach(x => (params[x] = req.query[x]));
       }
+
       // Create Context
       const context = {
         logger,
@@ -263,10 +278,12 @@ async function execute(
         gameId,
         etag,
       };
+
+      // Execute Response Handler
       body = await route.handler(context as CatanContext<CatanRequest>);
     } else {
-      const x = await route.handler;
-      body = x;
+      // Resolve Response
+      body = await route.handler;
     }
 
     // ETag Response Header
@@ -276,15 +293,17 @@ async function execute(
     }
   } catch (e) {
     // Error Handling
-    const error = CatanError.wrap(e, 'Execution Error');
+    const error = CatanError.wrap(e, 'Unknown Error');
     status = error.errorStatus;
+
+    // Log Error
     if (status / 100 === 4) {
-      // Client Error - Warning
-      logger.warn('Error Handler', error);
+      logger.warn('[ Client Error ]', error);
     } else {
-      // Server Error - Error
-      logger.error('Error Handler', error);
+      logger.error('[ Server Error ]', error);
     }
+
+    // Resolve Error Response
     body = error.asMessageResponse();
   } finally {
     // Request Log
@@ -329,9 +348,15 @@ function createPathSegments(req: HttpRequest): PathSegments {
 
 export function router(context: Context, req: HttpRequest): Promise<CatanHttpResponse> {
   const start = process.hrtime();
+  if (req.method === METHOD_POST && typeof req.body !== 'object') {
+    return Promise.resolve({
+      status: 400,
+      headers: { 'content-type': 'text/plain', 'x-request-id': context.invocationId },
+      body: 'Request body is not a JSON',
+    });
+  }
   const segments = createPathSegments(req);
   return (
-    swagger(context, req, segments) ||
-    execute(resolve(context, req, segments), segments, req, createLogger(context), start)
+    swagger(context, req, segments) || execute(resolve(req, segments), segments, req, createLogger(context), start)
   );
 }

@@ -1,6 +1,5 @@
 import { BAD_REQUEST, INTERNAL_SERVER_ERROR } from 'http-status-codes';
-
-import MessageResponse from '../model/response/message-response';
+import type { MessageResponse } from '../model/response/message-response';
 
 export const DEFAULT_ERROR_STATUS = INTERNAL_SERVER_ERROR;
 

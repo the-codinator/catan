@@ -1,0 +1,6 @@
+.vscode
+dist/**/*
+node_modules/**/*
+swagger/*
+request-schema-validation/generated-schemas/*
+src/model/request/generated-validator.ts

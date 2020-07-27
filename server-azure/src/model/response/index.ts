@@ -1,4 +1,4 @@
-import MessageResponse from './message-response';
+import type { MessageResponse } from './message-response';
 import type { StateResponse } from './state-response';
 
 export type SwaggerResponse = Buffer;

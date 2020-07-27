@@ -2,12 +2,11 @@
 *.js.map
 *.ts
 .git*
-.eslintrc.json
-.prettierignore
-.prettierrc.js
+.eslint*
+.prettier*
 .vscode
 local.settings.json
-package*.json
+request-schema-validation
 src
 test
 tsconfig.json

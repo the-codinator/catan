@@ -2,3 +2,5 @@
 **/node_modules
 **/dist
 **/swagger
+**/request-schema-validation/generated-schemas
+src/model/request/generated-validator.ts

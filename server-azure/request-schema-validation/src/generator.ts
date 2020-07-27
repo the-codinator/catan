@@ -5,11 +5,7 @@ import * as path from 'path';
 import { validator } from '@exodus/schemasafe';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const pipe = (...fn: Function[]) => (v: any = undefined) => {
-  fn.reduce((_v, f) => {
-    return f(_v);
-  }, v);
-};
+const pipe = (...fn: Function[]) => (v: any = undefined) => fn.reduce((_v, f) => f(_v), v);
 
 const settings: TJS.PartialArgs = {
   aliasRef: true,
@@ -21,6 +17,8 @@ const settings: TJS.PartialArgs = {
 };
 const compilerOptions: TJS.CompilerOptions = { strictNullChecks: true };
 const basePath = path.resolve(__dirname, '..', '..');
+const generatedValidatorFile = 'generated-validator.ts';
+let shouldError = true;
 
 function resolve(...route: string[]): string {
   return path.join(basePath, ...route);
@@ -32,6 +30,22 @@ function getInterfaceFiles(): string[] {
     .readdirSync(resolve('src', 'model', 'request'))
     .filter(file => file.endsWith('.ts') && file !== 'index.ts')
     .map(file => resolve('src', 'model', 'request', file));
+}
+
+function breakIfNoUpdate(files: string[]): string[] {
+  const generatedFile = resolve('src', 'model', 'request', generatedValidatorFile);
+  if (!fs.existsSync(generatedFile)) {
+    return files;
+  }
+  const lastGenerationTime = fs.statSync(generatedFile).mtime;
+  for (const file of files) {
+    if (fs.statSync(file).mtime > lastGenerationTime) {
+      console.log('Changes Detected - Regenerating Validators!');
+      return files;
+    }
+  }
+  shouldError = false;
+  throw Error('All type definitions are unchanged. Not generating validators!');
 }
 
 function generateSchemas(files: string[]): { generator: TJS.JsonSchemaGenerator; symbols: string[] } {
@@ -89,8 +103,16 @@ function generateModules(): void {
         module.replace(/function validate\(data, recursive\)/g, 'function validate(data: any, recursive: any)')
     );
   }
-  fs.writeFileSync(resolve('src', 'model', 'request', 'generated-validator.ts'), validationModules.join('\n\n'));
+  fs.writeFileSync(resolve('src', 'model', 'request', generatedValidatorFile), validationModules.join('\n\n'));
   console.log('Generated Request Validator');
 }
 
-pipe(getInterfaceFiles, generateSchemas, saveSchemas, generateModules)();
+try {
+  pipe(getInterfaceFiles, breakIfNoUpdate, generateSchemas, saveSchemas, generateModules)();
+} catch (e) {
+  if (shouldError) {
+    throw e;
+  } else {
+    console.log(e.message);
+  }
+}

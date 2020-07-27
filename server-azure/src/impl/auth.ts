@@ -24,7 +24,7 @@ export async function authenticate(
   try {
     dbToken = await dataConnector.getToken(token.id);
   } catch (e) {
-    const error = CatanError.wrap(e);
+    const error = CatanError.from(e);
     if (error.errorStatus !== NOT_FOUND) {
       throw new CatanError('Error reading token data store', undefined, error);
     } else {

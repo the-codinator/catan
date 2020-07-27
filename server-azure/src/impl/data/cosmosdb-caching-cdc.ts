@@ -24,11 +24,10 @@ import { MyCache } from './my-cache';
 import type { State } from '../../model/game/state';
 import { format } from 'util';
 
-const DB_ENDPOINT = 'https://catan-db.documents.azure.com:443/';
-const DB_KEY = process.env.CATAN_COSMOSDB_KEY;
-if (!DB_KEY) {
-  throw new CatanError('Missing Cosmos DB Key Secret');
+if (!process.env.CATAN_COSMOSDB_ENDPOINT || !process.env.CATAN_COSMOSDB_KEY) {
+  throw new CatanError('Missing Cosmos DB Configs');
 }
+const DB_OPTIONS = { endpoint: process.env.CATAN_COSMOSDB_ENDPOINT, key: process.env.CATAN_COSMOSDB_KEY };
 const DB_NAME = 'catan';
 const COLLECTION_USERS_NAME = 'user';
 const COLLECTION_TOKENS_NAME = 'token';
@@ -91,7 +90,7 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
   private readonly states: EntityStore<State>;
 
   constructor() {
-    this.$client = new CosmosClient({ endpoint: DB_ENDPOINT, key: DB_KEY });
+    this.$client = new CosmosClient(DB_OPTIONS);
     const database = this.$client.database(DB_NAME);
     this.users = {
       container: database.container(COLLECTION_USERS_NAME),
@@ -290,7 +289,7 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
   }
 
   public async createUser(user: User): Promise<void> {
-    this.create(this.users, user);
+    await this.create(this.users, user);
   }
 
   public async getToken(id: string): Promise<Token> {

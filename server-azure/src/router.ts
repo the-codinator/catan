@@ -293,11 +293,11 @@ async function execute(
     }
   } catch (e) {
     // Error Handling
-    const error = CatanError.wrap(e, 'Unknown Error');
+    const error = CatanError.from(e, 'Unknown Error');
     status = error.errorStatus;
 
     // Log Error
-    if (status / 100 === 4) {
+    if (status < 500) {
       logger.warn('[ Client Error ]', error);
     } else {
       logger.error('[ Server Error ]', error);

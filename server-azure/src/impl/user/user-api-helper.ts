@@ -43,7 +43,7 @@ export async function signup(request: SignUpRequest): Promise<void> {
   try {
     await dataConnector.createUser(user);
   } catch (e) {
-    const error = CatanError.wrap(e);
+    const error = CatanError.from(e);
     if (error.errorStatus === CONFLICT) {
       throw new CatanError('User id is already taken!', CONFLICT, error);
     } else {

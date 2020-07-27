@@ -19,10 +19,13 @@ export class CatanError extends Error {
   }
 
   public asMessageResponse(): MessageResponse {
-    return { code: this.errorStatus, message: this.message };
+    return {
+      code: this.errorStatus,
+      message: this.message.startsWith('[ code=') ? this.message.slice(this.message.indexOf(']') + 2) : this.message,
+    };
   }
 
-  static wrap(e: Error, message?: string): CatanError {
+  static from(e: Error, message?: string): CatanError {
     return e instanceof CatanError ? e : new CatanError(message || 'Internal Error', undefined, e);
   }
 }

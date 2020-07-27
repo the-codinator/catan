@@ -14,7 +14,7 @@ export interface CatanDataConnector {
   // List<String> getGames(String userId, Boolean ongoing) throws CatanException;
 
   getToken(id: string): Promise<Token>;
-  // void createToken(Token token) throws CatanException;
+  createToken(token: Token): Promise<void>;
   // void deleteToken(String id) throws CatanException;
 
   getBoard(id: string): Promise<Board>;

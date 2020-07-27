@@ -23,5 +23,5 @@ export type Token = IdentifiableEntity &
     roles?: Role[];
     created: number;
     expires: number;
-    linkedId: string;
+    linkedId?: string;
   }>;

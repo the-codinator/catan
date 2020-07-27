@@ -182,6 +182,14 @@ function routeUser(req: HttpRequest, segments: PathSegments): RCC | undefined {
             handler: UserApi.signup,
             validator: Validator.validateSignUpRequest,
           } as RCC;
+        case 'login':
+          return {
+            handler: UserApi.login,
+            req: {
+              query: ['rememberMe'],
+            },
+            validator: Validator.validateLoginRequest,
+          } as RCC;
       }
   }
   return undefined;

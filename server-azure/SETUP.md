@@ -34,6 +34,24 @@ const DB = 'catan';
 const CONTAINERS = ['board', 'state', 'token', 'user'];
 const THROUGHPUT = 400;
 const PARTITION = '/id';
+const TTL = {
+  board: 86400 * 365,
+  state: 86400 * 365,
+  token: 86400 * 14,
+};
+const INDEXING_POLICY = {
+  indexingMode: 'consistent',
+  automatic: true,
+  includedPaths: [],
+  excludedPaths: [
+    {
+      path: '/*',
+    },
+    {
+      path: '/"_etag"/?',
+    },
+  ],
+};
 
 async function setup() {
   const client = new CosmosClient(process.env.CONNECTION);
@@ -46,7 +64,12 @@ async function setup() {
     throw new Error('Error creating Database - status=' + dbResponse.statusCode);
   }
   for (const container of CONTAINERS) {
-    const contResponse = await client.database(DB).containers.createIfNotExists({ id: container, partitionKey: PARTITION });
+    const contResponse = await client.database(DB).containers.createIfNotExists({
+      id: container,
+      partitionKey: PARTITION,
+      defaultTtl: TTL[container],
+      indexingPolicy: INDEXING_POLICY,
+    });
     if (contResponse.statusCode === 201) {
       console.log(`Container [${contResponse.container.id}] created successfully!`);
     } else if (contResponse.statusCode === 200) {

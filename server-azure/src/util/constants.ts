@@ -26,3 +26,4 @@ export const METHOD_DELETE = 'DELETE';
 
 // Misc
 export const BEARER_PREFIX = 'Bearer ';
+export const DAY_MILLIS = 24 * 60 * 60 * 1000;

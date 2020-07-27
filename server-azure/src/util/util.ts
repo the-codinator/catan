@@ -1,3 +1,5 @@
+import { uuid } from 'uuidv4';
+
 export function getFrequencyMapTotalCount(map: { [_: string]: number | undefined }): number {
   return Object.values(map).reduce((a, b) => (a ? (b ? a + b : a) : b)) || 0;
 }
@@ -40,10 +42,14 @@ export function createPartialEnumMap<E extends Record<string, string>, T>(
   return map;
 }
 
-export function base64Encode(val: object): string {
-  return Buffer.from(JSON.stringify(val)).toString('base64');
+export function base64Encode(val: string): string {
+  return Buffer.from(val).toString('base64');
 }
 
-export function base64Decode(val: string): unknown {
-  return JSON.parse(Buffer.from(val, 'base64').toString('utf-8'));
+export function base64Decode(val: string): string {
+  return Buffer.from(val, 'base64').toString('utf-8');
+}
+
+export function generateRandomUuid(): string {
+  return uuid();
 }

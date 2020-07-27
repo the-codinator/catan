@@ -282,7 +282,7 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
 
   public async getUser(id: string, skipCache = false): Promise<User> {
     if (skipCache) {
-      return this.get<User>(this.users, id);
+      return this.get(this.users, id);
     } else {
       return this.getWithCacheWithoutETag(this.users, id);
     }
@@ -294,6 +294,10 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
 
   public async getToken(id: string): Promise<Token> {
     return this.getWithCacheWithoutETag(this.tokens, id);
+  }
+
+  public async createToken(token: Token): Promise<void> {
+    await this.create(this.tokens, token);
   }
 
   public async getBoard(id: string): Promise<Board> {

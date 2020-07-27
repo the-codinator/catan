@@ -2,6 +2,10 @@
 export const HEADER_IF_MATCH = 'If-Match';
 export const HEADER_IF_NONE_MATCH = 'If-None-Match';
 
+// Validators
+export const NAME_REGEX = /^[\w-'. ]{2,50}$/;
+export const USER_ID_REGEX = /^[\w-]{3,12}$/;
+
 // Game
 export const INIT_BANK_RESOURCE_COUNT = 19;
 

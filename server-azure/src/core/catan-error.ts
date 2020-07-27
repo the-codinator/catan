@@ -23,7 +23,7 @@ export class CatanError extends Error {
   }
 
   static wrap(e: Error, message?: string): CatanError {
-    return e instanceof CatanError ? e : new CatanError(message || e.message, undefined, e);
+    return e instanceof CatanError ? e : new CatanError(message || 'Internal Error', undefined, e);
   }
 }
 

@@ -5,6 +5,7 @@
 .eslint*
 .prettier*
 .vscode
+azure-functions-core-tools
 local.settings.json
 request-schema-validation
 src

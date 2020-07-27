@@ -88,6 +88,7 @@ dist
 out
 
 # Azure Functions artifacts
+azure-functions-core-tools
 bin
 obj
 appsettings.json

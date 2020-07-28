@@ -53,3 +53,22 @@ export function base64Decode(val: string): string {
 export function generateRandomUuid(): string {
   return uuid();
 }
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function arrayEquals(a: any, b: any): boolean {
+  if (a === b) {
+    return true;
+  }
+  if (!Array.isArray(a) || !Array.isArray(b)) {
+    return false;
+  }
+  if (a.length !== b.length) {
+    return false;
+  }
+  for (let i = 0; i < a.length; i++) {
+    if (a[i] !== b[i]) {
+      return false;
+    }
+  }
+  return true;
+}

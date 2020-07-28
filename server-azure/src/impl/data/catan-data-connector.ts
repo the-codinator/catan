@@ -15,7 +15,7 @@ export interface CatanDataConnector {
 
   getToken(id: string): Promise<Token>;
   createToken(token: Token): Promise<void>;
-  // void deleteToken(String id) throws CatanException;
+  deleteToken(id: string): Promise<void>;
 
   getBoard(id: string): Promise<Board>;
   // void createBoard(Board board) throws CatanException;

@@ -1,9 +1,10 @@
 import { NOT_FOUND, UNAUTHORIZED } from 'http-status-codes';
-import { Role, Token, TokenType, User } from '../model/user';
+import { Role, Token, TokenType, tokenEquals } from '../model/user';
 import { parseToken, validateRequestTokenOffline } from './user/session-helper';
 
 import { BEARER_PREFIX } from '../util/constants';
 import { CatanError } from '../core/catan-error';
+import type { User } from '../model/user';
 import dataConnector from './data/catan-data-connector';
 
 export async function authenticate(
@@ -28,12 +29,12 @@ export async function authenticate(
     if (error.errorStatus !== NOT_FOUND) {
       throw new CatanError('Error reading token data store', undefined, error);
     } else {
-      throw e;
+      throw error;
     }
   }
-  // if (!token.equals(dbToken)) { // TODO: Implement Token Equals
-  //   throw new CatanError('Invalid Token', UNAUTHORIZED);
-  // }
+  if (!tokenEquals(token, dbToken)) {
+    throw new CatanError('Invalid Access Token', UNAUTHORIZED);
+  }
   const user = { id: token.user, name: '', roles: token.roles, pwd: '' };
   return { token, user };
 }

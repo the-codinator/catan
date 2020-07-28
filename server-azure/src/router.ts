@@ -1,17 +1,27 @@
 import * as UserApi from './api/user-api';
 import * as Validator from './model/request/generated-validator';
-import type { AuthenticatedRequest, CatanRequest, ETagRequest, GameRequest } from './model/request/index';
+import type {
+  AuthenticatedGetRequest,
+  AuthenticatedRequest,
+  CatanRequest,
+  ETagRequest,
+  GameRequest,
+} from './model/request/index';
+import { BAD_REQUEST, NOT_FOUND, OK, UNSUPPORTED_MEDIA_TYPE } from 'http-status-codes';
 import { BadRequestError, CatanError } from './core/catan-error';
 import type { CatanContext, CatanLogger } from './core/catan-context';
 import type { CatanResponse, SwaggerResponse } from './model/response/index';
 import type { Context, HttpRequest } from '@azure/functions';
+import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from './model/request/user-request';
 import { METHOD_GET, METHOD_POST } from './util/constants';
-import { NOT_FOUND, OK } from 'http-status-codes';
 import type { Role, Token } from './model/user';
 import type { RouteHandler, StrongEntity } from './model/core';
 import { accessLog, requestLog } from './filter';
 import { authenticate, authorize } from './impl/auth';
 import type { DeepReadonly } from 'ts-essentials';
+import type { FindUserResponse } from './model/response/find-user-response';
+import type { MessageResponse } from './model/response/message-response';
+import type { SessionResponse } from './model/response/session-response';
 import { readFile } from 'fs';
 
 export interface CatanHttpResponse {
@@ -173,23 +183,56 @@ function routeUser(req: HttpRequest, segments: PathSegments): RCC | undefined {
   }
   switch (req.method) {
     case METHOD_GET:
-      // TODO
-      return undefined;
+      switch (segments[1]) {
+        case 'find': {
+          const route: Route<AuthenticatedGetRequest, FindUserResponse> = {
+            handler: UserApi.find,
+            req: {
+              query: ['user'],
+            },
+            filters: {
+              authenticate: true,
+            },
+          };
+          return route as RCC;
+        }
+      }
+      break;
     case METHOD_POST:
       switch (segments[1]) {
-        case 'signup':
-          return {
+        case 'signup': {
+          const route: Route<SignUpRequest, MessageResponse> = {
             handler: UserApi.signup,
             validator: Validator.validateSignUpRequest,
-          } as RCC;
-        case 'login':
-          return {
+          };
+          return route as RCC;
+        }
+        case 'login': {
+          const route: Route<LoginRequest, SessionResponse> = {
             handler: UserApi.login,
+            validator: Validator.validateLoginRequest,
             req: {
               query: ['rememberMe'],
             },
-            validator: Validator.validateLoginRequest,
-          } as RCC;
+          };
+          return route as RCC;
+        }
+        case 'refresh': {
+          const route: Route<RefreshTokenRequest, SessionResponse> = {
+            handler: UserApi.refresh,
+            validator: Validator.validateRefreshTokenRequest,
+          };
+          return route as RCC;
+        }
+        case 'logout': {
+          const route: Route<_LogoutRequest, MessageResponse> = {
+            handler: UserApi.logout,
+            filters: {
+              authenticate: true,
+            },
+          };
+          return route as RCC;
+        }
       }
   }
   return undefined;
@@ -302,7 +345,7 @@ async function execute(
   } catch (e) {
     // Error Handling
     const error = CatanError.from(e, 'Unknown Error');
-    status = error.errorStatus;
+    status = e.errorStatus;
 
     // Log Error
     if (status < 500) {
@@ -354,17 +397,37 @@ function createPathSegments(req: HttpRequest): PathSegments {
   return segments;
 }
 
-export function router(context: Context, req: HttpRequest): Promise<CatanHttpResponse> {
-  const start = process.hrtime();
-  if (req.method === METHOD_POST && typeof req.body !== 'object') {
+function invalidPostRequestContentType(
+  context: Context,
+  req: HttpRequest,
+  segments: PathSegments
+): Promise<CatanHttpResponse> | undefined {
+  if (segments.path === 'user/logout') {
+    // Special handling for body-less POST request
+    return undefined;
+  } else if (req.headers['content-type']?.toLowerCase() !== 'application/json') {
     return Promise.resolve({
-      status: 400,
+      status: UNSUPPORTED_MEDIA_TYPE,
+      headers: { 'content-type': 'text/plain', 'x-request-id': context.invocationId },
+      body: 'Request payload must be "Content-Type: application/json"',
+    });
+  } else if (typeof req.body !== 'object') {
+    return Promise.resolve({
+      status: BAD_REQUEST,
       headers: { 'content-type': 'text/plain', 'x-request-id': context.invocationId },
       body: 'Request body is not a JSON',
     });
+  } else {
+    return undefined;
   }
+}
+
+export function router(context: Context, req: HttpRequest): Promise<CatanHttpResponse> {
+  const start = process.hrtime();
   const segments = createPathSegments(req);
   return (
-    swagger(context, req, segments) || execute(resolve(req, segments), segments, req, createLogger(context), start)
+    (req.method === METHOD_POST && invalidPostRequestContentType(context, req, segments)) ||
+    swagger(context, req, segments) ||
+    execute(resolve(req, segments), segments, req, createLogger(context), start)
   );
 }

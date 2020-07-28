@@ -1,11 +1,13 @@
 import * as SessionHelper from './session-helper';
 import { BadRequestError, CatanError } from '../../core/catan-error';
 import { CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, UNAUTHORIZED } from 'http-status-codes';
-import type { LoginRequest, SignUpRequest } from '../../model/request/user-request';
+import type { LoginRequest, RefreshTokenRequest, SignUpRequest } from '../../model/request/user-request';
 import { NAME_REGEX, USER_ID_REGEX } from '../../util/constants';
-import { Role, Token, TokenType, User } from '../../model/user';
+import { Role, Token, TokenType, tokenEquals } from '../../model/user';
 import type { Buildable } from 'ts-essentials';
+import type { FindUserResponse } from '../../model/response/find-user-response';
 import type { SessionResponse } from '../../model/response/session-response';
+import { User } from '../../model/user';
 import dataConnector from '../data/catan-data-connector';
 
 let newUserEventListener: undefined | ((user: User) => void);
@@ -72,6 +74,34 @@ export async function login(request: LoginRequest, rememberMe: boolean): Promise
   return loginInternal(user, rememberMe);
 }
 
+export async function refresh(request: RefreshTokenRequest): Promise<SessionResponse> {
+  let token: Token;
+  try {
+    token = SessionHelper.parseToken(request.refresh_token);
+  } catch (e) {
+    throw new BadRequestError('Bad Token', e);
+  }
+  if (token.type !== TokenType.refresh) {
+    throw new BadRequestError('Incorrect Token Type');
+  }
+  SessionHelper.validateRequestTokenOffline(token);
+  let dbToken: Token | undefined;
+  try {
+    dbToken = await dataConnector.getToken(token.id);
+  } catch (e) {
+    const error = CatanError.from(e);
+    if (error.errorStatus !== NOT_FOUND) {
+      throw error;
+    }
+  }
+  if (!tokenEquals(token, dbToken)) {
+    throw new BadRequestError('Invalid Refresh Token');
+  }
+  logout(token);
+  const user: User = { id: token.user, name: '', pwd: '', roles: token.roles };
+  return createSessionInternal(user, true);
+}
+
 async function loginInternal(requestUser: User, rememberMe: boolean): Promise<SessionResponse> {
   let dbUser: User;
   try {
@@ -97,9 +127,9 @@ async function createSessionInternal(dbUser: User, rememberMe: boolean): Promise
     (refreshToken as Buildable<Token>).linkedId = accessToken.id;
   }
   try {
-    dataConnector.createToken(accessToken);
+    await dataConnector.createToken(accessToken);
     if (refreshToken) {
-      dataConnector.createToken(refreshToken);
+      await dataConnector.createToken(refreshToken);
     }
   } catch (e) {
     throw new CatanError('Error creating token', INTERNAL_SERVER_ERROR, e);
@@ -112,4 +142,37 @@ async function createSessionInternal(dbUser: User, rememberMe: boolean): Promise
     access_token: SessionHelper.serializeToken(accessToken),
     refresh_token: SessionHelper.serializeToken(refreshToken),
   };
+}
+
+export async function logout(token: Token): Promise<void> {
+  try {
+    await dataConnector.deleteToken(token.id);
+    if (token.linkedId) {
+      await dataConnector.deleteToken(token.linkedId);
+    }
+  } catch (e) {
+    const error = CatanError.from(e);
+    if (error.errorStatus === NOT_FOUND) {
+      throw new CatanError('Attempting to log out of missing session', INTERNAL_SERVER_ERROR, e);
+    } else {
+      throw error;
+    }
+  }
+}
+
+export async function find(userId: string | undefined): Promise<FindUserResponse> {
+  if (!userId) {
+    throw new BadRequestError('Missing Query Param "user"');
+  }
+  try {
+    const { id, name } = await dataConnector.getUser(userId);
+    return [{ id, name }];
+  } catch (e) {
+    const error = CatanError.from(e);
+    if (error.errorStatus === NOT_FOUND) {
+      return [];
+    } else {
+      throw error;
+    }
+  }
 }

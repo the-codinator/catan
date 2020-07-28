@@ -1,4 +1,4 @@
-import { DeepReadonly } from 'ts-essentials';
+import type { DeepReadonly, Opaque } from 'ts-essentials';
 
 export type SignUpRequest = LoginRequest &
   DeepReadonly<{
@@ -9,3 +9,9 @@ export type LoginRequest = DeepReadonly<{
   id: string;
   pwd: string;
 }>;
+
+export type RefreshTokenRequest = DeepReadonly<{
+  refresh_token: string;
+}>;
+
+export type _LogoutRequest = Opaque<{}, '_LogoutRequest'>;

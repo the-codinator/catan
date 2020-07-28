@@ -55,8 +55,12 @@ function generateSchemas(files: string[]): { generator: TJS.JsonSchemaGenerator;
   if (generator === null) {
     throw new Error('Null Generator!');
   }
+  const symbols = generator
+    .getMainFileSymbols(program)
+    .filter(symbol => symbol.includes('Request'))
+    .filter(symbol => !symbol.startsWith('_')); /* Prepend "_" in the type's name to prevent its validator generation */
 
-  return { generator, symbols: generator.getMainFileSymbols(program) };
+  return { generator, symbols };
 }
 
 function saveSchemas({
@@ -88,22 +92,25 @@ function saveSchemas({
 
 function generateModules(): void {
   const opts = { schemas: undefined, /* mode: 'strong', */ isJSON: true };
-  const files = fs
-    .readdirSync(resolve('request-schema-validation', 'generated-schemas'))
-    .filter(file => file.includes('Request'));
+  const files = fs.readdirSync(resolve('request-schema-validation', 'generated-schemas'));
   const validationModules: string[] = [];
   for (const file of files) {
     const contents = fs.readFileSync(resolve('request-schema-validation', 'generated-schemas', file)).toString();
     const schema = validator(JSON.parse(contents), opts);
     const module: string = schema.toModule();
+    const name = file.slice(0, file.lastIndexOf('.'));
     validationModules.push(
-      'export const validate' +
-        file.slice(0, file.lastIndexOf('.')) +
-        ': (data: any, recursive?: any) => boolean = ' +
-        module.replace(/function validate\(data, recursive\)/g, 'function validate(data: any, recursive: any)')
+      // TODO: try to convert function signature to (data: <name>, recursive?: any) => data is <name>
+      // Need to figure out how to import the types from the correct file
+      `export const validate${name}: (data: any, recursive?: any) => boolean = ` +
+        module
+          .replace(/function validate\(data, recursive\)/g, 'function validate(data: any, recursive: any)')
+          .replace(/'use strict'\n?/, '')
+          .replace(/const hasOwn = Function\.prototype\.call\.bind\(Object\.prototype\.hasOwnProperty\);\n?/, '')
     );
   }
-  fs.writeFileSync(resolve('src', 'model', 'request', generatedValidatorFile), validationModules.join('\n\n'));
+  const prefix = "'use strict'\nconst hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);\n";
+  fs.writeFileSync(resolve('src', 'model', 'request', generatedValidatorFile), prefix + validationModules.join('\n\n'));
   console.log('Generated Request Validator');
 }
 

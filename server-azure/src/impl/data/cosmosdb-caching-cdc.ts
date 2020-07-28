@@ -300,6 +300,10 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
     await this.create(this.tokens, token);
   }
 
+  public async deleteToken(id: string): Promise<void> {
+    await this.delete(this.tokens, id);
+  }
+
   public async getBoard(id: string): Promise<Board> {
     return this.getWithCacheWithoutETag(this.boards, id);
   }

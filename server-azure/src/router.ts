@@ -3,6 +3,7 @@ import * as Validator from './model/request/generated-validator';
 import type {
   AuthenticatedGetRequest,
   AuthenticatedRequest,
+  BodyLessRequest,
   CatanRequest,
   ETagRequest,
   GameRequest,
@@ -40,7 +41,6 @@ export interface CatanHttpResponseHeaders {
 type Route<T extends CatanRequest, U extends CatanResponse> = DeepReadonly<
   {
     handler: RouteHandler<T, U>;
-    validator?: (request: T) => boolean;
     req?: {
       headers?: string[];
       query?: string[];
@@ -50,14 +50,19 @@ type Route<T extends CatanRequest, U extends CatanResponse> = DeepReadonly<
         response?: boolean;
       };
     };
-  } & (T extends AuthenticatedRequest
-    ? {
-        filters: {
-          authenticate: true;
-          authorize?: Role[];
-        };
-      }
-    : {}) &
+  } & (T extends BodyLessRequest
+    ? {}
+    : {
+        validator: (request: T) => boolean;
+      }) &
+    (T extends AuthenticatedRequest
+      ? {
+          filters: {
+            authenticate: true;
+            authorize?: Role[];
+          };
+        }
+      : {}) &
     (T extends ETagRequest
       ? {
           filters: {
@@ -249,10 +254,16 @@ function isStrongEntity<T extends CatanResponse & (StrongEntity | {})>(val: T): 
   return 'etag' in val;
 }
 
-function requiresAuth<T extends RCC | Route<AuthenticatedRequest, CatanResponse>>(
-  route: T
-): route is T & Route<AuthenticatedRequest, CatanResponse> {
+function requiresAuth(
+  route: RCC | Route<AuthenticatedRequest, CatanResponse>
+): route is Route<AuthenticatedRequest, CatanResponse> {
   return (route.filters && 'authenticate' in route.filters && route.filters.authenticate) || false;
+}
+
+function requiresValidation(
+  route: RCC | Route<Exclude<CatanRequest, BodyLessRequest>, CatanResponse>
+): route is Route<Exclude<CatanRequest, BodyLessRequest>, CatanResponse> {
+  return 'validator' in route && typeof route.validator === 'function';
 }
 
 async function execute(
@@ -290,7 +301,7 @@ async function execute(
     accessLog(logger, user, segments.method, segments.path);
 
     // Input Validation
-    if (route.validator && !route.validator(req.body)) {
+    if (requiresValidation(route) && !route.validator(req.body)) {
       throw new BadRequestError('Incorrect Input Request Format');
     }
 

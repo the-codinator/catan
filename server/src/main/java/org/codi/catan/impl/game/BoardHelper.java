@@ -161,7 +161,7 @@ public class BoardHelper {
                 throw new BadRequestException("Duplicate port vertex in 2:1 and 3:1");
             }
             if (vertex != normalizedVertex) {
-                ports21.put(resource, vertex);
+                ports21.put(resource, normalizedVertex);
             }
         }
     }

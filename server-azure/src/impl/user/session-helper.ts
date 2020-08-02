@@ -1,9 +1,8 @@
-import type { Token, User } from '../../model/user';
+import { Token, TokenType, User } from '../../model/user';
 import { base64Decode, base64Encode, generateRandomUuid } from '../../util/util';
 
 import { CatanError } from '../../core/catan-error';
 import { DAY_MILLIS } from '../../util/constants';
-import { TokenType } from '../../model/user';
 import { UNAUTHORIZED } from 'http-status-codes';
 
 export function createSession(user: User, type?: TokenType): Token {

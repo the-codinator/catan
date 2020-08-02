@@ -1,7 +1,8 @@
+import type { Primitive, ValueOf } from 'ts-essentials';
 import { uuid } from 'uuidv4';
 
 export function getFrequencyMapTotalCount(map: { [_: string]: number | undefined }): number {
-  return Object.values(map).reduce((a, b) => (a ? (b ? a + b : a) : b)) || 0;
+  return Object.values(map).reduce<number>((a, b) => (b ? a + b : a), 0);
 }
 
 export function shuffle<T>(arr: T[]): T[] {
@@ -17,26 +18,24 @@ export function shuffle<T>(arr: T[]): T[] {
 
 export function createEnumMap<E extends Record<string, string>, T>(
   enumType: E,
-  mapper: (_: keyof E) => T
-): Record<keyof E, T> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const map: any = {};
-  for (const key in enumType) {
-    map[key] = mapper(key);
+  mapper: (_: ValueOf<E>) => T
+): Record<ValueOf<E>, T> {
+  const map: Partial<Record<ValueOf<E>, T>> = {};
+  for (const key of Object.values(enumType)) {
+    map[key as ValueOf<E>] = mapper(key as ValueOf<E>);
   }
-  return map;
+  return map as Record<ValueOf<E>, T>;
 }
 
 export function createPartialEnumMap<E extends Record<string, string>, T>(
   enumType: E,
-  mapper: (_: keyof E) => T | undefined
-): Partial<Record<keyof E, T>> {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const map: any = {};
-  for (const key in enumType) {
-    const val = mapper(key);
+  mapper: (_: ValueOf<E>) => T | undefined
+): Partial<Record<ValueOf<E>, T>> {
+  const map: Partial<Record<ValueOf<E>, T>> = {};
+  for (const key of Object.values(enumType)) {
+    const val = mapper(key as ValueOf<E>);
     if (val !== undefined) {
-      map[key] = val;
+      map[key as ValueOf<E>] = val;
     }
   }
   return map;
@@ -54,15 +53,11 @@ export function generateRandomUuid(): string {
   return uuid();
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export function arrayEquals(a: any, b: any): boolean {
+export function arrayEquals<T extends Primitive>(a: Readonly<T[]> | undefined, b: Readonly<T[]> | undefined): boolean {
   if (a === b) {
     return true;
   }
-  if (!Array.isArray(a) || !Array.isArray(b)) {
-    return false;
-  }
-  if (a.length !== b.length) {
+  if (a === undefined || b === undefined || a.length !== b.length) {
     return false;
   }
   for (let i = 0; i < a.length; i++) {
@@ -71,4 +66,8 @@ export function arrayEquals(a: any, b: any): boolean {
     }
   }
   return true;
+}
+
+export function addToFrequencyMap<T extends string>(map: Partial<Record<T, number>>, key: T, delta: number): void {
+  map[key] = (map[key] || 0)! + delta;
 }

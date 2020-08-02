@@ -1,4 +1,4 @@
-import { IdentifiableEntity } from '../../model/core';
+import type { IdentifiableEntity } from '../../model/core';
 
 export class MyCache<T extends IdentifiableEntity> {
   private readonly map: Map<string, { val: T; expiry: number }>;

@@ -1,3 +1,4 @@
+import * as BoardApi from './api/game/board-api';
 import * as UserApi from './api/user-api';
 import * as Validator from './model/request/generated-validator';
 import type {
@@ -8,7 +9,7 @@ import type {
   ETagRequest,
   GameRequest,
 } from './model/request/index';
-import { BAD_REQUEST, NOT_FOUND, OK, UNSUPPORTED_MEDIA_TYPE } from 'http-status-codes';
+import { BAD_REQUEST, NOT_FOUND, NO_CONTENT, OK, UNSUPPORTED_MEDIA_TYPE } from 'http-status-codes';
 import { BadRequestError, CatanError } from './core/catan-error';
 import type { CatanContext, CatanLogger } from './core/catan-context';
 import type { CatanResponse, SwaggerResponse } from './model/response/index';
@@ -19,8 +20,10 @@ import type { Role, Token } from './model/user';
 import type { RouteHandler, StrongEntity } from './model/core';
 import { accessLog, requestLog } from './filter';
 import { authenticate, authorize } from './impl/auth';
+import type { BoardRequest } from './model/request/board-request';
 import type { DeepReadonly } from 'ts-essentials';
 import type { FindUserResponse } from './model/response/find-user-response';
+import type { GameResponse } from './model/response/game-response';
 import type { MessageResponse } from './model/response/message-response';
 import type { SessionResponse } from './model/response/session-response';
 import { readFile } from 'fs';
@@ -38,17 +41,16 @@ export interface CatanHttpResponseHeaders {
   [_: string]: string | undefined;
 }
 
-type Route<T extends CatanRequest, U extends CatanResponse> = DeepReadonly<
+type Route<T extends CatanRequest, U extends CatanResponse> = {
+  handler: RouteHandler<T, U>;
+} & DeepReadonly<
   {
-    handler: RouteHandler<T, U>;
+    filters?: {
+      etag?: {};
+    };
     req?: {
       headers?: string[];
       query?: string[];
-    };
-    filters?: {
-      etag?: {
-        response?: boolean;
-      };
     };
   } & (T extends BodyLessRequest
     ? {}
@@ -72,10 +74,19 @@ type Route<T extends CatanRequest, U extends CatanResponse> = DeepReadonly<
           };
         }
       : {}) &
+    (U extends StrongEntity
+      ? {
+          filters: {
+            etag: {
+              response: true;
+            };
+          };
+        }
+      : {}) &
     (T extends GameRequest
       ? {
           filters: {
-            gameId: true;
+            gameId: string;
           };
         }
       : {})
@@ -165,8 +176,6 @@ function resolve(req: HttpRequest, segments: PathSegments): RCC {
 
 function routeBase(req: HttpRequest, segments: PathSegments): RCC | undefined {
   switch (segments[0]) {
-    case undefined:
-      return undefined;
     case 'game':
       return routeGame(req, segments);
     case 'user':
@@ -176,8 +185,10 @@ function routeBase(req: HttpRequest, segments: PathSegments): RCC | undefined {
         handler: 'pong',
       };
     case 'admin':
-      // TODO
-      break;
+      if (segments.length === 1 && req.method === METHOD_POST) {
+        // TODO: POST /admin
+        return undefined;
+      }
   }
   return undefined;
 }
@@ -187,7 +198,7 @@ function routeUser(req: HttpRequest, segments: PathSegments): RCC | undefined {
     return undefined;
   }
   switch (req.method) {
-    case METHOD_GET:
+    case METHOD_GET: {
       switch (segments[1]) {
         case 'find': {
           const route: Route<AuthenticatedGetRequest, FindUserResponse> = {
@@ -201,9 +212,14 @@ function routeUser(req: HttpRequest, segments: PathSegments): RCC | undefined {
           };
           return route as RCC;
         }
+        case 'games': {
+          // TODO: GET /user/games
+          return undefined;
+        }
       }
       break;
-    case METHOD_POST:
+    }
+    case METHOD_POST: {
       switch (segments[1]) {
         case 'signup': {
           const route: Route<SignUpRequest, MessageResponse> = {
@@ -239,12 +255,61 @@ function routeUser(req: HttpRequest, segments: PathSegments): RCC | undefined {
           return route as RCC;
         }
       }
+    }
   }
   return undefined;
 }
 
 function routeGame(req: HttpRequest, segments: PathSegments): RCC | undefined {
-  // TODO:
+  switch (req.method) {
+    case METHOD_GET: {
+      const gameId = segments[1];
+      if (!gameId) {
+        return undefined;
+      }
+      if (segments.length <= 3) {
+        switch (segments[2]) {
+          case undefined: {
+            // TODO: GET /game/:id
+            return undefined;
+          }
+          case 'board': {
+            // TODO: GET /game/:id/board
+            return undefined;
+          }
+          case 'state': {
+            // TODO: GET /game/:id/state
+            return undefined;
+          }
+        }
+      }
+      break;
+    }
+    case METHOD_POST: {
+      if (segments.length === 1) {
+        const route: Route<BoardRequest, GameResponse> = {
+          handler: BoardApi.create,
+          validator: Validator.validateBoardRequest,
+          filters: {
+            authenticate: true,
+            gameId: '', // For obvious reasons, "create" does not have a gameId
+            etag: {
+              response: true,
+            },
+          },
+        };
+        return route as RCC;
+      } else if (segments.length >= 3) {
+        return routeMove(req, segments);
+      }
+    }
+  }
+  return undefined;
+}
+
+function routeMove(req: HttpRequest, segments: PathSegments): RCC | undefined {
+  const gameId = segments[1];
+  // TODO: switch (segments[2]) {
   return undefined;
 }
 
@@ -257,7 +322,9 @@ function isStrongEntity<T extends CatanResponse & (StrongEntity | {})>(val: T): 
 function requiresAuth(
   route: RCC | Route<AuthenticatedRequest, CatanResponse>
 ): route is Route<AuthenticatedRequest, CatanResponse> {
-  return (route.filters && 'authenticate' in route.filters && route.filters.authenticate) || false;
+  return (
+    ('filters' in route && route.filters && 'authenticate' in route.filters && route.filters.authenticate) || false
+  );
 }
 
 function requiresValidation(
@@ -305,17 +372,19 @@ async function execute(
       throw new BadRequestError('Incorrect Input Request Format');
     }
 
+    // ETag (for response header in NO_CONTENT case)
+    let etag: string | undefined;
+
     if (typeof route.handler === 'function') {
       // Context vars
       const params: Record<string, string | undefined> = {};
       let gameId: string | undefined;
-      let etag: string | undefined;
 
       // Route Filters
       if (route.filters) {
         // Game Id
-        if ('gameId' in route.filters && route.filters.gameId) {
-          gameId = segments[1];
+        if ('gameId' in route.filters) {
+          gameId = route.filters.gameId;
         }
 
         // ETag
@@ -345,18 +414,29 @@ async function execute(
       body = await route.handler(context as CatanContext<CatanRequest>);
     } else {
       // Resolve Response
-      body = await route.handler;
+      const x = await route.handler;
+      body = x;
+    }
+
+    // Empty Response Handling
+    if (!body) {
+      body = '';
+      status = NO_CONTENT;
     }
 
     // ETag Response Header
-    if (route.filters && route.filters.etag && route.filters.etag.response && isStrongEntity(body) && body.etag) {
-      headers.etag = body.etag;
-      delete (body as StrongEntity).etag;
+    if (route.filters?.etag && 'response' in route.filters.etag && route.filters.etag.response) {
+      if (isStrongEntity(body) && body?.etag) {
+        headers.etag = body.etag;
+        delete (body as StrongEntity).etag;
+      } else if (etag && status === NO_CONTENT) {
+        headers.etag = etag;
+      }
     }
   } catch (e) {
     // Error Handling
-    const error = CatanError.from(e, 'Unknown Error');
-    status = e.errorStatus;
+    const error = e instanceof CatanError ? e : new CatanError('Unknown Error', undefined, e);
+    status = error.errorStatus;
 
     // Log Error
     if (status < 500) {

@@ -16,7 +16,7 @@ export function setNewUserEventListener(listener: (user: User) => void): void {
   newUserEventListener = listener;
 }
 
-function validateUserId(id: string): void {
+export function validateUserId(id: string): void {
   if (!USER_ID_REGEX.test(id)) {
     throw new BadRequestError(
       'User Id must only contain (english) alphabets, (arabic) numerals, hyphen (-), underscore(_), and must be between 3 and 12 characters'
@@ -58,11 +58,10 @@ export async function signup(request: SignUpRequest): Promise<void> {
   try {
     await dataConnector.createUser(user);
   } catch (e) {
-    const error = CatanError.from(e);
-    if (error.errorStatus === CONFLICT) {
-      throw new CatanError('User id is already taken!', CONFLICT, error);
+    if (e.errorStatus === CONFLICT) {
+      throw new CatanError('User id is already taken!', CONFLICT, e);
     } else {
-      throw error;
+      throw e;
     }
   }
 }
@@ -89,9 +88,8 @@ export async function refresh(request: RefreshTokenRequest): Promise<SessionResp
   try {
     dbToken = await dataConnector.getToken(token.id);
   } catch (e) {
-    const error = CatanError.from(e);
-    if (error.errorStatus !== NOT_FOUND) {
-      throw error;
+    if (e.errorStatus !== NOT_FOUND) {
+      throw e;
     }
   }
   if (!tokenEquals(token, dbToken)) {
@@ -107,11 +105,10 @@ async function loginInternal(requestUser: User, rememberMe: boolean): Promise<Se
   try {
     dbUser = await dataConnector.getUser(requestUser.id);
   } catch (e) {
-    const error = CatanError.from(e);
-    if (error.errorStatus === NOT_FOUND) {
-      throw new CatanError('Username/Password Mismatch', UNAUTHORIZED, error);
+    if (e.errorStatus === NOT_FOUND) {
+      throw new CatanError('Username/Password Mismatch', UNAUTHORIZED, e);
     } else {
-      throw error;
+      throw e;
     }
   }
   validateCredentials(requestUser, dbUser);
@@ -151,11 +148,10 @@ export async function logout(token: Token): Promise<void> {
       await dataConnector.deleteToken(token.linkedId);
     }
   } catch (e) {
-    const error = CatanError.from(e);
-    if (error.errorStatus === NOT_FOUND) {
+    if (e.errorStatus === NOT_FOUND) {
       throw new CatanError('Attempting to log out of missing session', INTERNAL_SERVER_ERROR, e);
     } else {
-      throw error;
+      throw e;
     }
   }
 }
@@ -168,11 +164,10 @@ export async function find(userId: string | undefined): Promise<FindUserResponse
     const { id, name } = await dataConnector.getUser(userId);
     return [{ id, name }];
   } catch (e) {
-    const error = CatanError.from(e);
-    if (error.errorStatus === NOT_FOUND) {
+    if (e.errorStatus === NOT_FOUND) {
       return [];
     } else {
-      throw error;
+      throw e;
     }
   }
 }

@@ -2,6 +2,8 @@
   "extends": "./node_modules/gts/",
   "root": true,
   "rules": {
+    "curly": "error",
+    "no-return-await": "error",
     "node/no-missing-import": [
       "error",
       {
@@ -34,7 +36,18 @@
       "error",
       "always"
     ],
-    "sort-imports": "error"
+    "sort-imports": "error",
+    "wrap-iife": [
+      "error",
+      "inside"
+    ],
+    "yoda": [
+      "error",
+      "never",
+      {
+        "onlyEquality": true
+      }
+    ]
   },
   "overrides": [
     {

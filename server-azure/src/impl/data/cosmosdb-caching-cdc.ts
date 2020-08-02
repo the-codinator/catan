@@ -280,7 +280,7 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
 
   /* Implementing Methods from CatanDataConnector */
 
-  public async getUser(id: string, skipCache = false): Promise<User> {
+  public getUser(id: string, skipCache = false): Promise<User> {
     if (skipCache) {
       return this.get(this.users, id);
     } else {
@@ -288,11 +288,28 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
     }
   }
 
+  public getUsers(ids: string[]): Promise<User[]> {
+    // Maybe the query "select * from c where c.id = u1 or c.id = u2 ..." is better, but I'm unsure if it works cross-partition
+    // For now, we're taking the easy approach with parallel GETs
+    // Also, `this.getUser` will leverage the in-memory cache
+    return Promise.all(
+      ids.map(id =>
+        this.getUser(id).catch(e => {
+          if (e instanceof CatanError && e.errorStatus === NOT_FOUND) {
+            return undefined;
+          } else {
+            throw e;
+          }
+        })
+      )
+    ).then(users => users.filter(user => user !== undefined) as User[]);
+  }
+
   public async createUser(user: User): Promise<void> {
     await this.create(this.users, user);
   }
 
-  public async getToken(id: string): Promise<Token> {
+  public getToken(id: string): Promise<Token> {
     return this.getWithCacheWithoutETag(this.tokens, id);
   }
 
@@ -304,11 +321,19 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
     await this.delete(this.tokens, id);
   }
 
-  public async getBoard(id: string): Promise<Board> {
+  public getBoard(id: string): Promise<Board> {
     return this.getWithCacheWithoutETag(this.boards, id);
   }
 
-  public async getState(id: string, etag: string | undefined): Promise<State | undefined> {
+  public async createBoard(board: Board): Promise<void> {
+    await this.create(this.boards, board);
+  }
+
+  public getState(id: string, etag: string | undefined): Promise<State | undefined> {
     return this.get(this.states, id, etag);
+  }
+
+  public async createState(state: State): Promise<void> {
+    await this.create(this.states, state);
   }
 }

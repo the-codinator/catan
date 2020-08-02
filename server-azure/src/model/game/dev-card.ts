@@ -21,9 +21,9 @@ const counts: Partial<Record<DevCard, number>> = {
 
 export function createRandomDevCards(): DevCard[] {
   const list: DevCard[] = [];
-  for (const dev in DevCard) {
-    for (let count = counts[dev as DevCard]; count; count--) {
-      list.push(dev as DevCard);
+  for (const dev of Object.values(DevCard)) {
+    for (let count = counts[dev]; count; count--) {
+      list.push(dev);
     }
   }
   return shuffle(list);

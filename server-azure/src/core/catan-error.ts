@@ -24,10 +24,6 @@ export class CatanError extends Error {
       message: this.message.startsWith('[ code=') ? this.message.slice(this.message.indexOf(']') + 2) : this.message,
     };
   }
-
-  static from(e: Error, message?: string): CatanError {
-    return e instanceof CatanError ? e : new CatanError(message || 'Internal Error', undefined, e);
-  }
 }
 
 CatanError.prototype.name = 'CatanError';

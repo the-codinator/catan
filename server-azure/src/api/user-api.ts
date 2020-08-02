@@ -1,12 +1,11 @@
 import * as UserApiHelper from '../impl/user/user-api-helper';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest } from '../model/request/user-request';
+import { MessageResponse, createMessageResponse } from '../model/response/message-response';
 import type { AuthenticatedGetRequest } from '../model/request';
 import type { FindUserResponse } from '../model/response/find-user-response';
-import type { MessageResponse } from '../model/response/message-response';
 import { OK } from 'http-status-codes';
 import type { RouteHandler } from '../model/core';
 import type { SessionResponse } from '../model/response/session-response';
-import { createMessageResponse } from '../model/response/message-response';
 
 export const signup: RouteHandler<SignUpRequest, MessageResponse> = async context => {
   await UserApiHelper.signup(context.request);

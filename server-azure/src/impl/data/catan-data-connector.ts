@@ -1,12 +1,11 @@
-import { Token, User } from '../../model/user';
-
-import { Board } from '../../model/game/board';
+import type { Token, User } from '../../model/user';
+import type { Board } from '../../model/game/board';
 import { CosmosDBCachingCDC } from './cosmosdb-caching-cdc';
-import { State } from '../../model/game/state';
+import type { State } from '../../model/game/state';
 
 export interface CatanDataConnector {
   getUser(id: string, skipCache?: boolean): Promise<User>;
-  // User[] getUsers(String... ids) throws CatanException;
+  getUsers(ids: string[]): Promise<User[]>;
   createUser(user: User): Promise<void>;
   // void updateUser(User user) throws CatanException;
   // void deleteUser(String id) throws CatanException;
@@ -18,11 +17,11 @@ export interface CatanDataConnector {
   deleteToken(id: string): Promise<void>;
 
   getBoard(id: string): Promise<Board>;
-  // void createBoard(Board board) throws CatanException;
+  createBoard(board: Board): Promise<void>;
   // void deleteBoard(String id) throws CatanException;
 
   getState(id: string, etag: string | undefined): Promise<State | undefined>;
-  // void createState(State state) throws CatanException;
+  createState(state: State): Promise<void>;
   // void updateState(State state) throws CatanException;
   // void deleteState(String id, String etag) throws CatanException;
 }

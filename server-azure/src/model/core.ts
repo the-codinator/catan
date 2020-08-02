@@ -12,5 +12,5 @@ export interface IdentifiableEntity {
 }
 
 export interface StrongEntity {
-  etag: string | undefined;
+  etag?: string;
 }

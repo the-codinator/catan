@@ -1,8 +1,8 @@
-import type { BaseState, State } from '../game/state';
-import { getDevCardCount, getResourceCount } from '../game/hand';
+import { Hand, getResourceCount } from '../game/hand';
+import { BaseState } from '../game/base-state';
 import { Color } from '../game/color';
 import type { DeepReadonly } from 'ts-essentials';
-import type { Hand } from '../game/hand';
+import { State } from '../game/state';
 import { createPartialEnumMap } from '../../util/util';
 
 export type StateResponse = DeepReadonly<BaseState> &
@@ -13,28 +13,27 @@ export type StateResponse = DeepReadonly<BaseState> &
   }>;
 
 export function createStateResponse(state: State, color: Color | undefined): StateResponse {
-  // const { id, phase, houses, roads, thief, bank, playedDevCards, achievements, currentMove, etag } = state;
-  const { id, thief, etag } = state;
+  const { id, phase, houses, roads, thief, bank, playedDevCards, achievements, currentMove, etag } = state;
   const hand = color && state.hands[color];
   const playerResourceCounts = createPartialEnumMap(Color, c =>
     c === color ? undefined : getResourceCount(state.hands[c])
   );
   const playerDevCardCounts = createPartialEnumMap(Color, c =>
-    c === color ? undefined : getDevCardCount(state.hands[c])
+    c === color ? undefined : state.hands[c].devCards.length
   );
   return {
     id,
-    // phase,
-    // houses,
-    // roads,
+    phase,
+    houses,
+    roads,
     thief,
-    // bank,
-    // playedDevCards,
-    // achievements,
-    // currentMove,
-    etag,
+    bank,
+    playedDevCards,
+    achievements,
+    currentMove,
     hand,
     playerResourceCounts,
     playerDevCardCounts,
+    etag,
   };
 }

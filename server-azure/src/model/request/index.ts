@@ -1,8 +1,9 @@
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from './user-request';
+import type { BoardRequest } from './board-request';
 import type { Opaque } from 'ts-essentials';
 
 // All request types requiring game id
-export type GameRequest = { temp1: string };
+export type GameRequest = BoardRequest;
 
 // All request types supporting ETag header
 export type ETagRequest = { temp2: string };

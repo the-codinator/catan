@@ -112,7 +112,7 @@ public class BoardHelper {
                     count++;
                     if (tile.getRoll() < DICE_COUNT * MIN_ROLL_PER_DIE
                         || tile.getRoll() > DICE_COUNT * MAX_ROLL_PER_DIE) { // Valid dice rolls
-                        throw new BadRequestException("Invalid dice role value for tile");
+                        throw new BadRequestException("Invalid dice roll value for tile");
                     }
                     diceRollCounts[tile.getRoll()]++;
                 }

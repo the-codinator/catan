@@ -93,7 +93,7 @@ public class GameUtility {
     }
 
     /**
-     * Find the file position of the thief on the {@param board}
+     * Find the desert (and initial thief position) on the {@param board}
      */
     public int findDesert(Board board) throws CatanException {
         int desert = Util.find(board.getTiles(), t -> t.getResource() == null);
@@ -130,8 +130,8 @@ public class GameUtility {
         var toResources = to == null ? state.getBank() : state.getHand(to).getResources();
         // Ensure available resources to transfer
         if (from == null) {
-            count = Math.min(count, fromResources.get(resource));
-        } else if (fromResources.get(resource) < count) {
+            count = Math.min(count, fromResources.getOrDefault(resource, 0));
+        } else if (fromResources.getOrDefault(resource, 0) < count) {
             throw new BadRequestException("Not enough [" + resource + "] to perform this move");
         }
         // Perform transfer
@@ -190,7 +190,7 @@ public class GameUtility {
         int theChosenOne = random.nextInt(count);
         var resources = hand.getResources();
         for (Resource resource : Resource.values()) {
-            theChosenOne -= resources.get(resource);
+            theChosenOne -= resources.getOrDefault(resource, 0);
             if (theChosenOne < 0) {
                 return resource;
             }

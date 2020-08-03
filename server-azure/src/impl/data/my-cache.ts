@@ -30,7 +30,6 @@ export class MyCache<T extends IdentifiableEntity> {
   get(id: string): T | undefined {
     this.clean();
     const val = this.map.get(id)?.val;
-    val && console.warn('CACHE HIT', val); // TODO: Remove
     return val;
   }
 

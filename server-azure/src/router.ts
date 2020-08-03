@@ -2,6 +2,8 @@ import * as BoardApi from './api/game/board-api';
 import * as UserApi from './api/user-api';
 import * as Validator from './model/request/generated-validator';
 import type {
+  AuthenticatedGetGameETagRequest,
+  AuthenticatedGetGameRequest,
   AuthenticatedGetRequest,
   AuthenticatedRequest,
   BodyLessRequest,
@@ -11,11 +13,12 @@ import type {
 } from './model/request/index';
 import { BAD_REQUEST, NOT_FOUND, NO_CONTENT, OK, UNSUPPORTED_MEDIA_TYPE } from 'http-status-codes';
 import { BadRequestError, CatanError } from './core/catan-error';
+import type { BoardResponse, GameResponse } from './model/response/game-response';
 import type { CatanContext, CatanLogger } from './core/catan-context';
 import type { CatanResponse, SwaggerResponse } from './model/response/index';
 import type { Context, HttpRequest } from '@azure/functions';
+import { HEADER_IF_NONE_MATCH, METHOD_GET, METHOD_POST } from './util/constants';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from './model/request/user-request';
-import { METHOD_GET, METHOD_POST } from './util/constants';
 import type { Role, Token } from './model/user';
 import type { RouteHandler, StrongEntity } from './model/core';
 import { accessLog, requestLog } from './filter';
@@ -23,9 +26,9 @@ import { authenticate, authorize } from './impl/auth';
 import type { BoardRequest } from './model/request/board-request';
 import type { DeepReadonly } from 'ts-essentials';
 import type { FindUserResponse } from './model/response/find-user-response';
-import type { GameResponse } from './model/response/game-response';
 import type { MessageResponse } from './model/response/message-response';
 import type { SessionResponse } from './model/response/session-response';
+import type { StateResponse } from './model/response/state-response';
 import { readFile } from 'fs';
 
 export interface CatanHttpResponse {
@@ -270,16 +273,41 @@ function routeGame(req: HttpRequest, segments: PathSegments): RCC | undefined {
       if (segments.length <= 3) {
         switch (segments[2]) {
           case undefined: {
-            // TODO: GET /game/:id
-            return undefined;
+            const route: Route<AuthenticatedGetGameRequest, GameResponse> = {
+              handler: BoardApi.get,
+              filters: {
+                authenticate: true,
+                gameId,
+                etag: {
+                  response: true,
+                },
+              },
+            };
+            return route as RCC;
           }
           case 'board': {
-            // TODO: GET /game/:id/board
-            return undefined;
+            const route: Route<AuthenticatedGetGameRequest, BoardResponse> = {
+              handler: BoardApi.board,
+              filters: {
+                authenticate: true,
+                gameId,
+              },
+            };
+            return route as RCC;
           }
           case 'state': {
-            // TODO: GET /game/:id/state
-            return undefined;
+            const route: Route<AuthenticatedGetGameETagRequest, StateResponse | ''> = {
+              handler: BoardApi.state,
+              filters: {
+                authenticate: true,
+                gameId,
+                etag: {
+                  request: HEADER_IF_NONE_MATCH,
+                  response: true,
+                },
+              },
+            };
+            return route as RCC;
           }
         }
       }
@@ -316,7 +344,7 @@ function routeMove(req: HttpRequest, segments: PathSegments): RCC | undefined {
 /* Route Execution */
 
 function isStrongEntity<T extends CatanResponse & (StrongEntity | {})>(val: T): val is T & StrongEntity {
-  return 'etag' in val;
+  return typeof val === 'object' && 'etag' in val;
 }
 
 function requiresAuth(
@@ -389,13 +417,13 @@ async function execute(
 
         // ETag
         if (route.filters.etag && 'request' in route.filters.etag) {
-          etag = req.headers[route.filters.etag.request];
+          etag = req.headers[route.filters.etag.request.toLowerCase()];
         }
       }
 
       // Params
       if (route.req) {
-        route.req.headers?.forEach(x => (params[x] = req.headers[x]));
+        route.req.headers?.forEach(x => (params[x] = req.headers[x.toLowerCase()]));
         route.req.query?.forEach(x => (params[x] = req.query[x]));
       }
 

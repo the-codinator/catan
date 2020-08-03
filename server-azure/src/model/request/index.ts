@@ -3,12 +3,14 @@ import type { BoardRequest } from './board-request';
 import type { Opaque } from 'ts-essentials';
 
 // All request types requiring game id
-export type GameRequest = BoardRequest;
+export type GameRequest = AuthenticatedGetGameRequest | BoardRequest;
 
 // All request types supporting ETag header
-export type ETagRequest = { temp2: string };
+export type ETagRequest = AuthenticatedGetGameETagRequest | { temp2: string };
 
-export type AuthenticatedGetRequest = Opaque<{}, 'AuthenticatedGetRequest'>;
+export type AuthenticatedGetGameETagRequest = Opaque<{}, 'AuthenticatedGetGameETagRequest'>;
+export type AuthenticatedGetGameRequest = AuthenticatedGetGameETagRequest | Opaque<{}, 'AuthenticatedGetGameRequest'>;
+export type AuthenticatedGetRequest = AuthenticatedGetGameRequest | Opaque<{}, 'AuthenticatedGetRequest'>;
 
 // All request types support authentication
 export type AuthenticatedRequest = ETagRequest | GameRequest | AuthenticatedGetRequest | _LogoutRequest;

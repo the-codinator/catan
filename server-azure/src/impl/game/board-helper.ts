@@ -6,6 +6,7 @@ import { INTERNAL_SERVER_ERROR, NOT_FOUND } from 'http-status-codes';
 import { RESOURCES, getTileCount } from '../../model/game/resource';
 import { arrayEquals, generateRandomUuid } from '../../util/util';
 import type { BoardRequest } from '../../model/request/board-request';
+import type { BoardResponse } from '../../model/response/game-response';
 import { Color } from '../../model/game/color';
 import type { Player } from '../../model/game/player';
 import type { Ports } from '../../model/game/ports';
@@ -37,6 +38,12 @@ export async function getBoard(gameId: string): Promise<Board> {
       throw e;
     }
   }
+}
+
+export function createBoardResponse(board: Board): BoardResponse {
+  // This removes the extra Cosmos DB fields
+  const { id, created, completed, tiles, ports, players } = board;
+  return { id, created, completed, tiles, ports, players };
 }
 
 async function normalizeAndValidateBoard(request: BoardRequest): Promise<Board> {

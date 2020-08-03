@@ -188,7 +188,7 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
       if (!resource) {
         throw new CatanError(format(DB_ERROR_MISSING_RESOURCE, METHOD_POST));
       }
-      handlePopulateETag(strong, resource, resource);
+      handlePopulateETag(strong, val, resource);
       return resource;
     } catch (e) {
       if (e instanceof CatanError) {

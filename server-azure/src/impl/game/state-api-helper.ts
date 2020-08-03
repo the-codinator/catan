@@ -43,6 +43,8 @@ export async function createStateResponse(
 /**
  * Get state with id {@param gameId} and not matching {@param etag}
  */
+export async function getState(gameId: string, etag: undefined): Promise<State>;
+export async function getState(gameId: string, etag: string | undefined): Promise<State | undefined>;
 export async function getState(gameId: string, etag: string | undefined): Promise<State | undefined> {
   try {
     return await dataConnector.getState(gameId, etag);

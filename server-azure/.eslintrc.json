@@ -4,28 +4,6 @@
   "rules": {
     "curly": "error",
     "no-return-await": "error",
-    "node/no-missing-import": [
-      "error",
-      {
-        "allowModules": [
-          "@azure/functions"
-        ],
-        "tryExtensions": [
-          ".js",
-          ".json",
-          ".ts"
-        ]
-      }
-    ],
-    "node/no-unpublished-import": [
-      "error",
-      {
-        "allowModules": [
-          "@azure/functions",
-          "ts-essentials"
-        ]
-      }
-    ],
     "object-property-newline": [
       "error",
       {
@@ -55,6 +33,7 @@
         "**/*.ts"
       ],
       "parser": "@typescript-eslint/parser",
+      "extends": "plugin:@typescript-eslint/recommended-requiring-type-checking",
       "rules": {
         "@typescript-eslint/explicit-function-return-type": [
           "error",
@@ -63,7 +42,40 @@
           }
         ],
         "@typescript-eslint/naming-convention": "error",
-        "@typescript-eslint/no-explicit-any": "error"
+        "@typescript-eslint/no-explicit-any": "error",
+        "@typescript-eslint/ban-types": [
+          "error",
+          {
+            "types": {
+              "null": "Don't use null because it is ambiguous, prefer using undefined instead"
+            }
+          }
+        ],
+        "node/no-missing-import": [
+          "error",
+          {
+            "allowModules": [
+              "@azure/functions"
+            ],
+            "tryExtensions": [
+              ".js",
+              ".json",
+              ".ts"
+            ]
+          }
+        ],
+        "node/no-unpublished-import": [
+          "error",
+          {
+            "allowModules": [
+              "@azure/functions",
+              "ts-essentials"
+            ]
+          }
+        ]
+      },
+      "parserOptions": {
+        "project": "./tsconfig.json"
       }
     }
   ]

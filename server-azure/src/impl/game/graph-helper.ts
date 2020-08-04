@@ -29,20 +29,20 @@ export function getComplementaryPortVertex(vertex: number): number {
   return port === -1 ? -1 : 2 * port + 1 - vertex; // port + complement = normalized + (normalized+1)
 }
 
-export function getAdjacentVertexListForVertex(vertex: number): number[] | undefined {
-  return vertexToAdjacentVertexMatrix[vertex]?.slice();
+export function getAdjacentVertexListForVertex(vertex: number): number[] {
+  return vertexToAdjacentVertexMatrix[vertex]?.slice() || [];
 }
 
 export function isAdjacentVertices(a: number, b: number): boolean {
   return vertexToAdjacentVertexMatrix[a].includes(b);
 }
 
-export function getConnectedHexListForVertex(vertex: number): number[] | undefined {
-  return vertexToConnectedHexMatrix[vertex]?.slice();
+export function getConnectedHexListForVertex(vertex: number): number[] {
+  return vertexToConnectedHexMatrix[vertex]?.slice() || [];
 }
 
-export function getVerticesAroundHex(hex: number): number[] | undefined {
-  return hexToConnectedVertexMatrix[hex]?.slice();
+export function getVerticesAroundHex(hex: number): number[] {
+  return hexToConnectedVertexMatrix[hex]?.slice() || [];
 }
 
 export function getPortCount(): number {

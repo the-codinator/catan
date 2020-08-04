@@ -1,16 +1,16 @@
-import * as GraphHelper from './graph-helper';
-
 import { BadRequestError, CatanError } from '../../core/catan-error';
 import { MAX_ROLL_PER_DIE, MIN_ROLL_PER_DIE } from '../../util/constants';
 import { RESOURCES, Resource } from '../../model/game/resource';
 
 import { Board } from '../../model/game/board';
 import { Color } from '../../model/game/color';
+import type { DeepReadonly } from 'ts-essentials';
 import { FORBIDDEN } from 'http-status-codes';
 import { OutOfTurnApi } from '../../model/game/out-of-turn-api';
 import { Phase } from '../../model/game/phase';
 import { State } from '../../model/game/state';
 import { addToFrequencyMap } from '../../util/util';
+import { getComplementaryPortVertex } from './graph-helper';
 import { getResourceCount } from '../../model/game/hand';
 
 export function checkPlayerTurn(board: Board, state: State, user: string, outOfTurnApi?: OutOfTurnApi): Color {
@@ -55,6 +55,7 @@ export function transferResources(
   state: State,
   from: Color | undefined,
   to: Color | undefined,
+  // eslint-disable-next-line @typescript-eslint/ban-types
   resource: Resource | null | undefined,
   count: number
 ): number {
@@ -86,14 +87,20 @@ export function transferResources(
   return count;
 }
 
-export function transferResourcesList(state: State, from: Color, to: Color, ...resources: Resource[]): number {
+export function transferResourcesList(
+  state: State,
+  from: Color | undefined,
+  to: Color | undefined,
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  ...resources: (Resource | null)[]
+): number {
   return resources.reduce((count, resource) => count + transferResources(state, from, to, resource, 1), 0);
 }
 
 export function transferResourcesMap(
   state: State,
-  from: Color,
-  to: Color,
+  from: Color | undefined,
+  to: Color | undefined,
   resources: Partial<Record<Resource, number>>
 ): number {
   return (Object.keys(resources) as Resource[]).reduce(
@@ -109,7 +116,7 @@ export function rollDice(): number {
 /**
  * Get all tiles from board matching roll
  */
-export function findTileHexesForRoll(board: Board, roll: number): number[] {
+export function findTileHexesForRoll(board: DeepReadonly<Board>, roll: number): number[] {
   const tiles: number[] = [];
   board.tiles.forEach((tile, i) => tile.roll === roll && tiles.push(i));
   return tiles;
@@ -138,9 +145,7 @@ export function chooseRandomlyStolenCard(state: State, color: Color): Resource |
 export function hasHouseOnPort(board: Board, state: State, resource?: Resource): boolean {
   return (
     (resource ? [board.ports.ports21[resource]] : board.ports.ports31).findIndex(
-      port =>
-        (state.houses[port] || state.houses[GraphHelper.getComplementaryPortVertex(port)])?.color ===
-        state.currentMove.color
+      port => (state.houses[port] || state.houses[getComplementaryPortVertex(port)])?.color === state.currentMove.color
     ) !== -1
   );
 }

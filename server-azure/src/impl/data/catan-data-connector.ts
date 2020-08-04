@@ -22,7 +22,7 @@ export interface CatanDataConnector {
 
   getState(id: string, etag: string | undefined): Promise<State | undefined>;
   createState(state: State): Promise<void>;
-  // void updateState(State state) throws CatanException;
+  updateState(state: State): Promise<void>;
   // void deleteState(String id, String etag) throws CatanException;
 }
 

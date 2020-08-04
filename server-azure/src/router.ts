@@ -1,4 +1,5 @@
 import * as BoardApi from './api/game/board-api';
+import * as MoveApi from './api/game/move-api';
 import * as UserApi from './api/user-api';
 import * as Validator from './model/request/generated-validator';
 import type {
@@ -10,15 +11,16 @@ import type {
   CatanRequest,
   ETagRequest,
   GameRequest,
+  MoveRequest,
 } from './model/request/index';
-import { BAD_REQUEST, NOT_FOUND, NO_CONTENT, OK, UNSUPPORTED_MEDIA_TYPE } from 'http-status-codes';
 import { BadRequestError, CatanError } from './core/catan-error';
 import type { BoardResponse, GameResponse } from './model/response/game-response';
 import type { CatanContext, CatanLogger } from './core/catan-context';
 import type { CatanResponse, SwaggerResponse } from './model/response/index';
 import type { Context, HttpRequest } from '@azure/functions';
-import { HEADER_IF_NONE_MATCH, METHOD_GET, METHOD_POST } from './util/constants';
+import { HEADER_IF_MATCH, HEADER_IF_NONE_MATCH, METHOD_GET, METHOD_POST } from './util/constants';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from './model/request/user-request';
+import { NOT_FOUND, NO_CONTENT, OK, UNSUPPORTED_MEDIA_TYPE } from 'http-status-codes';
 import type { Role, Token } from './model/user';
 import type { RouteHandler, StrongEntity } from './model/core';
 import { accessLog, requestLog } from './filter';
@@ -28,6 +30,7 @@ import type { DeepReadonly } from 'ts-essentials';
 import type { FindUserResponse } from './model/response/find-user-response';
 import type { MessageResponse } from './model/response/message-response';
 import type { SessionResponse } from './model/response/session-response';
+import type { SetupMoveRequest } from './model/request/game-request';
 import type { StateResponse } from './model/response/state-response';
 import { readFile } from 'fs';
 
@@ -96,6 +99,7 @@ type Route<T extends CatanRequest, U extends CatanResponse> = {
 >;
 
 type RCC = Route<CatanRequest, CatanResponse>;
+type RMS = Route<MoveRequest, StateResponse>;
 
 function createLogger(context: Context): CatanLogger {
   return {
@@ -320,24 +324,42 @@ function routeGame(req: HttpRequest, segments: PathSegments): RCC | undefined {
           validator: Validator.validateBoardRequest,
           filters: {
             authenticate: true,
-            gameId: '', // For obvious reasons, "create" does not have a gameId
             etag: {
               response: true,
             },
           },
         };
         return route as RCC;
-      } else if (segments.length >= 3) {
-        return routeMove(req, segments);
+      } else if (segments[2] === 'move' && segments.length >= 4) {
+        return routeMove(req, segments) as RCC;
       }
     }
   }
   return undefined;
 }
 
-function routeMove(req: HttpRequest, segments: PathSegments): RCC | undefined {
-  const gameId = segments[1];
-  // TODO: switch (segments[2]) {
+function routeMove(req: HttpRequest, segments: PathSegments): Route<MoveRequest, StateResponse> | undefined {
+  if (segments.length > 5) {
+    return undefined;
+  }
+  const gameId = segments[1]!;
+  switch (segments[4] ? `${segments[3]}/${segments[4]}` : segments[3]) {
+    case 'setup': {
+      const route: Route<SetupMoveRequest, StateResponse> = {
+        handler: MoveApi.setup,
+        validator: Validator.validateSetupMoveRequest,
+        filters: {
+          authenticate: true,
+          etag: {
+            request: HEADER_IF_MATCH,
+            response: true,
+          },
+          gameId,
+        },
+      };
+      return route as RMS;
+    }
+  }
   return undefined;
 }
 
@@ -516,25 +538,12 @@ function createPathSegments(req: HttpRequest): PathSegments {
   return segments;
 }
 
-function invalidPostRequestContentType(
-  context: Context,
-  req: HttpRequest,
-  segments: PathSegments
-): Promise<CatanHttpResponse> | undefined {
-  if (segments.path === 'user/logout') {
-    // Special handling for body-less POST request
-    return undefined;
-  } else if (req.headers['content-type']?.toLowerCase() !== 'application/json') {
+function invalidPostRequestContentType(context: Context, req: HttpRequest): Promise<CatanHttpResponse> | undefined {
+  if (req.method === METHOD_POST && req.body && req.headers['content-type']?.toLowerCase() !== 'application/json') {
     return Promise.resolve({
       status: UNSUPPORTED_MEDIA_TYPE,
       headers: { 'content-type': 'text/plain', 'x-request-id': context.invocationId },
-      body: 'Request payload must be "Content-Type: application/json"',
-    });
-  } else if (typeof req.body !== 'object') {
-    return Promise.resolve({
-      status: BAD_REQUEST,
-      headers: { 'content-type': 'text/plain', 'x-request-id': context.invocationId },
-      body: 'Request body is not a JSON',
+      body: 'Request must be "Content-Type: application/json"',
     });
   } else {
     return undefined;
@@ -545,7 +554,7 @@ export function router(context: Context, req: HttpRequest): Promise<CatanHttpRes
   const start = process.hrtime();
   const segments = createPathSegments(req);
   return (
-    (req.method === METHOD_POST && invalidPostRequestContentType(context, req, segments)) ||
+    (req.method === METHOD_POST && invalidPostRequestContentType(context, req)) ||
     swagger(context, req, segments) ||
     execute(resolve(req, segments), segments, req, createLogger(context), start)
   );

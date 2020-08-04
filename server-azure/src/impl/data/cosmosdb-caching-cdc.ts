@@ -246,11 +246,11 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
 
   // PATCH   c.item(id, pid).replace(obj, opts)  -- 200 resource / error 404 / IfMatch error 412 / wrong obj.id error 400
   private async patch<T extends IdentifiableEntity>(store: EntityStore<T>, val: T): Promise<void> {
-    this.update(store, val, METHOD_PATCH, store.container.item(val.id, val.id).replace, [OK]);
+    await this.update(store, val, METHOD_PATCH, store.container.item(val.id, val.id).replace, [OK]);
   }
 
   // PUT     c.items.upsert(obj, opts)           -- 200 (update) 201 (create) resource / IfMatch (exists) error 412
-  private async put<T extends IdentifiableEntity>(store: EntityStore<T>, val: T): Promise<boolean> {
+  private put<T extends IdentifiableEntity>(store: EntityStore<T>, val: T): Promise<boolean> {
     return this.update(store, val, METHOD_PUT, store.container.items.upsert, [OK, CREATED], CREATED);
   }
 
@@ -335,5 +335,9 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
 
   public async createState(state: State): Promise<void> {
     await this.create(this.states, state);
+  }
+
+  public async updateState(state: State): Promise<void> {
+    await this.patch(this.states, state);
   }
 }

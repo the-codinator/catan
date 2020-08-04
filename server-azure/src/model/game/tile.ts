@@ -7,6 +7,7 @@ export type Tile =
     }
   | {
       // Dessert
+      // eslint-disable-next-line @typescript-eslint/ban-types
       resource: null;
       roll?: 0 | undefined;
     };

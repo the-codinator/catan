@@ -9,8 +9,12 @@ export const USER_ID_REGEX = /^[\w-]{3,12}$/;
 // Game
 export const DICE_COUNT = 2;
 export const INIT_BANK_RESOURCE_COUNT = 19;
+export const MAX_HOUSES_PER_PLAYER = 5;
+export const MAX_ROADS_PER_PLAYER = 14;
 export const MAX_ROLL_PER_DIE = 6;
 export const MIN_ROLL_PER_DIE = 1;
+export const THIEF_ROLL = 7;
+export const VICTORY_POINTS_FOR_WIN = 10;
 
 // Error Messages
 export const DB_ERROR_BAD_STATUS_CODE = 'DB [%s] error - bad status code [%d]';

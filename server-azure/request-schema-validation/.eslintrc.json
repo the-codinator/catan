@@ -1,4 +1,6 @@
 {
+  "extends": "../node_modules/gts/",
+  "root": true,
   "rules": {
     "node/no-unpublished-import": "off"
   }

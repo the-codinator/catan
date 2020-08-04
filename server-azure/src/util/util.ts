@@ -5,6 +5,10 @@ export function getFrequencyMapTotalCount(map: { [_: string]: number | undefined
   return Object.values(map).reduce<number>((a, b) => (b ? a + b : a), 0);
 }
 
+export function count<T>(arr: T[], filter: (_: T) => boolean): number {
+  return arr.reduce((count, item) => (filter(item) ? count + 1 : count), 0);
+}
+
 export function shuffle<T>(arr: T[]): T[] {
   // knuth-fisher-yates
   for (let n = arr.length; --n; ) {

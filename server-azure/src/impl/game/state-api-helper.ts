@@ -1,13 +1,13 @@
-import * as GameUtility from './game-utility';
 import { INTERNAL_SERVER_ERROR, NOT_FOUND } from 'http-status-codes';
 import { State, createState as createNewState } from '../../model/game/state';
 import { StateResponse, createStateResponse as createNewStateResponse } from '../../model/response/state-response';
 import type { Board } from '../../model/game/board';
 import { CatanError } from '../../core/catan-error';
 import dataConnector from '../data/catan-data-connector';
+import { findDesert } from './game-utility';
 
 export async function createState(board: Board): Promise<State> {
-  const state = createNewState(board.id, board.players[0].color, GameUtility.findDesert(board));
+  const state = createNewState(board.id, board.players[0].color, findDesert(board));
   try {
     await dataConnector.createState(state);
   } catch (e) {

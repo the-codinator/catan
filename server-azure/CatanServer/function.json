@@ -17,5 +17,5 @@
       "name": "res"
     }
   ],
-  "scriptFile": "../dist/_functions/catan-server.js"
+  "scriptFile": "../dist/_azure/functions/catan-server.js"
 }

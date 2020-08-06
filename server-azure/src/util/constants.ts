@@ -8,6 +8,7 @@ export const USER_ID_REGEX = /^[\w-]{3,12}$/;
 
 // Game
 export const DICE_COUNT = 2;
+export const DROP_CARDS_FOR_THIEF_THRESHOLD = 7;
 export const INIT_BANK_RESOURCE_COUNT = 19;
 export const MAX_HOUSES_PER_PLAYER = 5;
 export const MAX_ROADS_PER_PLAYER = 14;

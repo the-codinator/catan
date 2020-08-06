@@ -1,24 +1,30 @@
+import * as BuildMoveHelper from '../../impl/game/build-move-helper';
+import * as MiscMoveHelper from '../../impl/game/misc-move-helper';
 import * as SetupMoveHelper from '../../impl/game/setup-move-helper';
+import type {
+  HouseRequest,
+  RoadRequest,
+  SetupMoveRequest,
+  _BodyLessMoveRequest,
+} from '../../model/request/game-request';
 import type { MoveRequest } from '../../model/request';
 import { Phase } from '../../model/game/phase';
 import type { RouteHandler } from '../../model/core';
-import type { SetupMoveRequest } from '../../model/request/game-request';
 import type { StateResponse } from '../../model/response/state-response';
 import { play } from '../../impl/game/move-api-helper';
 
 type Move<T extends MoveRequest> = RouteHandler<T, StateResponse>;
 
 export const setup: Move<SetupMoveRequest> = context =>
-  play(
-    undefined,
-    context.user,
-    context.gameId,
-    context.etag,
-    context.request,
-    SetupMoveHelper.play,
-    Phase.setup1,
-    Phase.setup2
-  );
+  play(undefined, context, SetupMoveHelper.play, Phase.setup1, Phase.setup2);
+
+export const roll: Move<_BodyLessMoveRequest> = context =>
+  play(undefined, context, MiscMoveHelper.roll, Phase.gameplay);
+
+export const road: Move<RoadRequest> = context => play(undefined, context, BuildMoveHelper.road, Phase.gameplay);
+export const house: Move<HouseRequest> = context => play(undefined, context, BuildMoveHelper.house, Phase.gameplay);
+
+export const end: Move<_BodyLessMoveRequest> = context => play(undefined, context, MiscMoveHelper.end, Phase.gameplay);
 
 /*
 public class MoveApi {
@@ -28,27 +34,6 @@ public class MoveApi {
     private final BuildMoveHelper buildMoveHelper;
     private final ThiefMoveHelper thiefMoveHelper;
     private final MiscMoveHelper miscMoveHelper;
-
-    @POST
-    @Path(PATH_ROLL)
-    public StateResponse roll(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag) throws CatanException {
-        return moveApiHelper.play(user.getId(), gameId, etag, miscMoveHelper::roll, Phase.gameplay);
-    }
-
-    @POST
-    @Path(PATH_BUILD_ROAD)
-    public StateResponse road(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag, RoadRequest request) throws CatanException {
-        return moveApiHelper.play(user.getId(), gameId, etag, request, buildMoveHelper::road, Phase.gameplay);
-    }
-
-    @POST
-    @Path(PATH_BUILD_HOUSE)
-    public StateResponse house(@ApiParam(hidden = true) @Auth User user, @PathParam(PARAM_GAME_ID) String gameId,
-        @HeaderParam(HEADER_IF_MATCH) String etag, HouseRequest request) throws CatanException {
-        return moveApiHelper.play(user.getId(), gameId, etag, request, buildMoveHelper::house, Phase.gameplay);
-    }
 
     @POST
     @Path(PATH_THIEF_DROP)

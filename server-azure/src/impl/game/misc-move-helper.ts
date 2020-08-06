@@ -45,6 +45,10 @@ export function roll({ board, state }: PlayOptions<_BodyLessMoveRequest>): void 
   }
 }
 
+export function end({ board, state }: PlayOptions<_BodyLessMoveRequest>): void {
+  endTurn(board, state);
+}
+
 export function endTurn(board: DeepReadonly<Board>, state: State): void {
   const color = state.currentMove.color;
   let index = board.players.findIndex(player => player.color === color);
@@ -78,7 +82,7 @@ export function endTurn(board: DeepReadonly<Board>, state: State): void {
   }
 }
 
-export function isVictory(state: State): boolean {
+function isVictory(state: State): boolean {
   let points = 0;
   const color = state.currentMove.color;
   for (const house of Object.values(state.houses)) {

@@ -4,3 +4,5 @@ export enum Color {
   red = 'red',
   white = 'white',
 }
+
+export const COLORS = Object.freeze(Object.values(Color));

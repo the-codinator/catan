@@ -3,12 +3,12 @@ import type { Color } from '../game/color';
 import type { DevCard } from '../game/dev-card';
 import type { Resource } from '../game/resource';
 
-export type _BodyLessMoveRequest = Opaque<{}, '_BodyLessMoveRequest'>;
-
 export type SetupMoveRequest = DeepReadonly<{
   houseVertex: number;
   roadVertex: number;
 }>;
+
+export type _RollRequest = Opaque<{}, 'RollRequest'>;
 
 export type RoadRequest = DeepReadonly<{
   vertex1: number;
@@ -18,6 +18,8 @@ export type RoadRequest = DeepReadonly<{
 export type HouseRequest = DeepReadonly<{
   vertex: number;
 }>;
+
+export type _DevBuyRequest = Opaque<{}, '_DevBuyRequest'>;
 
 export type DevCardRequest = DeepReadonly<{
   type: DevCard;
@@ -63,3 +65,5 @@ export type TradeResponseRequest = DeepReadonly<{
   id: string;
   accepted: Resource;
 }>;
+
+export type _EndTurnRequest = Opaque<{}, '_EndTurnRequest'>;

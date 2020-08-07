@@ -8,7 +8,9 @@ import type {
   TradeBankRequest,
   TradePlayerRequest,
   TradeResponseRequest,
-  _BodyLessMoveRequest,
+  _DevBuyRequest,
+  _EndTurnRequest,
+  _RollRequest,
 } from './game-request';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from './user-request';
 import type { BoardRequest } from './board-request';
@@ -25,8 +27,8 @@ export type AuthenticatedGetGameRequest = AuthenticatedGetGameETagRequest | Opaq
 export type AuthenticatedGetGameETagRequest = Opaque<{}, 'AuthenticatedGetGameETagRequest'>;
 
 export type MoveRequest =
+  | BodyLessMoveRequest
   | SetupMoveRequest
-  | _BodyLessMoveRequest
   | RoadRequest
   | HouseRequest
   | DevCardRequest
@@ -36,6 +38,8 @@ export type MoveRequest =
   | TradePlayerRequest
   | TradeResponseRequest;
 
+export type BodyLessMoveRequest = _RollRequest | _DevBuyRequest | _EndTurnRequest;
+
 // All request types support authentication
 export type AuthenticatedRequest = AuthenticatedGetRequest | BoardRequest | MoveRequest | _LogoutRequest;
 
@@ -43,7 +47,7 @@ export type AuthenticatedRequest = AuthenticatedGetRequest | BoardRequest | Move
 export type UnauthenticatedRequest = LoginRequest | SignUpRequest | RefreshTokenRequest;
 
 // Mainly for GET requests
-export type BodyLessRequest = AuthenticatedGetRequest | _LogoutRequest | _BodyLessMoveRequest;
+export type BodyLessRequest = AuthenticatedGetRequest | _LogoutRequest | BodyLessMoveRequest;
 
 // All request types
 export type CatanRequest = AuthenticatedRequest | UnauthenticatedRequest;

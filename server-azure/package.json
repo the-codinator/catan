@@ -12,7 +12,7 @@
     "test": "echo \"No tests yet...\"",
     "check": "gts check",
     "fix": "gts fix",
-    "clean": "gts clean && rm -rf request-schema-validation/generated-schemas src/model/request/generated-validator.ts",
+    "clean": "gts clean && rm -f src/model/request/generated-validator.ts",
     "compile": "npm run build",
     "postcompile": "npm run fix",
     "prepare": "npm run compile",

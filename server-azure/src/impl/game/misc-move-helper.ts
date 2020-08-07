@@ -1,5 +1,6 @@
 import { ACHIEVEMENTS, getVictoryPoints as getAchievementTypeVictoryPoints } from '../../model/game/achievement';
 import { THIEF_ROLL, VICTORY_POINTS_FOR_WIN } from '../../util/constants';
+import type { _EndTurnRequest, _RollRequest } from '../../model/request/game-request';
 import { findTileHexesForRoll, rollDice, transferResources } from './game-utility';
 import { getVictoryPoints as getHouseTypeVictoryPoints, getResourceMultiplier } from '../../model/game/house-type';
 import { BadRequestError } from '../../core/catan-error';
@@ -8,14 +9,13 @@ import type { DeepReadonly } from 'ts-essentials';
 import { Phase } from '../../model/game/phase';
 import type { PlayOptions } from './move-api-helper';
 import type { State } from '../../model/game/state';
-import type { _BodyLessMoveRequest } from '../../model/request/game-request';
 import { createCurrentMove } from '../../model/game/current-move';
 import { getVictoryPoints as getDevCardVictoryPoints } from '../../model/game/dev-card';
 import { getRoll } from '../../model/game/roll';
 import { getVerticesAroundHex } from './graph-helper';
 import { handleThiefRoll } from './thief-move-helper';
 
-export function roll({ board, state }: PlayOptions<_BodyLessMoveRequest>): void {
+export function roll({ board, state }: PlayOptions<_RollRequest>): void {
   if (state.currentMove.roll) {
     throw new BadRequestError('Cannot re-roll in a turn');
   }
@@ -45,7 +45,7 @@ export function roll({ board, state }: PlayOptions<_BodyLessMoveRequest>): void 
   }
 }
 
-export function end({ board, state }: PlayOptions<_BodyLessMoveRequest>): void {
+export function end({ board, state }: PlayOptions<_EndTurnRequest>): void {
   endTurn(board, state);
 }
 

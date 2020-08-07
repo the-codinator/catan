@@ -20,7 +20,9 @@ import type {
   TradeBankRequest,
   TradePlayerRequest,
   TradeResponseRequest,
-  _BodyLessMoveRequest,
+  _DevBuyRequest,
+  _EndTurnRequest,
+  _RollRequest,
 } from '../model/request/game-request';
 import { HEADER_IF_MATCH, HEADER_IF_NONE_MATCH, METHOD_GET, METHOD_POST } from '../util/constants';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from '../model/request/user-request';
@@ -225,7 +227,7 @@ function moveRoute(segments: PathSegments): Route<MoveRequest, StateResponse> | 
       return route as RMS;
     }
     case 'roll': {
-      const route: Route<_BodyLessMoveRequest, StateResponse> = {
+      const route: Route<_RollRequest, StateResponse> = {
         handler: MoveApi.roll,
         filters,
       };
@@ -248,7 +250,7 @@ function moveRoute(segments: PathSegments): Route<MoveRequest, StateResponse> | 
       return route as RMS;
     }
     case 'dev/buy': {
-      const route: Route<_BodyLessMoveRequest, StateResponse> = {
+      const route: Route<_DevBuyRequest, StateResponse> = {
         handler: MoveApi.devBuy,
         filters,
       };
@@ -303,7 +305,7 @@ function moveRoute(segments: PathSegments): Route<MoveRequest, StateResponse> | 
       return route as RMS;
     }
     case 'end': {
-      const route: Route<_BodyLessMoveRequest, StateResponse> = {
+      const route: Route<_EndTurnRequest, StateResponse> = {
         handler: MoveApi.end,
         filters,
       };

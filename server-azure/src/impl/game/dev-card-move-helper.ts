@@ -1,6 +1,6 @@
 import * as AchievementHelper from './achievement-helper';
 import { COLORS, Color } from '../../model/game/color';
-import type { DevCardRequest, RoadRequest, _BodyLessMoveRequest } from '../../model/request/game-request';
+import type { DevCardRequest, RoadRequest, _DevBuyRequest } from '../../model/request/game-request';
 import { arrayRemove, count, getFrequencyMapTotalCount } from '../../util/util';
 import { transferResources, transferResourcesList } from './game-utility';
 import { BadRequestError } from '../../core/catan-error';
@@ -12,7 +12,7 @@ import type { State } from '../../model/game/state';
 import { ensureCanPlaceRoad } from './build-move-helper';
 import { thiefPlayInternal } from './thief-move-helper';
 
-export function buy({ state }: PlayOptions<_BodyLessMoveRequest>): void {
+export function buy({ state }: PlayOptions<_DevBuyRequest>): void {
   if (state.bankDevCards.length === 0) {
     throw new BadRequestError('No Dev Cards available in Bank');
   }
@@ -30,7 +30,6 @@ export function play({ state, request }: PlayOptions<DevCardRequest>): void {
   if (!arrayRemove(state.hands[color].devCards, devCard)) {
     throw new BadRequestError('Dev Card not present in hand');
   }
-
   state.currentMove.devCard = devCard;
   const playedDevCards = state.playedDevCards[color];
   if (!playedDevCards) {

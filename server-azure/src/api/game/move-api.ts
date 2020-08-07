@@ -14,7 +14,9 @@ import type {
   TradeBankRequest,
   TradePlayerRequest,
   TradeResponseRequest,
-  _BodyLessMoveRequest,
+  _DevBuyRequest,
+  _EndTurnRequest,
+  _RollRequest,
 } from '../../model/request/game-request';
 import type { MoveRequest } from '../../model/request';
 import { OutOfTurnApi } from '../../model/game/out-of-turn-api';
@@ -28,14 +30,13 @@ type Move<T extends MoveRequest> = RouteHandler<T, StateResponse>;
 export const setup: Move<SetupMoveRequest> = context =>
   play(undefined, context, SetupMoveHelper.play, Phase.setup1, Phase.setup2);
 
-export const roll: Move<_BodyLessMoveRequest> = context =>
-  play(undefined, context, MiscMoveHelper.roll, Phase.gameplay);
+export const roll: Move<_RollRequest> = context => play(undefined, context, MiscMoveHelper.roll, Phase.gameplay);
 
 export const road: Move<RoadRequest> = context => play(undefined, context, BuildMoveHelper.road, Phase.gameplay);
+
 export const house: Move<HouseRequest> = context => play(undefined, context, BuildMoveHelper.house, Phase.gameplay);
 
-export const devBuy: Move<_BodyLessMoveRequest> = context =>
-  play(undefined, context, DevCardMoveHelper.buy, Phase.gameplay);
+export const devBuy: Move<_DevBuyRequest> = context => play(undefined, context, DevCardMoveHelper.buy, Phase.gameplay);
 
 export const devPlay: Move<DevCardRequest> = context =>
   play(undefined, context, DevCardMoveHelper.play, Phase.gameplay);
@@ -55,4 +56,4 @@ export const tradePlayer: Move<TradePlayerRequest> = context =>
 export const tradeResponse: Move<TradeResponseRequest> = context =>
   play(undefined, context, TradeApiHelper.respond, Phase.gameplay);
 
-export const end: Move<_BodyLessMoveRequest> = context => play(undefined, context, MiscMoveHelper.end, Phase.gameplay);
+export const end: Move<_EndTurnRequest> = context => play(undefined, context, MiscMoveHelper.end, Phase.gameplay);

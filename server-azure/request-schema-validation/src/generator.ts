@@ -57,7 +57,7 @@ function generateSchemas(files: string[]): { generator: TJS.JsonSchemaGenerator;
   }
   const symbols = generator
     .getMainFileSymbols(program)
-    .filter(symbol => symbol.includes('Request'))
+    .filter(symbol => symbol.endsWith('Request'))
     .filter(symbol => !symbol.startsWith('_')); /* Prepend "_" in the type's name to prevent its validator generation */
 
   return { generator, symbols };

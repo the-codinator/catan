@@ -56,7 +56,7 @@ public class ThiefMoveHelper {
     public void thiefDrop(State state, Color color, ThiefDropRequest request) throws CatanException {
         Hand hand = state.getHand(color);
         Util.validateInput(request.getResources(), "resources");
-        if (request.getResources().length != hand.getResourceCount()) {
+        if (request.getResources().length != hand.getResourceCount() / 2) {
             throw new BadRequestException("Incorrect number of resource cards - need " + hand.getResourceCount() / 2);
         }
         gameUtility.transferResources(state, color, null, request.getResources());

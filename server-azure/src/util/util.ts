@@ -75,3 +75,15 @@ export function arrayEquals<T extends Primitive>(a: Readonly<T[]> | undefined, b
 export function addToFrequencyMap<T extends string>(map: Partial<Record<T, number>>, key: T, delta: number): void {
   map[key] = (map[key] || 0)! + delta;
 }
+
+export function arrayRemove<T>(arr: T[] | undefined, element: T): boolean {
+  if (!arr?.length) {
+    return false;
+  }
+  const index = arr.indexOf(element);
+  if (index < 0) {
+    return false;
+  }
+  arr.splice(index, 1);
+  return true;
+}

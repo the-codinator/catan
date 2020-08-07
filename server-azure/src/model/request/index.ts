@@ -5,6 +5,9 @@ import type {
   SetupMoveRequest,
   ThiefDropRequest,
   ThiefPlayRequest,
+  TradeBankRequest,
+  TradePlayerRequest,
+  TradeResponseRequest,
   _BodyLessMoveRequest,
 } from './game-request';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from './user-request';
@@ -26,9 +29,12 @@ export type MoveRequest =
   | _BodyLessMoveRequest
   | RoadRequest
   | HouseRequest
+  | DevCardRequest
   | ThiefDropRequest
   | ThiefPlayRequest
-  | DevCardRequest;
+  | TradeBankRequest
+  | TradePlayerRequest
+  | TradeResponseRequest;
 
 // All request types support authentication
 export type AuthenticatedRequest = AuthenticatedGetRequest | BoardRequest | MoveRequest | _LogoutRequest;

@@ -10,8 +10,19 @@ import type {
   MoveRequest,
 } from '../model/request';
 import type { BoardResponse, GameResponse } from '../model/response/game-response';
+import type {
+  DevCardRequest,
+  HouseRequest,
+  RoadRequest,
+  SetupMoveRequest,
+  ThiefDropRequest,
+  ThiefPlayRequest,
+  TradeBankRequest,
+  TradePlayerRequest,
+  TradeResponseRequest,
+  _BodyLessMoveRequest,
+} from '../model/request/game-request';
 import { HEADER_IF_MATCH, HEADER_IF_NONE_MATCH, METHOD_GET, METHOD_POST } from '../util/constants';
-import type { HouseRequest, RoadRequest, SetupMoveRequest, _BodyLessMoveRequest } from '../model/request/game-request';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from '../model/request/user-request';
 import type { PathSegments, Route } from './types';
 
@@ -232,6 +243,61 @@ function moveRoute(segments: PathSegments): Route<MoveRequest, StateResponse> | 
       const route: Route<HouseRequest, StateResponse> = {
         handler: MoveApi.house,
         validator: Validator.validateHouseRequest,
+        filters,
+      };
+      return route as RMS;
+    }
+    case 'dev/buy': {
+      const route: Route<_BodyLessMoveRequest, StateResponse> = {
+        handler: MoveApi.devBuy,
+        filters,
+      };
+      return route as RMS;
+    }
+    case 'dev/play': {
+      const route: Route<DevCardRequest, StateResponse> = {
+        handler: MoveApi.devPlay,
+        validator: Validator.validateHouseRequest,
+        filters,
+      };
+      return route as RMS;
+    }
+    case 'thief/drop': {
+      const route: Route<ThiefDropRequest, StateResponse> = {
+        handler: MoveApi.thiefDrop,
+        validator: Validator.validateThiefDropRequest,
+        filters,
+      };
+      return route as RMS;
+    }
+    case 'thief/play': {
+      const route: Route<ThiefPlayRequest, StateResponse> = {
+        handler: MoveApi.thiefPlay,
+        validator: Validator.validateThiefPlayRequest,
+        filters,
+      };
+      return route as RMS;
+    }
+    case 'trade/bank': {
+      const route: Route<TradeBankRequest, StateResponse> = {
+        handler: MoveApi.tradeBank,
+        validator: Validator.validateTradeBankRequest,
+        filters,
+      };
+      return route as RMS;
+    }
+    case 'trade/offer': {
+      const route: Route<TradePlayerRequest, StateResponse> = {
+        handler: MoveApi.tradePlayer,
+        validator: Validator.validateTradePlayerRequest,
+        filters,
+      };
+      return route as RMS;
+    }
+    case 'trade/respond': {
+      const route: Route<TradeResponseRequest, StateResponse> = {
+        handler: MoveApi.tradeResponse,
+        validator: Validator.validateTradeResponseRequest,
         filters,
       };
       return route as RMS;

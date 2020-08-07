@@ -7,6 +7,7 @@ import { DROP_CARDS_FOR_THIEF_THRESHOLD } from '../../util/constants';
 import { Phase } from '../../model/game/phase';
 import type { PlayOptions } from './move-api-helper';
 import type { State } from '../../model/game/state';
+import { arrayRemove } from '../../util/util';
 import { getResourceCount } from '../../model/game/hand';
 
 export function handleThiefRoll(state: State): void {
@@ -29,7 +30,7 @@ export function thiefDrop({ state, color, request }: PlayOptions<ThiefDropReques
   }
   transferResourcesList(state, color, undefined, ...request.resources);
   const thieved = state.currentMove.thieved!; // From MoveApiHelper
-  thieved.splice(thieved.indexOf(color), 1);
+  arrayRemove(thieved, color);
   if (thieved.length === 0) {
     delete state.currentMove.thieved;
   }
@@ -41,6 +42,10 @@ export function thiefPlay({ state, request }: PlayOptions<ThiefPlayRequest>): vo
       'Please wait until players with 8+ cards have dropped half - ' + state.currentMove.thieved
     );
   }
+  thiefPlayInternal(state, request);
+}
+
+export function thiefPlayInternal(state: State, request: ThiefPlayRequest): void {
   if (request.hex === state.thief) {
     throw new BadRequestError('Thief MUST be moved to a different tile');
   }

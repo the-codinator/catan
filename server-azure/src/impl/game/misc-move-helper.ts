@@ -36,7 +36,7 @@ export function roll({ board, state }: PlayOptions<_BodyLessMoveRequest>): void 
             state,
             undefined,
             house.color,
-            board.tiles[hex].resource,
+            board.tiles[hex].resource!, // Cannot be desert tile
             getResourceMultiplier(house.type)
           );
         }

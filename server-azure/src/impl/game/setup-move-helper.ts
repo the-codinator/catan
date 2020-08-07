@@ -20,7 +20,11 @@ export function play({ board, state, request }: PlayOptions<SetupMoveRequest>): 
   // Gain resources
   if (state.phase === Phase.setup2) {
     for (const hex of getConnectedHexListForVertex(request.houseVertex)) {
-      transferResourcesList(state, undefined, color, board.tiles[hex].resource);
+      const resource = board.tiles[hex].resource;
+      if (resource !== null) {
+        // Ignore Desert
+        transferResourcesList(state, undefined, color, resource);
+      }
     }
   }
   // Auto end turn

@@ -1,6 +1,11 @@
 import { COLORS, Color } from '../../model/game/color';
+import type { ThiefDropRequest, ThiefPlayRequest } from '../../model/request/game-request';
+import { chooseRandomlyStolenCard, transferResourcesList } from './game-utility';
+import { getVerticesAroundHex, validateHex } from './graph-helper';
+import { BadRequestError } from '../../core/catan-error';
 import { DROP_CARDS_FOR_THIEF_THRESHOLD } from '../../util/constants';
 import { Phase } from '../../model/game/phase';
+import type { PlayOptions } from './move-api-helper';
 import type { State } from '../../model/game/state';
 import { getResourceCount } from '../../model/game/hand';
 
@@ -17,57 +22,54 @@ export function handleThiefRoll(state: State): void {
   }
 }
 
-// TODO: impl
-
-/*
-public void thiefDrop(State state, Color color, ThiefDropRequest request) throws CatanException {
-  Hand hand = state.getHand(color);
-  Util.validateInput(request.getResources(), "resources");
-  if (request.getResources().length != hand.getResourceCount()) {
-      throw new BadRequestException("Incorrect number of resource cards - need " + hand.getResourceCount() / 2);
+export function thiefDrop({ state, color, request }: PlayOptions<ThiefDropRequest>): void {
+  const hand = state.hands[color];
+  if (request.resources.length !== Math.floor(getResourceCount(hand) / 2)) {
+    throw new BadRequestError('Incorrect number of resource cards - need ' + getResourceCount(hand) / 2);
   }
-  gameUtility.transferResources(state, color, null, request.getResources());
-  state.getCurrentMove().getThieved().remove(color);
-  if (state.getCurrentMove().getThieved().isEmpty()) {
-      state.getCurrentMove().setThieved(null);
+  transferResourcesList(state, color, undefined, ...request.resources);
+  const thieved = state.currentMove.thieved!; // From MoveApiHelper
+  thieved.splice(thieved.indexOf(color), 1);
+  if (thieved.length === 0) {
+    delete state.currentMove.thieved;
   }
 }
 
-public void thiefPlay(State state, ThiefPlayRequest request) throws CatanException {
-  if (state.getCurrentMove().getThieved() != null && !state.getCurrentMove().getThieved().isEmpty()) {
-      throw new BadRequestException(
-          "Please wait until players with 8+ cards have dropped half - " + state.getCurrentMove().getThieved());
+export function thiefPlay({ state, request }: PlayOptions<ThiefPlayRequest>): void {
+  if (state.currentMove.thieved?.length) {
+    throw new BadRequestError(
+      'Please wait until players with 8+ cards have dropped half - ' + state.currentMove.thieved
+    );
   }
-  if (request.getHex() == state.getThief()) {
-      throw new BadRequestException("Thief MUST be moved to a different tile");
+  if (request.hex === state.thief) {
+    throw new BadRequestError('Thief MUST be moved to a different tile');
   }
-  Color color = state.getCurrentMove().getColor();
-  if (color == request.getVictim()) {
-      throw new BadRequestException("Cannot steal from self");
+  const color = state.currentMove.color;
+  if (color === request.victim) {
+    throw new BadRequestError('Cannot steal from self');
   }
-  graphHelper.validateHex(request.getHex());
-  int[] vertices = graphHelper.getVerticesAroundHex(request.getHex());
-  boolean hasHouse = false;
-  for (int vertex : vertices) {
-      House house = state.getHouses().get(vertex);
-      if (house != null && house.getColor() != color) {
-          if (request.getVictim() == null && state.getHand(house.getColor()).getResourceCount() > 0) {
-              throw new BadRequestException("Must steal from a player if possible (missing field - victim)");
-          }
-          if (house.getColor() == request.getVictim()) {
-              hasHouse = true;
-              break;
-          }
+  validateHex(request.hex);
+  const vertices = getVerticesAroundHex(request.hex);
+
+  let hasHouse = false;
+  for (const vertex of vertices) {
+    const house = state.houses[vertex];
+    if (house && house.color !== color) {
+      if (!request.victim && getResourceCount(state.hands[house.color])) {
+        throw new BadRequestError('Must steal from a player if possible (missing field - victim)');
       }
+      if (house.color === request.victim) {
+        hasHouse = true;
+        break;
+      }
+    }
   }
-  if (request.getVictim() == null) {
-      return;
+  if (!request.victim) {
+    return;
   }
   if (!hasHouse) {
-      throw new BadRequestException("Cannot steal from player without house on thief tile");
+    throw new BadRequestError('Cannot steal from player without house on thief tile');
   }
-  Resource resource = gameUtility.chooseRandomlyStolenCard(state, request.getVictim());
-  // Note: resource can be null if chosen player has no cards
-  gameUtility.transferResources(state, request.getVictim(), color, resource);
+  const resource = chooseRandomlyStolenCard(state, request.victim);
+  transferResourcesList(state, request.victim, color, resource);
 }
-*/

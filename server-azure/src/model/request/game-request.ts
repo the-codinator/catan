@@ -19,6 +19,15 @@ export type HouseRequest = DeepReadonly<{
   vertex: number;
 }>;
 
+export type ThiefDropRequest = DeepReadonly<{
+  resources: Resource[];
+}>;
+
+export type ThiefPlayRequest = DeepReadonly<{
+  hex: number;
+  victim?: Color;
+}>;
+
 export type DevCardRequest = DeepReadonly<{
   type: DevCard;
 

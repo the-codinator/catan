@@ -1,4 +1,12 @@
-import type { DevCardRequest, HouseRequest, RoadRequest, SetupMoveRequest, _BodyLessMoveRequest } from './game-request';
+import type {
+  DevCardRequest,
+  HouseRequest,
+  RoadRequest,
+  SetupMoveRequest,
+  ThiefDropRequest,
+  ThiefPlayRequest,
+  _BodyLessMoveRequest,
+} from './game-request';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from './user-request';
 import type { BoardRequest } from './board-request';
 import type { Opaque } from 'ts-essentials';
@@ -13,7 +21,14 @@ export type AuthenticatedGetRequest = AuthenticatedGetGameRequest | Opaque<{}, '
 export type AuthenticatedGetGameRequest = AuthenticatedGetGameETagRequest | Opaque<{}, 'AuthenticatedGetGameRequest'>;
 export type AuthenticatedGetGameETagRequest = Opaque<{}, 'AuthenticatedGetGameETagRequest'>;
 
-export type MoveRequest = SetupMoveRequest | _BodyLessMoveRequest | RoadRequest | HouseRequest | DevCardRequest;
+export type MoveRequest =
+  | SetupMoveRequest
+  | _BodyLessMoveRequest
+  | RoadRequest
+  | HouseRequest
+  | ThiefDropRequest
+  | ThiefPlayRequest
+  | DevCardRequest;
 
 // All request types support authentication
 export type AuthenticatedRequest = AuthenticatedGetRequest | BoardRequest | MoveRequest | _LogoutRequest;

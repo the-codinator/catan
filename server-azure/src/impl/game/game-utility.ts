@@ -18,14 +18,13 @@ export function checkPlayerTurn(board: Board, state: State, user: string, outOfT
   if (!color) {
     throw new CatanError("Cannot make moves in a game you aren't playing!", FORBIDDEN);
   }
-  if (!outOfTurnApi) {
-    if (color === state.currentMove.color) {
-      return color;
-    } else {
-      throw new CatanError('Cannot play this move out of turn', FORBIDDEN);
-    }
-  }
   switch (outOfTurnApi) {
+    case undefined:
+      if (color === state.currentMove.color) {
+        return color;
+      } else {
+        throw new CatanError('Cannot play this move out of turn', FORBIDDEN);
+      }
     case OutOfTurnApi.THIEF:
       if (state.currentMove.thieved?.includes(color)) {
         return color;
@@ -55,12 +54,11 @@ export function transferResources(
   state: State,
   from: Color | undefined,
   to: Color | undefined,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  resource: Resource | null | undefined,
+  resource: Resource | undefined,
   count: number
 ): number {
   // No transfer
-  if (from === to || resource === undefined || resource === null || count === 0) {
+  if (from === to || resource === undefined || count === 0) {
     return 0;
   }
   if (!Number.isInteger(count)) {
@@ -91,8 +89,7 @@ export function transferResourcesList(
   state: State,
   from: Color | undefined,
   to: Color | undefined,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  ...resources: (Resource | null)[]
+  ...resources: (Resource | undefined)[]
 ): number {
   return resources.reduce((count, resource) => count + transferResources(state, from, to, resource, 1), 0);
 }

@@ -41,6 +41,7 @@ import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.impl.user.UserApiHelper;
 import org.codi.catan.impl.user.UserGamesHelper;
+import org.codi.catan.model.game.UserGame;
 import org.codi.catan.model.request.LoginRequest;
 import org.codi.catan.model.request.RefreshTokenRequest;
 import org.codi.catan.model.request.SignUpRequest;
@@ -107,7 +108,7 @@ public class UserApi {
     @Path(PATH_GAMES)
     @ApiOperation(value = "", authorizations = @Authorization(BEARER_AUTHORIZATION_KEY))
     @PermitAll
-    public List<String> games(@ApiParam(hidden = true) @Auth User user, @QueryParam(PARAM_ONGOING) Boolean ongoing)
+    public List<UserGame> games(@ApiParam(hidden = true) @Auth User user, @QueryParam(PARAM_ONGOING) Boolean ongoing)
         throws CatanException {
         return userGamesHelper.games(user.getId(), ongoing);
     }

@@ -30,6 +30,7 @@ import org.codi.catan.model.game.Player;
 import org.codi.catan.model.game.Ports;
 import org.codi.catan.model.game.Resource;
 import org.codi.catan.model.game.Tile;
+import org.codi.catan.model.game.UserGame;
 import org.codi.catan.model.request.BoardRequest;
 import org.codi.catan.model.user.User;
 import org.codi.catan.util.Util;
@@ -69,6 +70,8 @@ public class BoardHelper {
         }
         try {
             dataConnector.createBoard(board);
+            UserGame[] ugs = UserGame.createUserGamesFromBoard(board);
+            dataConnector.createUserGames(ugs);
         } catch (CatanException e) {
             throw new CatanException("Error creating game", Status.INTERNAL_SERVER_ERROR, e);
         }

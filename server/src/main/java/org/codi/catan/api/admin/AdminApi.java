@@ -27,11 +27,16 @@ import org.codi.catan.core.BadRequestException;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.impl.data.CatanDataConnector;
 import org.codi.catan.impl.game.MiscMoveHelper;
+import org.codi.catan.impl.game.MoveApiHelper;
 import org.codi.catan.impl.user.UserApiHelper;
 import org.codi.catan.model.admin.AdminAction;
 import org.codi.catan.model.admin.AdminRequest;
+import org.codi.catan.model.game.Board;
+import org.codi.catan.model.game.OutOfTurnApi;
 import org.codi.catan.model.game.Phase;
+import org.codi.catan.model.game.Player;
 import org.codi.catan.model.game.State;
+import org.codi.catan.model.game.UserGame;
 import org.codi.catan.model.user.Role;
 import org.codi.catan.model.user.User;
 import org.slf4j.Logger;
@@ -55,14 +60,16 @@ public class AdminApi {
 
     private final ObjectMapper objectMapper;
     private final CatanDataConnector dataConnector;
+    private final MoveApiHelper moveApiHelper;
     private final MiscMoveHelper miscMoveHelper;
 
     @Inject
     public AdminApi(ObjectMapper objectMapper, CatanDataConnector dataConnector, MiscMoveHelper miscMoveHelper,
-        UserApiHelper userApiHelper) {
+        UserApiHelper userApiHelper, MoveApiHelper moveApiHelper) {
         this.objectMapper = objectMapper;
         this.dataConnector = dataConnector;
         this.miscMoveHelper = miscMoveHelper;
+        this.moveApiHelper = moveApiHelper;
         // Note: userApiHelper can never be a proxy object since no-once depends on AdminApi
         userApiHelper.setNewUserEventListener(this::handleNewUser);
     }
@@ -81,18 +88,16 @@ public class AdminApi {
         switch (request.getAction()) {
             case delete_user:
                 dataConnector.deleteUser(id);
-                break;
+                return dataConnector.getUserGamesByUser(id, true);
             case delete_game:
                 dataConnector.deleteState(id, null);
+                for (Player player : dataConnector.getBoard(id).getPlayers()) {
+                    dataConnector.deleteUserGame(UserGame.generateId(id, player.getId()));
+                }
                 dataConnector.deleteBoard(id);
                 break;
             case end_turn:
-                State state = dataConnector.getState(id, null);
-                if (state.getPhase() != Phase.gameplay) {
-                    throw new BadRequestException("Game is not in gameplay phase");
-                }
-                miscMoveHelper.endTurn(dataConnector.getBoard(id), state);
-                dataConnector.updateState(state);
+                moveApiHelper.play(OutOfTurnApi.ADMIN, null, id, null, miscMoveHelper::endTurn, Phase.gameplay);
                 break;
             case get_state:
                 return dataConnector.getState(id, null);

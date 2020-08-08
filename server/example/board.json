@@ -3,7 +3,6 @@
     "user": 0,
     "api": "/game",
     "body": {
-      "id": "string",
       "tiles": [
         {
           "resource": "sheep",

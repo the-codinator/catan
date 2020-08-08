@@ -6,6 +6,7 @@
 package org.codi.catan.model.game;
 
 public enum OutOfTurnApi {
+    ADMIN,
     THIEF,
     TRADE
 }

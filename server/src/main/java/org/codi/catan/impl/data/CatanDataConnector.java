@@ -12,6 +12,7 @@ import org.codi.catan.core.CatanException;
 import org.codi.catan.model.core.StrongEntity;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
+import org.codi.catan.model.game.UserGame;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
@@ -44,7 +45,10 @@ public interface CatanDataConnector {
     void updateUser(User user) throws CatanException;
     void deleteUser(String id) throws CatanException;
 
-    List<String> getGames(String userId, Boolean ongoing) throws CatanException;
+    List<UserGame> getUserGamesByUser(String userId, Boolean ongoing) throws CatanException;
+    void createUserGames(UserGame... userGames) throws CatanException;
+    void updateUserGames(UserGame... userGames) throws CatanException;
+    void deleteUserGame(String id) throws CatanException;
 
     Token getToken(String id) throws CatanException;
     void createToken(Token token) throws CatanException;
@@ -52,6 +56,7 @@ public interface CatanDataConnector {
 
     Board getBoard(String id) throws CatanException;
     void createBoard(Board board) throws CatanException;
+    void updateBoard(Board board) throws CatanException;
     void deleteBoard(String id) throws CatanException;
 
     State getState(String id, String etag) throws CatanException;

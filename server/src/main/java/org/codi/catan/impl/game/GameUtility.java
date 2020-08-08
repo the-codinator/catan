@@ -47,6 +47,9 @@ public class GameUtility {
      */
     public Color checkPlayerTurn(Board board, State state, String user, OutOfTurnApi outOfTurnApi)
         throws CatanException {
+        if (outOfTurnApi == OutOfTurnApi.ADMIN) {
+            return state.getCurrentMove().getColor();
+        }
         Color color = null;
         // Move by actual player whose turn it is
         for (Player player : board.getPlayers()) {

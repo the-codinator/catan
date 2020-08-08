@@ -21,6 +21,7 @@ import org.codi.catan.model.game.Color;
 import org.codi.catan.model.game.OutOfTurnApi;
 import org.codi.catan.model.game.Phase;
 import org.codi.catan.model.game.State;
+import org.codi.catan.model.game.UserGame;
 import org.codi.catan.model.response.StateResponse;
 import org.codi.catan.util.Util;
 
@@ -48,6 +49,7 @@ public class MoveApiHelper {
         BoardStateColorRequestMoveHandler<T> handler, Phase... validPhases) throws CatanException {
         Board board = boardHelper.getBoard(gameId);
         State state = stateApiHelper.getState(gameId, null);
+        Color current = state.getCurrentMove().getColor();
         if (etag != null && !state.getETag().equals(etag)) {
             throw new CatanException("Someone made a move before you. Please retry with updated game state.",
                 Status.PRECONDITION_FAILED);
@@ -60,6 +62,18 @@ public class MoveApiHelper {
         handler.play(board, state, color, request);
         try {
             dataConnector.updateState(state);
+            Color updated = state.getCurrentMove().getColor();
+            if (updated != current) {
+                UserGame oldUG = new UserGame(board, current);
+                UserGame newUG = new UserGame(board, updated);
+                newUG.setMyTurn(true);
+                dataConnector.updateUserGames(oldUG, newUG);
+            } else if (state.getPhase() == Phase.end && board.getCompleted() == 0) {
+                board.setCompleted(System.currentTimeMillis());
+                dataConnector.updateBoard(board);
+                UserGame[] ugs = UserGame.createUserGamesFromBoard(board);
+                dataConnector.updateUserGames(ugs);
+            }
         } catch (CatanException e) {
             if (e.getErrorStatus() == Status.PRECONDITION_FAILED) {
                 throw new CatanException("Someone made a move before you. Please retry with updated game state.",
@@ -74,6 +88,11 @@ public class MoveApiHelper {
     public <T> StateResponse play(OutOfTurnApi outOfTurnApi, String userId, String gameId, String etag, T request,
         StateColorRequestMoveHandler<T> handler, Phase... validPhases) throws CatanException {
         return play(outOfTurnApi, userId, gameId, etag, request, handler.asBaseType(), validPhases);
+    }
+
+    public StateResponse play(OutOfTurnApi outOfTurnApi, String userId, String gameId, String etag,
+        BoardStateMoveHandler handler, Phase... validPhases) throws CatanException {
+        return play(outOfTurnApi, userId, gameId, etag, null, handler.asBaseType(), validPhases);
     }
 
     public <T> StateResponse play(String userId, String gameId, String etag, T request,

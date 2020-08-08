@@ -14,6 +14,7 @@ import org.codi.catan.model.core.IdentifiableEntity;
 import org.codi.catan.model.core.StrongEntity;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
+import org.codi.catan.model.game.UserGame;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 import org.slf4j.Logger;
@@ -109,6 +110,25 @@ public abstract class AbstractCDC implements CatanDataConnector {
     }
 
     @Override
+    public void createUserGames(UserGame... userGames) throws CatanException {
+        for (var ug : userGames) {
+            create(UserGame.class, ug);
+        }
+    }
+
+    @Override
+    public void updateUserGames(UserGame... userGames) throws CatanException {
+        for (var ug : userGames) {
+            update(UserGame.class, ug);
+        }
+    }
+
+    @Override
+    public void deleteUserGame(String id) throws CatanException {
+        delete(UserGame.class, id);
+    }
+
+    @Override
     public Token getToken(String id) throws CatanException {
         return get(Token.class, id, null);
     }
@@ -131,6 +151,11 @@ public abstract class AbstractCDC implements CatanDataConnector {
     @Override
     public void createBoard(Board board) throws CatanException {
         create(Board.class, board);
+    }
+
+    @Override
+    public void updateBoard(Board board) throws CatanException {
+        update(Board.class, board);
     }
 
     @Override

@@ -26,8 +26,7 @@ import javax.ws.rs.core.Response.Status;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.core.IdentifiableEntity;
 import org.codi.catan.model.core.StrongEntity;
-import org.codi.catan.model.game.Board;
-import org.codi.catan.model.game.Player;
+import org.codi.catan.model.game.UserGame;
 import org.codi.catan.util.Util;
 
 public class InMemoryCDC extends AbstractCDC implements CatanDataConnector {
@@ -163,17 +162,13 @@ public class InMemoryCDC extends AbstractCDC implements CatanDataConnector {
     }
 
     @Override
-    public List<String> getGames(String userId, Boolean ongoing) throws CatanException {
-        List<String> list = new ArrayList<>();
+    public List<UserGame> getUserGamesByUser(String userId, Boolean ongoing) throws CatanException {
+        List<UserGame> list = new ArrayList<>();
         try {
-            for (String json : db.get(Board.class).values()) {
-                Board board = objectMapper.readValue(json, Board.class);
-                for (Player player : board.getPlayers()) {
-                    if (player.getId().equals(userId) && (ongoing == null
-                        || ongoing && board.getCompleted() <= board.getCreated()
-                        || !ongoing && board.getCompleted() > board.getCreated())) {
-                        list.add(board.getId());
-                    }
+            for (String json : db.get(UserGame.class).values()) {
+                UserGame ug = objectMapper.readValue(json, UserGame.class);
+                if (ug.getUser().equals(userId) && (ongoing == null || (ongoing ^ ug.isCompleted()))) {
+                    list.add(ug);
                 }
             }
             return list;

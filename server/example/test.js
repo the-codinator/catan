@@ -55,7 +55,14 @@
   // Validate Games API
   start('user games');
   const games = await callWithData(0, '/user/games');
-  assertEqual(games, [vars.id]);
+  assertEqual(games, [{
+    "id": vars.id + ":user0",
+    "game": vars.id,
+    "user": "user0",
+    "color": "red",
+    "myTurn": true,
+    "completed": false
+  }]);
   pass('user games');
 
   // TODO:

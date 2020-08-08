@@ -10,6 +10,7 @@ import java.util.List;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.model.game.Board;
 import org.codi.catan.model.game.State;
+import org.codi.catan.model.game.UserGame;
 import org.codi.catan.model.user.Token;
 import org.codi.catan.model.user.User;
 
@@ -57,8 +58,23 @@ public class DelegateCDC implements CatanDataConnector {
     }
 
     @Override
-    public List<String> getGames(String userId, Boolean ongoing) throws CatanException {
-        return delegate.getGames(userId, ongoing);
+    public List<UserGame> getUserGamesByUser(String userId, Boolean ongoing) throws CatanException {
+        return delegate.getUserGamesByUser(userId, ongoing);
+    }
+
+    @Override
+    public void createUserGames(UserGame... userGames) throws CatanException {
+        delegate.createUserGames(userGames);
+    }
+
+    @Override
+    public void updateUserGames(UserGame... userGames) throws CatanException {
+        delegate.updateUserGames(userGames);
+    }
+
+    @Override
+    public void deleteUserGame(String id) throws CatanException {
+        delegate.deleteUserGame(id);
     }
 
     @Override
@@ -84,6 +100,11 @@ public class DelegateCDC implements CatanDataConnector {
     @Override
     public void createBoard(Board board) throws CatanException {
         delegate.createBoard(board);
+    }
+
+    @Override
+    public void updateBoard(Board board) throws CatanException {
+        delegate.updateBoard(board);
     }
 
     @Override

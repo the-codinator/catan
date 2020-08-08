@@ -10,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import org.codi.catan.core.CatanException;
 import org.codi.catan.impl.data.CatanDataConnector;
+import org.codi.catan.model.game.UserGame;
 
 @Singleton
 public class UserGamesHelper {
@@ -24,9 +25,9 @@ public class UserGamesHelper {
     /**
      * Get users ongoing and recently completed games
      */
-    public List<String> games(String userId, Boolean ongoing) throws CatanException {
+    public List<UserGame> games(String userId, Boolean ongoing) throws CatanException {
         // Handle param "ongoing" - true = only ongoing games, false = only completed games, null = both
-        return dataConnector.getGames(userId, ongoing);
+        return dataConnector.getUserGamesByUser(userId, ongoing);
     }
 
 }

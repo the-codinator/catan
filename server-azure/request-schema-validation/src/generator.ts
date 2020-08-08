@@ -27,12 +27,16 @@ function resolve(...route: string[]): string {
 function getInterfaceFiles(): string[] {
   // Search interface files
   console.log('Scanning Request Model Files...');
-  return fs
+  const files = fs
     .readdirSync(resolve('src', 'model', 'request'))
     .filter(file => file.endsWith('.ts') && file !== 'index.ts')
     .map(file => resolve('src', 'model', 'request', file));
+  // Add some custom models we want to validate
+  files.push(resolve('src', 'model', 'admin', 'admin-request.ts'));
+  return files;
 }
 
+// Note: this does not check changes for dependent types... only base requests
 function breakIfNoUpdate(files: string[]): string[] {
   const generatedFile = resolve('src', 'model', 'request', generatedValidatorFile);
   if (!fs.existsSync(generatedFile)) {

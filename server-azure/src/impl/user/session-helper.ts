@@ -48,8 +48,12 @@ export function parseToken(token: string | undefined): Token | undefined {
   }
   try {
     const parsed = base64Decode(token);
-    // TODO: Ensure Token schema matching - Can try something with validator...
-    return JSON.parse(parsed) as Token;
+    const object = JSON.parse(parsed);
+    if (validateTokenModel(object)) {
+      return object;
+    } else {
+      throw new CatanError('Token format is incorrect');
+    }
   } catch (e) {
     throw new CatanError('Error parsing session from token', UNAUTHORIZED, e);
   }
@@ -63,4 +67,54 @@ export function validateRequestTokenOffline(token: Token): void {
   if (token.expires < now) {
     throw new CatanError('Session has expired', UNAUTHORIZED);
   }
+}
+
+// Manually generated using the validator generator (and then tweaked). Do NOT manually edit.
+/* eslint-disable */
+const hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);
+function validateTokenModel(data: any, recursive?: any): data is Token {
+  const ref1 = function validate(data: any, recursive: any) {
+    if (!(typeof data === 'string')) return false;
+    if (!(data === 'access' || data === 'refresh')) return false;
+    return true;
+  };
+  const ref0 = function validate(data: any, recursive: any) {
+    if (!(typeof data === 'object' && data && !Array.isArray(data))) return false;
+    if (!(data.created !== undefined && hasOwn(data, 'created'))) return false;
+    if (!(data.expires !== undefined && hasOwn(data, 'expires'))) return false;
+    if (!(data.id !== undefined && hasOwn(data, 'id'))) return false;
+    if (!(data.type !== undefined && hasOwn(data, 'type'))) return false;
+    if (!(data.user !== undefined && hasOwn(data, 'user'))) return false;
+    if (!(typeof data.id === 'string')) return false;
+    if (!ref1(data.type, recursive)) return false;
+    if (!(typeof data.user === 'string')) return false;
+    if (data.roles !== undefined && hasOwn(data, 'roles')) {
+      if (!Array.isArray(data.roles)) return false;
+      for (let i = 0; i < data.roles.length; i++) {
+        if (data.roles[i] !== undefined && hasOwn(data.roles, i)) {
+          if (!(typeof data.roles[i] === 'string')) return false;
+          if (!(data.roles[i] === 'ADMIN')) return false;
+        }
+      }
+    }
+    if (!Number.isInteger(data.created)) return false;
+    if (!Number.isInteger(data.expires)) return false;
+    if (data.linkedId !== undefined && hasOwn(data, 'linkedId')) {
+      if (!(typeof data.linkedId === 'string')) return false;
+    }
+    for (const key0 of Object.keys(data)) {
+      if (
+        key0 !== 'id' &&
+        key0 !== 'type' &&
+        key0 !== 'user' &&
+        key0 !== 'roles' &&
+        key0 !== 'created' &&
+        key0 !== 'expires' &&
+        key0 !== 'linkedId'
+      )
+        return false;
+    }
+    return true;
+  };
+  return ref0(data, recursive);
 }

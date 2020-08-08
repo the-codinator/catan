@@ -56,3 +56,4 @@ export type CatanRequest = AuthenticatedRequest | UnauthenticatedRequest;
 export * from './user-request';
 export * from './board-request';
 export * from './game-request';
+export { AdminRequest } from '../admin/admin-request';

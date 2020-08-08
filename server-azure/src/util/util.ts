@@ -73,7 +73,7 @@ export function arrayEquals<T extends Primitive>(a: Readonly<T[]> | undefined, b
 }
 
 export function addToFrequencyMap<T extends string>(map: Partial<Record<T, number>>, key: T, delta: number): void {
-  map[key] = (map[key] || 0)! + delta;
+  map[key] = (map[key] ?? 0) + delta;
 }
 
 export function arrayRemove<T>(arr: T[] | undefined, element: T): boolean {
@@ -86,4 +86,13 @@ export function arrayRemove<T>(arr: T[] | undefined, element: T): boolean {
   }
   arr.splice(index, 1);
   return true;
+}
+
+export function arrayToEnumMap<T extends string>(...arr: T[]): Partial<Record<T, number>> {
+  const map: Partial<Record<T, number>> = {};
+  for (const t of arr) {
+    const old: number | undefined = map[t];
+    map[t] = old ? old + 1 : 1;
+  }
+  return map;
 }

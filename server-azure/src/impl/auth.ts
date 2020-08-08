@@ -45,5 +45,5 @@ export function authorize(user: Readonly<User | undefined>, roles: Readonly<Role
 }
 
 function authorizeSingle(user: User, role: Role): boolean {
-  return (user.roles && user.roles.includes(role)) || false;
+  return (user.roles && user.roles.includes(role)) ?? false;
 }

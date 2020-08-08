@@ -113,7 +113,7 @@ function monopoly(state: State, resource: Resource | undefined): void {
   const turn = state.currentMove.color;
   for (const color of COLORS) {
     if (color !== turn) {
-      transferResources(state, color, turn, resource, state.hands[color].resources[resource] || 0);
+      transferResources(state, color, turn, resource, state.hands[color].resources[resource] ?? 0);
     }
   }
 }

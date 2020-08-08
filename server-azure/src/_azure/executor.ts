@@ -19,7 +19,7 @@ function requiresAuth(
   route: Route<CatanRequest, CatanResponse> | Route<AuthenticatedRequest, CatanResponse>
 ): route is Route<AuthenticatedRequest, CatanResponse> {
   return (
-    ('filters' in route && route.filters && 'authenticate' in route.filters && route.filters.authenticate) || false
+    ('filters' in route && route.filters && 'authenticate' in route.filters && route.filters.authenticate) ?? false
   );
 }
 

@@ -1,136 +1,106 @@
+import { BadRequestError, CatanError } from '../../core/catan-error';
+import { RESOURCES, Resource } from '../../model/game/resource';
 import type { TradeBankRequest, TradePlayerRequest, TradeResponseRequest } from '../../model/request/game-request';
+import { arrayToEnumMap, generateRandomUuid } from '../../util/util';
+import { hasHouseOnPort, transferResources, transferResourcesMap } from './game-utility';
+import { BAD_REQUEST } from 'http-status-codes';
+import { MAX_ACTIVE_TRADES } from '../../util/constants';
 import type { PlayOptions } from './move-api-helper';
 
-export function bank({ board, state, request }: PlayOptions<TradeBankRequest>): void {}
-export function offer({ state, color, request }: PlayOptions<TradePlayerRequest>): void {}
-export function respond({ state, color, request }: PlayOptions<TradeResponseRequest>): void {}
-
-// TODO: impl
-
-/*
-public class TradeApiHelper {
-
-    private final GameUtility gameUtility;
-
-    @Inject
-    public TradeApiHelper(GameUtility gameUtility) {
-        this.gameUtility = gameUtility;
-    }
-
-    /**
-     * Trade with Bank / Port
-     * /
-    public void bank(Board board, State state, TradeBankRequest request) throws CatanException {
-        if (request.getOffer() == null || request.getAsk() == null) {
-            // In theory, the rules do not disallow trading n resources for 1 of the same resource, hence no check
-            throw new BadRequestException("Missing resource in request");
-        }
-        Color color = state.getCurrentMove().getColor();
-        switch (request.getCount()) {
-            case 2: // 2:1 port
-                if (!gameUtility.hasHouseOnPort(board, state, request.getOffer())) {
-                    throw new BadRequestException(
-                        "Cannot perform trade without house on 2:1 port for " + request.getOffer());
-                }
-                break;
-            case 3: // 3:1 port
-                if (!gameUtility.hasHouseOnPort(board, state, null)) {
-                    throw new BadRequestException("Cannot perform trade without house on 3:1 port");
-                }
-                break;
-            case 4: // 4:1 bank
-                break;
-            default:
-                throw new BadRequestException("Invalid resource count for trade");
-        }
-        gameUtility.transferResources(state, color, null, request.getOffer(), request.getCount());
-        if (gameUtility.transferResources(state, null, color, request.getAsk()) != 1) {
-            throw new BadRequestException("Bank does not have requested resource");
-        }
-    }
-
-    /**
-     * {@param requester} offers a trade with {@param partner} (defaults to current turn player if null)
-     * /
-    public void offer(State state, Color requester, TradePlayerRequest request) throws CatanException {
-        Color current = state.getCurrentMove().getColor();
-        Color partner = request.getPartner();
-        // Validate participants & input
-        if (partner == null) {
-            partner = current;
-        }
-        if (requester == partner) {
-            throw new BadRequestException("Cannot trade with self");
-        }
-        if (requester != current && partner != current) {
-            throw new BadRequestException("One of the trade participants MUST be the current turn player");
-        }
-        if (request.getOffer() == null || request.getAsk() == null) {
-            throw new BadRequestException("Missing trade resources");
-        }
-        var trades = state.getCurrentMove().getActiveTrades();
-        if (trades.size() >= MAX_ACTIVE_TRADES) {
-            throw new BadRequestException("Too many active trades this turn");
-        }
-        // Validate resources
-        var offer = Util.arrayToEnumMap(Resource.class, request.getOffer());
-        var ask = Util.arrayToEnumMap(Resource.class, request.getAsk());
-        if (offer.isEmpty() && ask.isEmpty()) {
-            throw new BadRequestException("Dumb empty trade...");
-        }
-        if (!hasSufficientResources(state.getHand(requester).getResources(), offer)) {
-            throw new BadRequestException("Insufficient Resources for trade");
-        }
-        // Create Trade
-        String id = Util.generateRandomUuid();
-        if (trades.containsKey(id)) {
-            throw new CatanException("UUID conflict error - this is a random stupid error, please retry");
-        }
-        Trade trade;
-        if (requester == current) {
-            trade = new Trade(partner, false, ask, offer);
-        } else {
-            trade = new Trade(requester, true, offer, ask);
-        }
-        trades.put(id, trade);
-    }
-
-    /**
-     * Respond (accept/reject) to a trade offer to you.
-     * On acceptance, clear all other active trades due to potential impact from changed resources
-     * /
-    public void respond(State state, Color requester, TradeResponseRequest request) throws CatanException {
-        Color current = state.getCurrentMove().getColor();
-        Trade trade = state.getCurrentMove().getActiveTrades().get(request.getId());
-        if (trade == null) {
-            throw new BadRequestException("Invalid trade");
-        }
-        if (requester != (trade.isOfferedByPartner() ? current : trade.getPartner())) {
-            throw new BadRequestException("Cannot respond to a trade you offered");
-        }
-        if (request.isAccepted()) {
-            try {
-                gameUtility.transferResources(state, current, trade.getPartner(), trade.getTurnResources());
-                gameUtility.transferResources(state, trade.getPartner(), current, trade.getPartnerResources());
-            } catch (CatanException e) {
-                throw new CatanException("You do not have sufficient resources to accept this trade",
-                    Status.BAD_REQUEST, e);
-            }
-            state.getCurrentMove().getActiveTrades().clear();
-            state.getCurrentMove().getAcceptedTrades().add(trade);
-        } else {
-            state.getCurrentMove().getActiveTrades().remove(request.getId());
-        }
-    }
-
-    private boolean hasSufficientResources(EnumMap<Resource, Integer> hand, EnumMap<Resource, Integer> required) {
-        for (Resource resource : Resource.values()) {
-            if (hand.getOrDefault(resource, 0) < required.getOrDefault(resource, 0)) {
-                return false;
-            }
-        }
-        return true;
-    }
+export function bank({ board, state, request }: PlayOptions<TradeBankRequest>): void {
+  const color = state.currentMove.color;
+  switch (request.count) {
+    case 2:
+      if (!hasHouseOnPort(board, state, request.offer)) {
+        throw new BadRequestError('Cannot perform trade without house on 2:1 port for ' + request.offer);
+      }
+      break;
+    case 3:
+      if (!hasHouseOnPort(board, state, undefined)) {
+        throw new BadRequestError('Cannot perform trade without house on 3:1 port');
+      }
+      break;
+    case 4:
+      break;
+    default:
+      throw new BadRequestError('Invalid resource count for trade');
+  }
+  transferResources(state, color, undefined, request.offer, request.count);
+  if (transferResources(state, undefined, color, request.ask, 1) !== 1) {
+    throw new BadRequestError('Bank does not havce requested resource');
+  }
 }
 
-*/
+export function offer({ state, color: requester, request }: PlayOptions<TradePlayerRequest>): void {
+  const current = state.currentMove.color;
+  let partner = request.partner;
+  // Validate participants & input
+  if (!partner) {
+    partner = current;
+  }
+  if (requester === partner) {
+    throw new BadRequestError('Cannot trade with self');
+  }
+  if (requester !== current && partner !== current) {
+    throw new BadRequestError('One of the trade participants MUST be the current turn player');
+  }
+  const trades = state.currentMove.activeTrades;
+  const tradeIds = Object.keys(trades);
+  if (tradeIds.length >= MAX_ACTIVE_TRADES) {
+    throw new BadRequestError('Too many active trades this turn');
+  }
+  // Validate resources
+  const offer = arrayToEnumMap(...request.offer);
+  const ask = arrayToEnumMap(...request.ask);
+  if (request.offer.length === 0 && request.ask.length === 0) {
+    throw new BadRequestError('Dumb empty trade...');
+  }
+  if (!hasSufficientResources(state.hands[requester].resources, offer)) {
+    throw new BadRequestError('Insufficient Resources for trade');
+  }
+  // Create Trade
+  const id = generateRandomUuid();
+  if (trades[id]) {
+    throw new CatanError('UUID conflict error - this is a random stupid error, please retry');
+  }
+  const trade =
+    requester === current
+      ? { partner, offeredByPartner: false, partnerResources: ask, turnResources: offer }
+      : { partner: requester, offeredByPartner: true, partnerResources: offer, turnResources: ask };
+  trades[id] = trade;
+}
+
+export function respond({ state, color: requester, request }: PlayOptions<TradeResponseRequest>): void {
+  const current = state.currentMove.color;
+  const trade = state.currentMove.activeTrades[request.id];
+  if (!trade) {
+    throw new BadRequestError('Invalid Trade');
+  }
+  if (requester !== (trade.offeredByPartner ? current : trade.partner)) {
+    throw new BadRequestError('Cannot respond to a trade offered to someone else');
+  }
+  if (request.accepted) {
+    try {
+      transferResourcesMap(state, current, trade.partner, trade.turnResources);
+      transferResourcesMap(state, trade.partner, current, trade.partnerResources);
+    } catch (e) {
+      throw new CatanError('You do not have sufficient resources to accept this trade', BAD_REQUEST, e);
+    }
+    state.currentMove.activeTrades = {};
+    state.currentMove.acceptedTrades.push(trade);
+  } else {
+    delete state.currentMove.activeTrades[request.id];
+  }
+}
+
+function hasSufficientResources(
+  hand: Partial<Record<Resource, number>>,
+  required: Partial<Record<Resource, number>>
+): boolean {
+  for (const resource of RESOURCES) {
+    if ((hand[resource] ?? 0) < (required[resource] ?? 0)) {
+      return false;
+    }
+  }
+  return true;
+}

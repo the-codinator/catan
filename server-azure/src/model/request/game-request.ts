@@ -52,11 +52,11 @@ export type ThiefPlayRequest = DeepReadonly<{
 export type TradeBankRequest = DeepReadonly<{
   offer: Resource;
   count: number;
-  ask: Color;
+  ask: Resource;
 }>;
 
 export type TradePlayerRequest = DeepReadonly<{
-  partner: Color;
+  partner?: Color;
   offer: Resource[];
   ask: Resource[];
 }>;

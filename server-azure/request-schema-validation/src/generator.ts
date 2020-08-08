@@ -26,6 +26,7 @@ function resolve(...route: string[]): string {
 
 function getInterfaceFiles(): string[] {
   // Search interface files
+  console.log('Scanning Request Model Files...');
   return fs
     .readdirSync(resolve('src', 'model', 'request'))
     .filter(file => file.endsWith('.ts') && file !== 'index.ts')
@@ -35,17 +36,18 @@ function getInterfaceFiles(): string[] {
 function breakIfNoUpdate(files: string[]): string[] {
   const generatedFile = resolve('src', 'model', 'request', generatedValidatorFile);
   if (!fs.existsSync(generatedFile)) {
+    console.log('No existing Validator found!');
     return files;
   }
   const lastGenerationTime = fs.statSync(generatedFile).mtime;
   for (const file of files) {
     if (fs.statSync(file).mtime > lastGenerationTime) {
-      console.log('Changes Detected - Regenerating Validators!');
+      console.log('Changes Detected!');
       return files;
     }
   }
   shouldError = false;
-  throw Error('All type definitions are unchanged. Not generating validators!');
+  throw Error('All type definitions are unchanged. Skipping Validator generation!');
 }
 
 function generateSchemas(files: string[]): { generator: TJS.JsonSchemaGenerator; symbols: string[] } {
@@ -60,6 +62,7 @@ function generateSchemas(files: string[]): { generator: TJS.JsonSchemaGenerator;
     .filter(symbol => symbol.endsWith('Request'))
     .filter(symbol => !symbol.startsWith('_')); /* Prepend "_" in the type's name to prevent its validator generation */
 
+  console.log('Creating Schemas...');
   return { generator, symbols };
 }
 
@@ -88,6 +91,7 @@ function saveSchemas({
     const fileContents = JSON.stringify(schema, null, 2);
     fs.writeFileSync(filePath, fileContents);
   });
+  console.log('Generated Schemas!');
 }
 
 function generateModules(): void {
@@ -111,7 +115,7 @@ function generateModules(): void {
   }
   const prefix = "'use strict'\nconst hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);\n";
   fs.writeFileSync(resolve('src', 'model', 'request', generatedValidatorFile), prefix + validationModules.join('\n\n'));
-  console.log('Generated Request Validator');
+  console.log('Generated Request Validator!');
 }
 
 try {

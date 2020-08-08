@@ -74,8 +74,8 @@ export function transferResources(
   const toResources = to ? state.hands[to].resources : state.bank;
   // Ensure available resources to transfer
   if (!from) {
-    count = Math.min(count, fromResources[resource] || 0);
-  } else if ((fromResources[resource] || 0) < count) {
+    count = Math.min(count, fromResources[resource] ?? 0);
+  } else if ((fromResources[resource] ?? 0) < count) {
     throw new BadRequestError(`Not enough [${resource}] to perform this move`);
   }
   // Perform transfer
@@ -131,7 +131,7 @@ export function chooseRandomlyStolenCard(state: State, color: Color): Resource |
   let theChosenOne = Math.floor(Math.random() * count);
   const resources = hand.resources;
   for (const resource of RESOURCES) {
-    theChosenOne -= resources[resource] || 0;
+    theChosenOne -= resources[resource] ?? 0;
     if (theChosenOne < 0) {
       return resource;
     }
@@ -139,7 +139,7 @@ export function chooseRandomlyStolenCard(state: State, color: Color): Resource |
   return undefined; // Will never happen
 }
 
-export function hasHouseOnPort(board: Board, state: State, resource?: Resource): boolean {
+export function hasHouseOnPort(board: DeepReadonly<Board>, state: State, resource?: Resource | undefined): boolean {
   return (
     (resource ? [board.ports.ports21[resource]] : board.ports.ports31).findIndex(
       port => (state.houses[port] || state.houses[getComplementaryPortVertex(port)])?.color === state.currentMove.color

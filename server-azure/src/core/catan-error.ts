@@ -8,7 +8,7 @@ export class CatanError extends Error {
 
   constructor(message: string, errorStatus?: number, error?: Error) {
     super(errorStatus ? `[ code=${errorStatus} ] ${message}` : message);
-    this.errorStatus = errorStatus || (error instanceof CatanError && error.errorStatus) || DEFAULT_ERROR_STATUS;
+    this.errorStatus = errorStatus ?? (error instanceof CatanError ? error.errorStatus : DEFAULT_ERROR_STATUS);
     if (error && error.stack) {
       if (this.stack) {
         this.stack = this.stack + '\n Caused By: ' + error.stack;

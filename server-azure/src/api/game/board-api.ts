@@ -3,7 +3,7 @@ import * as StateApiHelper from '../../impl/game/state-api-helper';
 import type { AuthenticatedGetGameETagRequest, AuthenticatedGetGameRequest } from '../../model/request';
 import { BoardResponse, GameResponse, createGameResponse } from '../../model/response/game-response';
 import type { BoardRequest } from '../../model/request/board-request';
-import type { RouteHandler } from '../../model/core';
+import type { RouteHandler } from '../../core/route-handler';
 import type { StateResponse } from '../../model/response/state-response';
 
 export const create: RouteHandler<BoardRequest, GameResponse> = async context => {

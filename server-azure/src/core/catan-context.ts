@@ -9,33 +9,6 @@ export interface CatanLogger {
   error(message: string, error?: Error): void;
 }
 
-// export type CatanContext<T extends CatanRequest> = DeepReadonly<
-//   {
-//     logger: CatanLogger;
-//     params: Record<string, string | undefined>;
-//   } & (T extends AuthenticatedRequest
-//     ? DeepReadonly<{
-//         token: Token;
-//         user: string;
-//       }>
-//     : {}) &
-//     (T extends GameRequest
-//       ? DeepReadonly<{
-//           gameId: string;
-//         }>
-//       : {}) &
-//     (T extends ETagRequest
-//       ? DeepReadonly<{
-//           etag: string | undefined;
-//         }>
-//       : {}) &
-//     (T extends BodyLessRequest
-//       ? {}
-//       : DeepReadonly<{
-//           request: T;
-//         }>)
-// >;
-
 export type CatanContext<T extends CatanRequest> = DeepReadonly<{
   logger: CatanLogger;
   params: Record<string, string | undefined>;

@@ -5,12 +5,15 @@ import type { AdminRequest } from '../model/request';
 import type { CatanContext } from '../core/catan-context';
 import type { DeepWritable } from 'ts-essentials';
 import { NOT_IMPLEMENTED } from 'http-status-codes';
+import { OutOfTurnApi } from '../model/game/out-of-turn-api';
 import { Phase } from '../model/game/phase';
-import type { RouteHandler } from '../model/core';
+import type { RouteHandler } from '../core/route-handler';
 import type { State } from '../model/game/state';
 import { arrayRemove } from '../util/util';
 import dataConnector from '../impl/data/catan-data-connector';
-import { endTurn } from '../impl/game/misc-move-helper';
+import { end } from '../impl/game/misc-move-helper';
+import { generateUserGameId } from '../model/game/user-game';
+import { play } from '../impl/game/move-api-helper';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const admin: RouteHandler<AdminRequest, any> = async ({ logger, user, request }: CatanContext<AdminRequest>) => {
@@ -22,20 +25,18 @@ export const admin: RouteHandler<AdminRequest, any> = async ({ logger, user, req
   switch (request.action) {
     case AdminAction.delete_user:
       await dataConnector.deleteUser(id);
-      break;
+      return dataConnector.getUserGamesByUser(id, true);
 
     case AdminAction.delete_game:
       await dataConnector.deleteState(id);
+      for (const player of (await dataConnector.getBoard(id)).players) {
+        await dataConnector.deleteUserGame(generateUserGameId(id, player.id));
+      }
       await dataConnector.deleteBoard(id);
       break;
 
     case AdminAction.end_turn: {
-      const state = (await dataConnector.getState(id, undefined))!;
-      if (state.phase !== Phase.gameplay) {
-        throw new BadRequestError('Game is not in gameplay phase');
-      }
-      endTurn(await dataConnector.getBoard(id), state);
-      await dataConnector.updateState(state);
+      play(OutOfTurnApi.ADMIN, { user: '', gameId: id, etag: undefined, request: undefined }, end, Phase.gameplay);
       break;
     }
 

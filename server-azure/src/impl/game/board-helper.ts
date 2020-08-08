@@ -1,17 +1,18 @@
 import * as GraphHelper from './graph-helper';
 import { BadRequestError, CatanError } from '../../core/catan-error';
 import { Board, createBoard as createNewBoard } from '../../model/game/board';
+import { COLORS, Color } from '../../model/game/color';
 import { DICE_COUNT, MAX_ROLL_PER_DIE, MIN_ROLL_PER_DIE } from '../../util/constants';
 import { INTERNAL_SERVER_ERROR, NOT_FOUND } from 'http-status-codes';
 import { RESOURCES, getTileCount } from '../../model/game/resource';
 import { arrayEquals, generateRandomUuid } from '../../util/util';
 import type { BoardRequest } from '../../model/request/board-request';
 import type { BoardResponse } from '../../model/response/game-response';
-import { Color } from '../../model/game/color';
 import type { Player } from '../../model/game/player';
 import type { Ports } from '../../model/game/ports';
 import type { Tile } from '../../model/game/tile';
 import type { Writable } from 'ts-essentials';
+import { createUserGamesFromBoard } from '../../model/game/user-game';
 import dataConnector from '../data/catan-data-connector';
 import { validateUserId } from '../user/user-api-helper';
 
@@ -22,6 +23,8 @@ export async function createBoard(request: BoardRequest, author: string): Promis
   }
   try {
     await dataConnector.createBoard(board);
+    const ugs = createUserGamesFromBoard(board);
+    await dataConnector.createUserGames(ugs);
   } catch (e) {
     throw new CatanError('Error creating game', INTERNAL_SERVER_ERROR, e);
   }
@@ -130,7 +133,7 @@ async function validatePlayers(players: Player[]): Promise<void> {
     }
     users.add(player.id);
   }
-  if (!arrayEquals(Array.from(colors).sort(), Object.values(Color).sort())) {
+  if (!arrayEquals(Array.from(colors).sort(), COLORS)) {
     throw new BadRequestError('Missing player color');
   }
   const usersArray = Array.from(users);

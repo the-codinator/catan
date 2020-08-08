@@ -1,9 +1,10 @@
 import type { AuthenticatedRequest, BodyLessRequest, CatanRequest, ETagRequest, GameRequest } from '../model/request';
 import type { CatanResponse, SwaggerResponse } from '../model/response';
-import type { RouteHandler, StrongEntity } from '../model/core';
 
 import type { DeepReadonly } from 'ts-essentials';
 import type { Role } from '../model/user';
+import type { RouteHandler } from '../core/route-handler';
+import type { StrongEntity } from '../model/core';
 
 export interface CatanHttpResponse {
   status?: number;

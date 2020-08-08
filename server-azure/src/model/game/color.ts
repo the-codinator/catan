@@ -5,4 +5,4 @@ export enum Color {
   white = 'white',
 }
 
-export const COLORS = Object.freeze(Object.values(Color));
+export const COLORS = Object.freeze(Object.values(Color).sort());

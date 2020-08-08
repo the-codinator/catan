@@ -21,7 +21,7 @@ import type {
 import type { MoveRequest } from '../../model/request';
 import { OutOfTurnApi } from '../../model/game/out-of-turn-api';
 import { Phase } from '../../model/game/phase';
-import type { RouteHandler } from '../../model/core';
+import type { RouteHandler } from '../../core/route-handler';
 import type { StateResponse } from '../../model/response/state-response';
 import { play } from '../../impl/game/move-api-helper';
 

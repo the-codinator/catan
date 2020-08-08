@@ -4,8 +4,9 @@ import { MessageResponse, createMessageResponse } from '../model/response/messag
 import type { AuthenticatedGetRequest } from '../model/request';
 import type { FindUserResponse } from '../model/response/find-user-response';
 import { OK } from 'http-status-codes';
-import type { RouteHandler } from '../model/core';
+import type { RouteHandler } from '../core/route-handler';
 import type { SessionResponse } from '../model/response/session-response';
+import type { UserGamesResponse } from '../model/response/user-games-response';
 
 export const signup: RouteHandler<SignUpRequest, MessageResponse> = async context => {
   await UserApiHelper.signup(context.request);
@@ -23,6 +24,8 @@ export const logout: RouteHandler<AuthenticatedGetRequest, MessageResponse> = as
   return createMessageResponse(OK, 'User Logged Out Successfully!');
 };
 
-export const find: RouteHandler<AuthenticatedGetRequest, FindUserResponse> = context => {
-  return UserApiHelper.find(context.params.user);
-};
+export const find: RouteHandler<AuthenticatedGetRequest, FindUserResponse> = context =>
+  UserApiHelper.find(context.params.user);
+
+export const games: RouteHandler<AuthenticatedGetRequest, UserGamesResponse> = context =>
+  UserApiHelper.games(context.user, context.params.ongoing);

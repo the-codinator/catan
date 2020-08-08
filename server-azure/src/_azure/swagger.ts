@@ -36,7 +36,7 @@ export function swagger(
                 'x-request-id': context.invocationId,
                 'content-type': resource.type,
                 'cache-control': 'max-age=2592000', // Cache for 30 days
-                etag: '2020-07-18_06-19', // Change this if any file changes (Date_Time)
+                etag: '2020-08-08_19-30', // Change this if any file changes (Date_Time)
               },
               body,
             };

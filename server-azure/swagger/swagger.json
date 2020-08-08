@@ -984,7 +984,7 @@
             "schema": {
               "type": "array",
               "items": {
-                "type": "string"
+                "$ref": "#/definitions/UserGame"
               }
             }
           }
@@ -1966,6 +1966,35 @@
         },
         "name": {
           "type": "string"
+        }
+      }
+    },
+    "UserGame": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "game": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        },
+        "myTurn": {
+          "type": "boolean"
+        },
+        "completed": {
+          "type": "boolean"
         }
       }
     }

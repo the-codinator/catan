@@ -14,6 +14,9 @@ import { getComplementaryPortVertex } from './graph-helper';
 import { getResourceCount } from '../../model/game/hand';
 
 export function checkPlayerTurn(board: Board, state: State, user: string, outOfTurnApi?: OutOfTurnApi): Color {
+  if (outOfTurnApi === OutOfTurnApi.ADMIN) {
+    return state.currentMove.color;
+  }
   const color = board.players.find(player => player.id === user)?.color;
   if (!color) {
     throw new CatanError("Cannot make moves in a game you aren't playing!", FORBIDDEN);

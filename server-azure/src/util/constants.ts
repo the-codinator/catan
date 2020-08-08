@@ -11,6 +11,7 @@ export const DICE_COUNT = 2;
 export const DROP_CARDS_FOR_THIEF_THRESHOLD = 7;
 export const INIT_BANK_RESOURCE_COUNT = 19;
 export const MAX_ACTIVE_TRADES = 5;
+export const QUERY_PAGE_SIZE_GAMES = 50;
 export const MAX_HOUSES_PER_PLAYER = 5;
 export const MAX_ROADS_PER_PLAYER = 14;
 export const MAX_ROLL_PER_DIE = 6;

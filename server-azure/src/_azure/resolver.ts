@@ -40,6 +40,7 @@ import { NOT_FOUND } from 'http-status-codes';
 import { Role } from '../model/user';
 import type { SessionResponse } from '../model/response/session-response';
 import type { StateResponse } from '../model/response/state-response';
+import type { UserGamesResponse } from '../model/response/user-games-response';
 
 type RCC = Route<CatanRequest, CatanResponse>;
 type RMS = Route<MoveRequest, StateResponse>;
@@ -99,8 +100,16 @@ function userRoute(req: HttpRequest, segments: PathSegments): RCC | undefined {
           return route as RCC;
         }
         case 'games': {
-          // TODO: GET /user/games
-          return undefined;
+          const route: Route<AuthenticatedGetRequest, UserGamesResponse> = {
+            handler: UserApi.games,
+            req: {
+              query: ['ongoing'],
+            },
+            filters: {
+              authenticate: true,
+            },
+          };
+          return route as RCC;
         }
       }
       break;

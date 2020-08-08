@@ -29,7 +29,7 @@ function getInterfaceFiles(): string[] {
   console.log('Scanning Request Model Files...');
   const files = fs
     .readdirSync(resolve('src', 'model', 'request'))
-    .filter(file => file.endsWith('.ts') && file !== 'index.ts')
+    .filter(file => file.endsWith('.ts') && file !== 'index.ts' && file !== generatedValidatorFile)
     .map(file => resolve('src', 'model', 'request', file));
   // Add some custom models we want to validate
   files.push(resolve('src', 'model', 'admin', 'admin-request.ts'));

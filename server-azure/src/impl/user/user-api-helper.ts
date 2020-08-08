@@ -4,10 +4,10 @@ import type { Buildable, Writable } from 'ts-essentials';
 import { CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, UNAUTHORIZED } from 'http-status-codes';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest } from '../../model/request/user-request';
 import { NAME_REGEX, USER_ID_REGEX } from '../../util/constants';
-import { Role, Token, TokenType, tokenEquals } from '../../model/user';
+import { Role, Token, TokenType, User, tokenEquals } from '../../model/user';
 import type { FindUserResponse } from '../../model/response/find-user-response';
 import type { SessionResponse } from '../../model/response/session-response';
-import { User } from '../../model/user';
+import type { UserGamesResponse } from '../../model/response/user-games-response';
 import dataConnector from '../data/catan-data-connector';
 
 const INITIAL_ADMIN_USER = 'admin';
@@ -169,4 +169,16 @@ export async function find(userId: string | undefined): Promise<FindUserResponse
       throw e;
     }
   }
+}
+
+export async function games(user: string, ongoing: string | undefined): Promise<UserGamesResponse> {
+  ongoing = ongoing?.toLowerCase();
+  const ugs = await dataConnector.getUserGamesByUser(
+    user,
+    ongoing === 'true' ? true : ongoing === 'false' ? false : undefined
+  );
+  return ugs.map(ug => {
+    const { game, color, myTurn, completed } = ug;
+    return { game, color, myTurn, completed };
+  });
 }

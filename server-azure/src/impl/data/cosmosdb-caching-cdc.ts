@@ -1,5 +1,5 @@
 import { CONFLICT, CREATED, NOT_FOUND, NOT_MODIFIED, NO_CONTENT, OK, PRECONDITION_FAILED } from 'http-status-codes';
-import type { Container, Item, ItemResponse, Items, RequestOptions, Resource } from '@azure/cosmos';
+import type { Container, Item, ItemResponse, Items, RequestOptions, Resource, SqlParameter } from '@azure/cosmos';
 import {
   DB_ERROR_BAD_STATUS_CODE,
   DB_ERROR_MISSING_RESOURCE,
@@ -12,6 +12,7 @@ import {
   METHOD_PATCH,
   METHOD_POST,
   METHOD_PUT,
+  QUERY_PAGE_SIZE_GAMES,
 } from '../../util/constants';
 import type { IdentifiableEntity, StrongEntity } from '../../model/core';
 import type { Token, User } from '../../model/user';
@@ -22,6 +23,7 @@ import { CatanError } from '../../core/catan-error';
 import { CosmosClient } from '@azure/cosmos';
 import { MyCache } from './my-cache';
 import type { State } from '../../model/game/state';
+import type { UserGame } from '../../model/game/user-game';
 import { format } from 'util';
 
 if (!process.env.CATAN_COSMOSDB_ENDPOINT || !process.env.CATAN_COSMOSDB_KEY) {
@@ -33,6 +35,7 @@ const COLLECTION_USERS_NAME = 'user';
 const COLLECTION_TOKENS_NAME = 'token';
 const COLLECTION_BOARDS_NAME = 'board';
 const COLLECTION_STATES_NAME = 'state';
+const COLLECTION_GAMES_NAME = 'user-game';
 
 type TypedContainer<T extends IdentifiableEntity> = Omit<Container, 'item'> & {
   item: (
@@ -88,6 +91,7 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
   private readonly tokens: EntityStore<Token>;
   private readonly boards: EntityStore<Board>;
   private readonly states: EntityStore<State>;
+  private readonly games: EntityStore<UserGame>;
 
   constructor() {
     this.$client = new CosmosClient(DB_OPTIONS);
@@ -110,6 +114,10 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
     this.states = {
       container: database.container(COLLECTION_STATES_NAME),
       strong: true,
+    };
+    this.games = {
+      container: database.container(COLLECTION_GAMES_NAME),
+      strong: false,
     };
   }
 
@@ -310,11 +318,45 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
   }
 
   public async updateUser(user: User): Promise<void> {
-    await this.put(this.users, user);
+    await this.patch(this.users, user);
   }
 
   public async deleteUser(id: string): Promise<void> {
     await this.delete(this.users, id);
+  }
+
+  public async getUserGamesByUser(userId: string, ongoing: boolean | undefined): Promise<UserGame[]> {
+    let completedQuery = '';
+    const parameters: SqlParameter[] = [
+      { name: '@user', value: userId },
+      { name: '@start', value: 0 },
+      { name: '@limit', value: QUERY_PAGE_SIZE_GAMES },
+    ];
+    if (ongoing !== undefined) {
+      completedQuery = 'AND c.completed = @completed';
+      parameters.push({ name: '@completed', value: !ongoing });
+    }
+    const query = `SELECT * FROM c WHERE c.user = @user ${completedQuery} ORDER BY c.user, c.completed, c._ts DESC OFFSET @start LIMIT @limit`;
+    try {
+      const result = await this.users.container.items
+        .query<UserGame>({ query, parameters }, { partitionKey: userId })
+        .fetchAll();
+      return result.resources;
+    } catch (e) {
+      throw new CatanError('Error querying user games', e);
+    }
+  }
+
+  public async createUserGames(userGames: UserGame[]): Promise<void> {
+    await Promise.all(userGames.map(ug => this.create(this.games, ug)));
+  }
+
+  public async updateUserGames(...userGames: UserGame[]): Promise<void> {
+    await Promise.all(userGames.map(ug => this.patch(this.games, ug)));
+  }
+
+  public async deleteUserGame(id: string): Promise<void> {
+    await this.delete(this.games, id);
   }
 
   public getToken(id: string): Promise<Token> {
@@ -335,6 +377,10 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
 
   public async createBoard(board: Board): Promise<void> {
     await this.create(this.boards, board);
+  }
+
+  public async updateBoard(board: Board): Promise<void> {
+    await this.patch(this.boards, board);
   }
 
   public async deleteBoard(id: string): Promise<void> {

@@ -9,12 +9,15 @@ import type {
   CatanRequest,
   MoveRequest,
 } from '../model/request';
-import type { BoardResponse, GameResponse } from '../model/response/game-response';
 import type {
+  BoardRequest,
   DevCardRequest,
   HouseRequest,
+  LoginRequest,
+  RefreshTokenRequest,
   RoadRequest,
   SetupMoveRequest,
+  SignUpRequest,
   ThiefDropRequest,
   ThiefPlayRequest,
   TradeBankRequest,
@@ -22,13 +25,13 @@ import type {
   TradeResponseRequest,
   _DevBuyRequest,
   _EndTurnRequest,
+  _LogoutRequest,
   _RollRequest,
-} from '../model/request/game-request';
+} from '../model/request';
+import type { BoardResponse, GameResponse } from '../model/response/game-response';
 import { HEADER_IF_MATCH, HEADER_IF_NONE_MATCH, METHOD_GET, METHOD_POST } from '../util/constants';
-import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from '../model/request/user-request';
 import type { PathSegments, Route } from './types';
 
-import type { BoardRequest } from '../model/request/board-request';
 import type { CatanResponse } from '../model/response';
 import type { FindUserResponse } from '../model/response/find-user-response';
 import type { HttpRequest } from '@azure/functions';
@@ -259,7 +262,7 @@ function moveRoute(segments: PathSegments): Route<MoveRequest, StateResponse> | 
     case 'dev/play': {
       const route: Route<DevCardRequest, StateResponse> = {
         handler: MoveApi.devPlay,
-        validator: Validator.validateHouseRequest,
+        validator: Validator.validateDevCardRequest,
         filters,
       };
       return route as RMS;

@@ -48,7 +48,7 @@ export function parseToken(token: string | undefined): Token | undefined {
   }
   try {
     const parsed = base64Decode(token);
-    // TODO: Ensure Token schema matching
+    // TODO: Ensure Token schema matching - Can try something with validator...
     return JSON.parse(parsed) as Token;
   } catch (e) {
     throw new CatanError('Error parsing session from token', UNAUTHORIZED, e);

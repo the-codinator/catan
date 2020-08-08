@@ -98,23 +98,27 @@ function generateModules(): void {
   const opts = { schemas: undefined, /* mode: 'strong', */ isJSON: true };
   const files = fs.readdirSync(resolve('request-schema-validation', 'generated-schemas'));
   const validationModules: string[] = [];
+  const imports: string[] = [];
   for (const file of files) {
     const contents = fs.readFileSync(resolve('request-schema-validation', 'generated-schemas', file)).toString();
     const schema = validator(JSON.parse(contents), opts);
     const module: string = schema.toModule();
     const name = file.slice(0, file.lastIndexOf('.'));
+    imports.push(name);
     validationModules.push(
-      // TODO: try to convert function signature to (data: <name>, recursive?: any) => data is <name>
-      // Need to figure out how to import the types from the correct file
-      `export const validate${name}: (data: any, recursive?: any) => boolean = ` +
+      `export const validate${name}: (data: ${name}, recursive?: any) => boolean = ` +
         module
           .replace(/function validate\(data, recursive\)/g, 'function validate(data: any, recursive: any)')
           .replace(/'use strict'\n?/, '')
           .replace(/const hasOwn = Function\.prototype\.call\.bind\(Object\.prototype\.hasOwnProperty\);\n?/, '')
     );
   }
-  const prefix = "'use strict'\nconst hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);\n";
-  fs.writeFileSync(resolve('src', 'model', 'request', generatedValidatorFile), prefix + validationModules.join('\n\n'));
+  const importString = `import type { ${imports.sort().join(', ')} } from './'`;
+  const prefix = '\nconst hasOwn = Function.prototype.call.bind(Object.prototype.hasOwnProperty);\n';
+  fs.writeFileSync(
+    resolve('src', 'model', 'request', generatedValidatorFile),
+    importString + prefix + validationModules.join('\n\n')
+  );
   console.log('Generated Request Validator!');
 }
 

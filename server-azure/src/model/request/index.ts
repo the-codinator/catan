@@ -51,3 +51,8 @@ export type BodyLessRequest = AuthenticatedGetRequest | _LogoutRequest | BodyLes
 
 // All request types
 export type CatanRequest = AuthenticatedRequest | UnauthenticatedRequest;
+
+/* Re-export request types */
+export * from './user-request';
+export * from './board-request';
+export * from './game-request';

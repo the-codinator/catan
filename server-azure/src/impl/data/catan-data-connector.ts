@@ -7,8 +7,8 @@ export interface CatanDataConnector {
   getUser(id: string, skipCache?: boolean): Promise<User>;
   getUsers(ids: string[]): Promise<User[]>;
   createUser(user: User): Promise<void>;
-  // void updateUser(User user) throws CatanException;
-  // void deleteUser(String id) throws CatanException;
+  updateUser(user: User): Promise<void>;
+  deleteUser(id: string): Promise<void>;
 
   // List<String> getGames(String userId, Boolean ongoing) throws CatanException;
 
@@ -18,12 +18,12 @@ export interface CatanDataConnector {
 
   getBoard(id: string): Promise<Board>;
   createBoard(board: Board): Promise<void>;
-  // void deleteBoard(String id) throws CatanException;
+  deleteBoard(id: string): Promise<void>;
 
   getState(id: string, etag: string | undefined): Promise<State | undefined>;
   createState(state: State): Promise<void>;
   updateState(state: State): Promise<void>;
-  // void deleteState(String id, String etag) throws CatanException;
+  deleteState(id: string): Promise<void>;
 }
 
 const dataConnector: CatanDataConnector = new CosmosDBCachingCDC();

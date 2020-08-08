@@ -1,19 +1,19 @@
+import * as AdminApi from '../api/admin-api';
 import * as BoardApi from '../api/game/board-api';
 import * as MoveApi from '../api/game/move-api';
 import * as UserApi from '../api/user-api';
 import * as Validator from '../model/request/generated-validator';
 import type {
+  AdminRequest,
   AuthenticatedGetGameETagRequest,
   AuthenticatedGetGameRequest,
   AuthenticatedGetRequest,
-  CatanRequest,
-  MoveRequest,
-} from '../model/request';
-import type {
   BoardRequest,
+  CatanRequest,
   DevCardRequest,
   HouseRequest,
   LoginRequest,
+  MoveRequest,
   RefreshTokenRequest,
   RoadRequest,
   SetupMoveRequest,
@@ -37,6 +37,7 @@ import type { FindUserResponse } from '../model/response/find-user-response';
 import type { HttpRequest } from '@azure/functions';
 import type { MessageResponse } from '../model/response/message-response';
 import { NOT_FOUND } from 'http-status-codes';
+import { Role } from '../model/user';
 import type { SessionResponse } from '../model/response/session-response';
 import type { StateResponse } from '../model/response/state-response';
 
@@ -63,8 +64,16 @@ function baseRoute(req: HttpRequest, segments: PathSegments): RCC | undefined {
       };
     case 'admin':
       if (segments.length === 1 && req.method === METHOD_POST) {
-        // TODO: POST /admin
-        return undefined;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        const route: Route<AdminRequest, any> = {
+          handler: AdminApi.admin,
+          validator: Validator.validateAdminRequest,
+          filters: {
+            authenticate: true,
+            authorize: [Role.ADMIN],
+          },
+        };
+        return route as RCC;
       }
   }
   return undefined;

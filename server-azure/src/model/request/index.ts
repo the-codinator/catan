@@ -13,6 +13,7 @@ import type {
   _RollRequest,
 } from './game-request';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest, _LogoutRequest } from './user-request';
+import type { AdminRequest } from '../admin/admin-request';
 import type { BoardRequest } from './board-request';
 import type { Opaque } from 'ts-essentials';
 
@@ -41,7 +42,7 @@ export type MoveRequest =
 export type BodyLessMoveRequest = _RollRequest | _DevBuyRequest | _EndTurnRequest;
 
 // All request types support authentication
-export type AuthenticatedRequest = AuthenticatedGetRequest | BoardRequest | MoveRequest | _LogoutRequest;
+export type AuthenticatedRequest = AuthenticatedGetRequest | BoardRequest | MoveRequest | _LogoutRequest | AdminRequest;
 
 // All request types which do not require authentication
 export type UnauthenticatedRequest = LoginRequest | SignUpRequest | RefreshTokenRequest;

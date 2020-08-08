@@ -309,6 +309,14 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
     await this.create(this.users, user);
   }
 
+  public async updateUser(user: User): Promise<void> {
+    await this.put(this.users, user);
+  }
+
+  public async deleteUser(id: string): Promise<void> {
+    await this.delete(this.users, id);
+  }
+
   public getToken(id: string): Promise<Token> {
     return this.getWithCacheWithoutETag(this.tokens, id);
   }
@@ -329,6 +337,10 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
     await this.create(this.boards, board);
   }
 
+  public async deleteBoard(id: string): Promise<void> {
+    await this.delete(this.boards, id);
+  }
+
   public getState(id: string, etag: string | undefined): Promise<State | undefined> {
     return this.get(this.states, id, etag);
   }
@@ -339,5 +351,9 @@ export class CosmosDBCachingCDC implements CatanDataConnector {
 
   public async updateState(state: State): Promise<void> {
     await this.patch(this.states, state);
+  }
+
+  public async deleteState(id: string): Promise<void> {
+    await this.delete(this.states, id);
   }
 }

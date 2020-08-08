@@ -1,19 +1,20 @@
 import * as SessionHelper from './session-helper';
 import { BadRequestError, CatanError } from '../../core/catan-error';
+import type { Buildable, Writable } from 'ts-essentials';
 import { CONFLICT, INTERNAL_SERVER_ERROR, NOT_FOUND, UNAUTHORIZED } from 'http-status-codes';
 import type { LoginRequest, RefreshTokenRequest, SignUpRequest } from '../../model/request/user-request';
 import { NAME_REGEX, USER_ID_REGEX } from '../../util/constants';
 import { Role, Token, TokenType, tokenEquals } from '../../model/user';
-import type { Buildable } from 'ts-essentials';
 import type { FindUserResponse } from '../../model/response/find-user-response';
 import type { SessionResponse } from '../../model/response/session-response';
 import { User } from '../../model/user';
 import dataConnector from '../data/catan-data-connector';
 
-let newUserEventListener: undefined | ((user: User) => void);
-
-export function setNewUserEventListener(listener: (user: User) => void): void {
-  newUserEventListener = listener;
+const INITIAL_ADMIN_USER = 'admin';
+function newUserEventListener(user: User): void {
+  if (INITIAL_ADMIN_USER === user.id) {
+    (user as Writable<User>).roles = [Role.ADMIN];
+  }
 }
 
 export function validateUserId(id: string): void {
@@ -52,9 +53,7 @@ export async function signup(request: SignUpRequest): Promise<void> {
   validateName(request.name);
   validatePwd(request.pwd);
   const user: User = { id: request.id, name: request.name, pwd: request.pwd };
-  if (newUserEventListener) {
-    newUserEventListener(user);
-  }
+  newUserEventListener(user);
   try {
     await dataConnector.createUser(user);
   } catch (e) {

@@ -92,6 +92,7 @@ public class AdminApi {
                     throw new BadRequestException("Game is not in gameplay phase");
                 }
                 miscMoveHelper.endTurn(dataConnector.getBoard(id), state);
+                dataConnector.updateState(state);
                 break;
             case get_state:
                 return dataConnector.getState(id, null);

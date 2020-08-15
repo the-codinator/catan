@@ -1,8 +1,8 @@
 import { Hand, getResourceCount } from '../game/hand';
-import { BaseState } from '../game/base-state';
+import type { BaseState } from '../game/base-state';
 import { Color } from '../game/color';
 import type { DeepReadonly } from 'ts-essentials';
-import { State } from '../game/state';
+import type { State } from '../game/state';
 import { createPartialEnumMap } from '../../util/util';
 
 export type StateResponse = DeepReadonly<BaseState> &

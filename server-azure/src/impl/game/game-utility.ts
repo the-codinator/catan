@@ -2,13 +2,13 @@ import { BadRequestError, CatanError } from '../../core/catan-error';
 import { MAX_ROLL_PER_DIE, MIN_ROLL_PER_DIE } from '../../util/constants';
 import { RESOURCES, Resource } from '../../model/game/resource';
 
-import { Board } from '../../model/game/board';
-import { Color } from '../../model/game/color';
+import type { Board } from '../../model/game/board';
+import type { Color } from '../../model/game/color';
 import type { DeepReadonly } from 'ts-essentials';
 import { FORBIDDEN } from 'http-status-codes';
 import { OutOfTurnApi } from '../../model/game/out-of-turn-api';
-import { Phase } from '../../model/game/phase';
-import { State } from '../../model/game/state';
+import type { Phase } from '../../model/game/phase';
+import type { State } from '../../model/game/state';
 import { addToFrequencyMap } from '../../util/util';
 import { getComplementaryPortVertex } from './graph-helper';
 import { getResourceCount } from '../../model/game/hand';

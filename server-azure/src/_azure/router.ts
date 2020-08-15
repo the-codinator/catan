@@ -62,7 +62,7 @@ export function router(context: Context, req: HttpRequest): Promise<CatanHttpRes
   const start = process.hrtime();
   const segments = createPathSegments(req);
   return (
-    (req.method === METHOD_POST && invalidPostRequestContentType(context, req)) ||
+    invalidPostRequestContentType(context, req) ||
     swagger(context, req, segments) ||
     execute(resolve(req, segments), segments, req, createLogger(context), start)
   );

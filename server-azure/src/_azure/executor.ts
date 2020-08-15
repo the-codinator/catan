@@ -56,7 +56,7 @@ export async function execute(
 
       // AuthZ
       if (route.filters.authorize) {
-        authorize(authInfo?.user, route.filters.authorize);
+        authorize(authInfo.user, route.filters.authorize);
       }
     }
 

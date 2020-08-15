@@ -1,0 +1,40 @@
+{
+  "name": "server-azure",
+  "version": "1.0.0",
+  "description": "Catan Game Server - Azure Functions",
+  "scripts": {
+    "generate-request-schema-validations": "ts-node --dir request-schema-validation src/generator.ts",
+    "prebuild": "npm run generate-request-schema-validations",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "prestart": "npm run build",
+    "start": "func start --port 8080 --cors \"*\" --useHttps",
+    "test": "echo \"No tests yet...\"",
+    "check": "gts check",
+    "fix": "gts fix",
+    "clean": "gts clean && rm -f src/model/request/generated-validator.ts",
+    "compile": "npm run build",
+    "postcompile": "npm run fix",
+    "prepare": "npm run compile",
+    "pretest": "npm run compile",
+    "posttest": "npm run check",
+    "dep:upgrade": "npx npm-check-updates -u && npm install"
+  },
+  "dependencies": {
+    "@azure/cosmos": "^3.7.4",
+    "http-status-codes": "^1.4.0",
+    "uuidv4": "^6.2.0"
+  },
+  "devDependencies": {
+    "@azure/functions": "^1.2.2",
+    "@exodus/schemasafe": "^1.0.0-rc.1",
+    "@types/fs-extra": "^9.0.1",
+    "@types/node": "^14.0.26",
+    "fs-extra": "^9.0.1",
+    "gts": "^2.0.2",
+    "ts-essentials": "^7.0.0",
+    "ts-node": "^8.10.2",
+    "typescript": "^3.9.7",
+    "typescript-json-schema": "^0.42.0"
+  }
+}

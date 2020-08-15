@@ -1,0 +1,2002 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "Catan Server",
+    "contact": {
+      "name": "github/the-codinator"
+    }
+  },
+  "tags": [
+    {
+      "name": "Admin API"
+    },
+    {
+      "name": "Game State APIs"
+    },
+    {
+      "name": "Game Move APIs"
+    },
+    {
+      "name": "Health & Ping Check"
+    },
+    {
+      "name": "User APIs"
+    }
+  ],
+  "schemes": [
+    "https"
+  ],
+  "paths": {
+    "/admin": {
+      "post": {
+        "tags": [
+          "Admin API"
+        ],
+        "operationId": "admin",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/AdminRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "type": "object"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}": {
+      "get": {
+        "tags": [
+          "Game State APIs"
+        ],
+        "operationId": "get_1",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/GameResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game": {
+      "post": {
+        "tags": [
+          "Game State APIs"
+        ],
+        "operationId": "create",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/BoardRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/GameResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/state": {
+      "get": {
+        "tags": [
+          "Game State APIs"
+        ],
+        "operationId": "state",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-None-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/board": {
+      "get": {
+        "tags": [
+          "Game State APIs"
+        ],
+        "operationId": "board",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/Board"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/dev/play": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "play",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/DevCardRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/dev/buy": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "buy",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/end": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "end",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/setup": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "setup",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/SetupMoveRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/roll": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "roll",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/build/road": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "road",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/RoadRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/thief/play": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "thiefPlay",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ThiefPlayRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/thief/drop": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "thiefDrop",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/ThiefDropRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/build/house": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "house",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/HouseRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/trade/offer": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "offer",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/TradePlayerRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/trade/bank": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "bank",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/TradeBankRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/game/{game}/move/trade/respond": {
+      "post": {
+        "tags": [
+          "Game Move APIs"
+        ],
+        "operationId": "respond",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": false,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/TradeResponseRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/StateResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/ping": {
+      "get": {
+        "tags": [
+          "Health & Ping Check"
+        ],
+        "operationId": "ping",
+        "produces": [
+          "text/plain"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "/user/find": {
+      "get": {
+        "tags": [
+          "User APIs"
+        ],
+        "summary": "",
+        "description": "",
+        "operationId": "find",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "user",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FindUserResponse"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/user/refresh": {
+      "post": {
+        "tags": [
+          "User APIs"
+        ],
+        "operationId": "refresh",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/RefreshTokenRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/SessionResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": [
+          "User APIs"
+        ],
+        "operationId": "login",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/LoginRequest"
+            }
+          },
+          {
+            "name": "rememberMe",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/SessionResponse"
+            }
+          }
+        }
+      }
+    },
+    "/user/logout": {
+      "post": {
+        "tags": [
+          "User APIs"
+        ],
+        "summary": "",
+        "description": "",
+        "operationId": "logout",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "$ref": "#/definitions/MessageResponse"
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/user/games": {
+      "get": {
+        "tags": [
+          "User APIs"
+        ],
+        "summary": "",
+        "description": "",
+        "operationId": "games",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "name": "ongoing",
+            "in": "query",
+            "required": false,
+            "type": "boolean"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/UserGame"
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "Bearer [access_token]": []
+          }
+        ]
+      }
+    },
+    "/user/signup": {
+      "post": {
+        "tags": [
+          "User APIs"
+        ],
+        "operationId": "signup",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "required": false,
+            "schema": {
+              "$ref": "#/definitions/SignUpRequest"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful operation",
+            "headers": {},
+            "schema": {
+              "$ref": "#/definitions/MessageResponse"
+            }
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "Bearer [access_token]": {
+      "description": "",
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "AchievementValue": {
+      "type": "object",
+      "properties": {
+        "color": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "AdminRequest": {
+      "type": "object",
+      "properties": {
+        "action": {
+          "type": "string",
+          "enum": [
+            "delete_user",
+            "delete_game",
+            "end_turn",
+            "get_state",
+            "set_state",
+            "add_admin",
+            "remove_admin"
+          ]
+        },
+        "id": {
+          "type": "string"
+        },
+        "state": {
+          "$ref": "#/definitions/State"
+        }
+      }
+    },
+    "CurrentMove": {
+      "type": "object",
+      "properties": {
+        "color": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        },
+        "roll": {
+          "$ref": "#/definitions/Roll"
+        },
+        "devCard": {
+          "type": "string",
+          "enum": [
+            "knight",
+            "monopoly",
+            "road_building",
+            "year_of_plenty",
+            "chapel",
+            "great_hall",
+            "library",
+            "market",
+            "university"
+          ]
+        },
+        "activeTrades": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Trade"
+          }
+        },
+        "acceptedTrades": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Trade"
+          }
+        },
+        "thieved": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "blue",
+              "orange",
+              "red",
+              "white"
+            ]
+          }
+        }
+      }
+    },
+    "Hand": {
+      "type": "object",
+      "properties": {
+        "resources": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "devCards": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "knight",
+              "monopoly",
+              "road_building",
+              "year_of_plenty",
+              "chapel",
+              "great_hall",
+              "library",
+              "market",
+              "university"
+            ]
+          }
+        }
+      }
+    },
+    "House": {
+      "type": "object",
+      "properties": {
+        "color": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "settlement",
+            "city"
+          ]
+        }
+      }
+    },
+    "Road": {
+      "type": "object",
+      "properties": {
+        "color": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        },
+        "vertex1": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "vertex2": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "Roll": {
+      "type": "object",
+      "properties": {
+        "die1": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "die2": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "State": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "setup1",
+            "setup2",
+            "gameplay",
+            "thief",
+            "end"
+          ]
+        },
+        "houses": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/House"
+          }
+        },
+        "roads": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Road"
+          }
+        },
+        "thief": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "bank": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "playedDevCards": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "knight",
+                "monopoly",
+                "road_building",
+                "year_of_plenty",
+                "chapel",
+                "great_hall",
+                "library",
+                "market",
+                "university"
+              ]
+            }
+          }
+        },
+        "achievements": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/AchievementValue"
+          }
+        },
+        "currentMove": {
+          "$ref": "#/definitions/CurrentMove"
+        },
+        "bankDevCards": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "knight",
+              "monopoly",
+              "road_building",
+              "year_of_plenty",
+              "chapel",
+              "great_hall",
+              "library",
+              "market",
+              "university"
+            ]
+          }
+        },
+        "hands": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/Hand"
+          }
+        }
+      }
+    },
+    "Trade": {
+      "type": "object",
+      "properties": {
+        "partner": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        },
+        "offeredByPartner": {
+          "type": "boolean"
+        },
+        "partnerResources": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "turnResources": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "Board": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "created": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "completed": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "tiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tile"
+          }
+        },
+        "ports": {
+          "$ref": "#/definitions/Ports"
+        },
+        "players": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Player"
+          }
+        }
+      }
+    },
+    "GameResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "board": {
+          "$ref": "#/definitions/Board"
+        },
+        "state": {
+          "$ref": "#/definitions/StateResponse"
+        }
+      }
+    },
+    "Player": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        }
+      }
+    },
+    "Ports": {
+      "type": "object",
+      "properties": {
+        "ports21": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "ports31": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "StateResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string",
+          "enum": [
+            "setup1",
+            "setup2",
+            "gameplay",
+            "thief",
+            "end"
+          ]
+        },
+        "houses": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/House"
+          }
+        },
+        "roads": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Road"
+          }
+        },
+        "thief": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "bank": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "playedDevCards": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "knight",
+                "monopoly",
+                "road_building",
+                "year_of_plenty",
+                "chapel",
+                "great_hall",
+                "library",
+                "market",
+                "university"
+              ]
+            }
+          }
+        },
+        "achievements": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/AchievementValue"
+          }
+        },
+        "currentMove": {
+          "$ref": "#/definitions/CurrentMove"
+        },
+        "hand": {
+          "$ref": "#/definitions/Hand"
+        },
+        "playerResourceCounts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "playerDevCardCounts": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "integer",
+            "format": "int32"
+          }
+        }
+      }
+    },
+    "Tile": {
+      "type": "object",
+      "properties": {
+        "resource": {
+          "type": "string",
+          "enum": [
+            "wood",
+            "brick",
+            "hay",
+            "sheep",
+            "rock"
+          ]
+        },
+        "roll": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "BoardRequest": {
+      "type": "object",
+      "properties": {
+        "tiles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tile"
+          }
+        },
+        "ports": {
+          "$ref": "#/definitions/Ports"
+        },
+        "players": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Player"
+          }
+        }
+      }
+    },
+    "DevCardRequest": {
+      "type": "object",
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "knight",
+            "monopoly",
+            "road_building",
+            "year_of_plenty",
+            "chapel",
+            "great_hall",
+            "library",
+            "market",
+            "university"
+          ]
+        },
+        "resource": {
+          "type": "string",
+          "enum": [
+            "wood",
+            "brick",
+            "hay",
+            "sheep",
+            "rock"
+          ]
+        },
+        "resource1": {
+          "type": "string",
+          "enum": [
+            "wood",
+            "brick",
+            "hay",
+            "sheep",
+            "rock"
+          ]
+        },
+        "resource2": {
+          "type": "string",
+          "enum": [
+            "wood",
+            "brick",
+            "hay",
+            "sheep",
+            "rock"
+          ]
+        },
+        "road1": {
+          "$ref": "#/definitions/RoadRequest"
+        },
+        "road2": {
+          "$ref": "#/definitions/RoadRequest"
+        },
+        "hex": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "victim": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        }
+      }
+    },
+    "RoadRequest": {
+      "type": "object",
+      "properties": {
+        "vertex1": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "vertex2": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "SetupMoveRequest": {
+      "type": "object",
+      "properties": {
+        "houseVertex": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "roadVertex": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "ThiefPlayRequest": {
+      "type": "object",
+      "properties": {
+        "hex": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "victim": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        }
+      }
+    },
+    "ThiefDropRequest": {
+      "type": "object",
+      "properties": {
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "wood",
+              "brick",
+              "hay",
+              "sheep",
+              "rock"
+            ]
+          }
+        }
+      }
+    },
+    "HouseRequest": {
+      "type": "object",
+      "properties": {
+        "vertex": {
+          "type": "integer",
+          "format": "int32"
+        }
+      }
+    },
+    "TradePlayerRequest": {
+      "type": "object",
+      "properties": {
+        "partner": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        },
+        "offer": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "wood",
+              "brick",
+              "hay",
+              "sheep",
+              "rock"
+            ]
+          }
+        },
+        "ask": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "wood",
+              "brick",
+              "hay",
+              "sheep",
+              "rock"
+            ]
+          }
+        }
+      }
+    },
+    "TradeBankRequest": {
+      "type": "object",
+      "properties": {
+        "offer": {
+          "type": "string",
+          "enum": [
+            "wood",
+            "brick",
+            "hay",
+            "sheep",
+            "rock"
+          ]
+        },
+        "count": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "ask": {
+          "type": "string",
+          "enum": [
+            "wood",
+            "brick",
+            "hay",
+            "sheep",
+            "rock"
+          ]
+        }
+      }
+    },
+    "TradeResponseRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "accepted": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Entry": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "object"
+        },
+        "key": {
+          "type": "object"
+        }
+      }
+    },
+    "EntryStringResult": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "$ref": "#/definitions/Result"
+        },
+        "key": {
+          "type": "string"
+        }
+      }
+    },
+    "Result": {
+      "type": "object",
+      "properties": {
+        "healthy": {
+          "type": "boolean"
+        },
+        "message": {
+          "type": "string"
+        },
+        "error": {
+          "$ref": "#/definitions/Throwable"
+        },
+        "details": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "object"
+          }
+        },
+        "time": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "duration": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "timestamp": {
+          "type": "string"
+        }
+      }
+    },
+    "StackTraceElement": {
+      "type": "object",
+      "properties": {
+        "classLoaderName": {
+          "type": "string"
+        },
+        "moduleName": {
+          "type": "string"
+        },
+        "moduleVersion": {
+          "type": "string"
+        },
+        "methodName": {
+          "type": "string"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "lineNumber": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "className": {
+          "type": "string"
+        },
+        "nativeMethod": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Throwable": {
+      "type": "object",
+      "properties": {
+        "cause": {
+          "$ref": "#/definitions/Throwable"
+        },
+        "stackTrace": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StackTraceElement"
+          }
+        },
+        "message": {
+          "type": "string"
+        },
+        "suppressed": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Throwable"
+          }
+        },
+        "localizedMessage": {
+          "type": "string"
+        }
+      }
+    },
+    "FindUserResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "SessionResponse": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "enum": [
+              "ADMIN"
+            ]
+          }
+        },
+        "created": {
+          "type": "integer",
+          "format": "int64"
+        },
+        "access_token": {
+          "type": "string",
+          "readOnly": true
+        },
+        "refresh_token": {
+          "type": "string",
+          "readOnly": true
+        }
+      }
+    },
+    "RefreshTokenRequest": {
+      "type": "object",
+      "properties": {
+        "refresh_token": {
+          "type": "string"
+        }
+      }
+    },
+    "LoginRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "pwd": {
+          "type": "string"
+        }
+      }
+    },
+    "MessageResponse": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "message": {
+          "type": "string"
+        }
+      }
+    },
+    "SignUpRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "pwd": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "UserGame": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "game": {
+          "type": "string"
+        },
+        "user": {
+          "type": "string"
+        },
+        "color": {
+          "type": "string",
+          "enum": [
+            "blue",
+            "orange",
+            "red",
+            "white"
+          ]
+        },
+        "myTurn": {
+          "type": "boolean"
+        },
+        "completed": {
+          "type": "boolean"
+        }
+      }
+    }
+  }
+}

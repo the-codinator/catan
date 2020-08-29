@@ -48,6 +48,7 @@
       2
     ],
     "no-return-await": "error",
+    "no-unused-vars": "warn",
     "no-useless-rename": "error",
     "prefer-arrow-callback": "error",
     "require-jsdoc": "off",
@@ -73,6 +74,7 @@
       }
     ],
     "@typescript-eslint/naming-convention": "error",
+    "@typescript-eslint/no-empty-function": "warn",
     "@typescript-eslint/no-explicit-any": "error"
   },
   "overrides": [

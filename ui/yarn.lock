@@ -10246,6 +10246,11 @@ tr46@^1.0.1:
   dependencies:
     punycode "^2.1.0"
 
+ts-essentials@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/ts-essentials/-/ts-essentials-7.0.0.tgz#eb807945d65e258bae8914f541543758f879f6c5"
+  integrity sha512-DptrzFAwb5afnsTdKxfScHqLbVZHl7YsxvDT+iT8tbXWFGSzbXALhfWlal25HBesqlX0NZd6wz9KBGnJcWScdQ==
+
 ts-pnp@1.1.6:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/ts-pnp/-/ts-pnp-1.1.6.tgz#389a24396d425a0d3162e96d2b4638900fdc289a"

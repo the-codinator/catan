@@ -1,7 +1,7 @@
 # catan
 Catan the game! [Official Website](https://www.catan.com/game/catan)
 
-Status: In development
+Status: In development. Project probably dropped as there's already https://colonist.io/
 
 Contents:
 
